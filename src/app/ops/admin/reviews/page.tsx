@@ -46,7 +46,7 @@ export default async function ReviewsPage() {
           </div>
         ) : null}
         {open.length ? (
-          <div className="tbl-wrap">
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t">
               <caption className="visually-hidden">Items with open review tags</caption>
               <thead>
@@ -79,7 +79,7 @@ export default async function ReviewsPage() {
       <section className="card stack" aria-labelledby="log-h">
         <h2 id="log-h">Review log</h2>
         {reviews.length ? (
-          <div className="tbl-wrap">
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t">
               <thead>
                 <tr>

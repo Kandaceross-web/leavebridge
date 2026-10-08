@@ -82,7 +82,7 @@ export async function DocumentsTab(props: TabProps) {
 function DocTable({ docs, caseId, canDeliver, linkToEditor }: { docs: Awaited<ReturnType<typeof caseDocuments>>; caseId: string; canDeliver: boolean; linkToEditor: boolean }) {
   if (!docs.length) return <Empty title="No documents yet" />;
   return (
-    <div className="tbl-wrap" style={{ position: "relative" }}>
+    <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
       <table className="t">
         <thead>
           <tr>

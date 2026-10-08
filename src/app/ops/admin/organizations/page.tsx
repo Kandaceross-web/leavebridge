@@ -39,7 +39,7 @@ export default async function OrganizationsPage() {
         lede="Referral organizations get a landing link. They never receive patient information; counts here are aggregate and suppressed below 5."
       />
       {orgs.length ? (
-        <div className="tbl-wrap">
+        <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
           <table className="t">
             <caption className="visually-hidden">Referral organizations</caption>
             <thead>

@@ -127,7 +127,7 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
             {list.length} {list.length === 1 ? "case" : "cases"}
             {pages > 1 ? ` · page ${page} of ${pages}` : ""}
           </p>
-          <div className="tbl-wrap" style={{ position: "relative" }}>
+          <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t" id="cases-table">
               <caption className="visually-hidden">Cases matching the filters</caption>
               <thead>

@@ -29,7 +29,7 @@ export default async function BillingPage() {
       <section aria-labelledby="pend-h" className="stack">
         <h2 id="pend-h">Refunds awaiting a second approver</h2>
         {pending.length ? (
-          <div className="tbl-wrap" style={{ position: "relative" }}>
+          <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t">
               <thead>
                 <tr>
@@ -87,7 +87,7 @@ export default async function BillingPage() {
       <section aria-labelledby="pay-h" className="stack">
         <h2 id="pay-h">Recent payments</h2>
         {payments.length ? (
-          <div className="tbl-wrap" style={{ position: "relative" }}>
+          <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t">
               <thead>
                 <tr>

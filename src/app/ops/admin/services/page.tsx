@@ -83,7 +83,7 @@ export default async function ServicesPage() {
             </details>
             <h3>Price history</h3>
             {s.prices.length ? (
-              <div className="tbl-wrap">
+              <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
                 <table className="t">
                   <thead>
                     <tr>

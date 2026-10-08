@@ -47,7 +47,7 @@ export default async function CliniciansPage() {
         </section>
       ) : null}
       {rows.length ? (
-        <div className="tbl-wrap">
+        <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
           <table className="t">
             <caption className="visually-hidden">Clinicians</caption>
             <thead>

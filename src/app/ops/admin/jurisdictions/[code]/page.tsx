@@ -126,7 +126,7 @@ export default async function JurisdictionPage({ params }: { params: Promise<{ c
       <section className="card stack" aria-labelledby="reviews-h">
         <h2 id="reviews-h">Compliance reviews</h2>
         {reviews.length ? (
-          <div className="tbl-wrap">
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t">
               <thead>
                 <tr>

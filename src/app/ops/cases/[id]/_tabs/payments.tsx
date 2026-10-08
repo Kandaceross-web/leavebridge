@@ -58,7 +58,7 @@ export async function PaymentsTab({ ws, actor }: TabProps) {
               <dd className="mono small">{p.provider}</dd>
             </dl>
             {p.refunds.length ? (
-              <div className="tbl-wrap" style={{ position: "relative" }}>
+              <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
                 <table className="t">
                   <thead>
                     <tr>

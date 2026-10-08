@@ -46,7 +46,7 @@ export default async function ConsentsPage() {
               </div>
               {published ? <Badge tone="done">Published v{published.version}</Badge> : <Badge tone="alert">No published version</Badge>}
             </div>
-            <div className="tbl-wrap">
+            <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
               <table className="t">
                 <thead>
                   <tr>

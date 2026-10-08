@@ -25,7 +25,7 @@ export default async function AccessGrantsPage() {
         lede="Break-glass access is time-limited, requires a reason and a second person's approval, and every use is recorded in the audit log."
       />
       {rows.length ? (
-        <div className="tbl-wrap">
+        <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
           <table className="t">
             <caption className="visually-hidden">Break-glass access grants</caption>
             <thead>

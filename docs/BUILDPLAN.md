@@ -121,4 +121,11 @@ Docker image (standalone Next output) → ECS Fargate; RDS Postgres 16 Multi-AZ;
 
 ## Phase log
 
-(Updated as phases complete.)
+| Date | Phase | Result |
+| --- | --- | --- |
+| 2026-10-08 | 1. Foundation | Schema (≈60 tables), security migration (RLS, append-only, guards), domain rules, config catalog, providers, crypto, audit chain, auth. |
+| 2026-10-08 | 1b. Services + seed | Service layer for the full journey; fixtures drive the real services; 9 fictional patients across every stage. |
+| 2026-10-08 | Tests | 86 unit + integration tests. Found and fixed two real bugs: RLS hid other patients' bookings (double-booking), and RLS blocked emergency safety events from anonymous screening. |
+| 2026-10-08 | 2–3. Site, screening, portal | 13 public pages, screening with emergency routing, patient portal for every journey step. |
+| 2026-10-08 | 4–5. Clinical, ops, admin | Ops overview, board, case workspace (11 tabs), document editor with step-up signing, schedule, safety, billing; 13 admin areas and audit. |
+| 2026-10-08 | 6. Hardening | Access checks moved into 8 case-scoped read helpers (+1 test), form echo fix, root forced dynamic so every page carries the CSP nonce, scrollable tables keyboard-reachable, admin index. Docs, Dockerfile, Terraform skeleton, jobs, release check. 87 Vitest + 56 Playwright/axe checks (mobile 360px and desktop) passing; lint, typecheck and production build clean. `release:check` fails as intended (121 blockers). |

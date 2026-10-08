@@ -38,7 +38,7 @@ export async function MeasuresTab(props: TabProps) {
           {m.instrument ? (
             <>
               <p className="small muted">{m.instrument.instructions}</p>
-              <div className="tbl-wrap" style={{ position: "relative" }}>
+              <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
                 <table className="t">
                   <thead>
                     <tr>

@@ -96,7 +96,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
         {refNotFound ? (
           <p className="muted">No case has that reference.</p>
         ) : rows.length ? (
-          <div className="tbl-wrap">
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t">
               <caption className="visually-hidden">Audit events, newest first</caption>
               <thead>

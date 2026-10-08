@@ -46,6 +46,8 @@ export async function signIn(page: Page, email: string, opts: { staff?: boolean 
 
 /** Fails on serious or critical WCAG 2.x A/AA violations. */
 export async function expectAccessible(page: Page) {
+  // Metadata streams in after navigation; wait for it so document-title is checked on the settled page.
+  await expect(page).toHaveTitle(/LeaveBridge/);
   const results = await new AxeBuilder({ page: page as never }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
   const bad = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(bad.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(", ")}`)).toEqual([]);

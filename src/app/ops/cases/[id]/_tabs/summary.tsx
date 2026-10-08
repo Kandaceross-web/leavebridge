@@ -137,7 +137,7 @@ export async function SummaryTab({ ws, actor }: TabProps) {
           <section className="card stack" aria-labelledby="sum-hist">
             <h2 id="sum-hist">Status history</h2>
             {ws.history.length ? (
-              <div className="tbl-wrap" style={{ position: "relative" }}>
+              <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
                 <table className="t">
                   <thead>
                     <tr>

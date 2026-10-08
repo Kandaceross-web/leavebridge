@@ -24,7 +24,7 @@ export async function FilesTab({ ws, actor }: TabProps) {
         <h2 id="files-h">Files</h2>
         {data.access !== "clinical" ? <p className="muted small">With operational access you can open photo ID files only. Other files open for the assigned clinician.</p> : null}
         {data.files.length ? (
-          <div className="tbl-wrap" style={{ position: "relative" }}>
+          <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
             <table className="t">
               <thead>
                 <tr>

@@ -82,7 +82,7 @@ export default async function PricingPage() {
           </Banner>
         ) : null}
         <p className="muted">{refundPolicy.summary}</p>
-        <div className="tbl-wrap">
+        <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
           <table className={`t ${styles.refunds}`}>
             <caption className="visually-hidden">Refund amount by situation</caption>
             <thead>

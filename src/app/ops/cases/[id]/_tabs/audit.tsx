@@ -9,7 +9,7 @@ export async function AuditTab({ ws, actor }: TabProps) {
   return (
     <div className="stack">
       <p className="muted small">The most recent 300 events. The audit log records references only, never clinical content.</p>
-      <div className="tbl-wrap" style={{ position: "relative" }}>
+      <div className="tbl-wrap" style={{ position: "relative" }} tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
         <table className="t">
           <thead>
             <tr>

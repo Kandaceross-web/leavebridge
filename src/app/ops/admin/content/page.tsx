@@ -36,7 +36,7 @@ export default async function ContentPage({ searchParams }: { searchParams: Prom
         ))}
       </nav>
       {rows.length ? (
-        <div className="tbl-wrap">
+        <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
           <table className="t">
             <caption className="visually-hidden">{label(kind)} entries</caption>
             <thead>
