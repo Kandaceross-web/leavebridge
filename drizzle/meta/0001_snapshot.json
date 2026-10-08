@@ -1,6 +1,6 @@
 {
-  "id": "86af783d-2444-48bc-81bd-90506c1f7f6d",
-  "prevId": "1df61b09-9bf9-4080-819a-1abc4eb59e7e",
+  "id": "00df4c6f-963c-4bcd-8a55-46658fcaa1ca",
+  "prevId": "054acca2-ad14-4f1d-9b04-3debb9f9e797",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -4424,6 +4424,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "attachment_file_id": {
+          "name": "attachment_file_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "signed_file_id": {
+          "name": "signed_file_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_by": {
           "name": "created_by",
           "type": "uuid",
@@ -4467,6 +4479,32 @@
             "employer_form_id"
           ],
           "tableTo": "employer_forms",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
+        },
+        "documents_attachment_file_id_files_id_fk": {
+          "name": "documents_attachment_file_id_files_id_fk",
+          "tableFrom": "documents",
+          "columnsFrom": [
+            "attachment_file_id"
+          ],
+          "tableTo": "files",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
+        },
+        "documents_signed_file_id_files_id_fk": {
+          "name": "documents_signed_file_id_files_id_fk",
+          "tableFrom": "documents",
+          "columnsFrom": [
+            "signed_file_id"
+          ],
+          "tableTo": "files",
           "columnsTo": [
             "id"
           ],

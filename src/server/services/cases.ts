@@ -20,7 +20,7 @@ import {
   services,
 } from "../db/schema";
 import { audit } from "../audit";
-import { randomToken } from "../crypto";
+import { encryptOptional, randomToken } from "../crypto";
 import { getSetting } from "../settings";
 import { clinicianJurisdictions } from "./jurisdiction";
 import { notifyUser } from "./notify";
@@ -206,7 +206,6 @@ export async function selectService(ctx: Ctx, caseId: string, input: { serviceId
   if (row.status !== "started") throw invalid("The service can't be changed after payment. Contact support for help.");
   const [svc] = await ctx.tx.select().from(services).where(and(eq(services.id, input.serviceId), eq(services.enabled, true))).limit(1);
   if (!svc) throw invalid("That service is not currently available.");
-  const { encryptOptional } = await import("../crypto");
   await ctx.tx
     .update(cases)
     .set({

@@ -300,6 +300,10 @@ export const documents = pgTable("documents", {
   employerFormId: uuid("employer_form_id").references(() => employerForms.id),
   currentVersionId: uuid("current_version_id"),
   signedVersionId: uuid("signed_version_id"),
+  /** Clinician-completed employer form (PDF) attached to this document, if any. */
+  attachmentFileId: uuid("attachment_file_id").references(() => files.id),
+  /** Rendered PDF of the signed version; the only file a patient can download for this document. */
+  signedFileId: uuid("signed_file_id").references(() => files.id),
   createdBy: uuid("created_by").notNull().references(() => users.id),
   createdAt: createdAt(),
   updatedAt: updatedAt(),

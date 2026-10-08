@@ -39,7 +39,7 @@ const severity = [
   { value: "severe", label: "Very much" },
 ];
 
-export const INTAKE_V1: IntakeDefinition = {
+export const INTAKE_V1: z.input<typeof intakeDefinitionSchema> = {
   sections: [
     {
       key: "concern",

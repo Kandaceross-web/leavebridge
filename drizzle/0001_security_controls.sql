@@ -111,7 +111,7 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO lb_app;
 --> statement-breakpoint
 REVOKE UPDATE ON audit_events, case_status_history, determinations, signatures, document_versions, assessment_notes, payment_events, case_notes FROM lb_app;
 --> statement-breakpoint
-GRANT DELETE ON sessions, rate_limit_buckets TO lb_app;
+GRANT DELETE ON sessions, rate_limit_buckets, availability_rules TO lb_app;
 --> statement-breakpoint
 
 -- 4. Row-level security (second line of defense behind the domain policy layer) -----
