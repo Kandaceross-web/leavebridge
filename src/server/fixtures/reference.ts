@@ -203,3 +203,20 @@ export async function seedStaff(ctx: Ctx): Promise<FixtureStaff> {
 
   return { userIds, clinicianIds, serviceId };
 }
+
+/** Looks up the fixture staff created by seedStaff (tests and scripts). */
+export async function loadFixtureStaff(ctx: Ctx): Promise<FixtureStaff> {
+  const userIds = {} as Record<FixtureStaffKey, string>;
+  for (const [key, s] of Object.entries(FIXTURE_STAFF) as [FixtureStaffKey, (typeof FIXTURE_STAFF)[FixtureStaffKey]][]) {
+    const [u] = await ctx.tx.select({ id: users.id }).from(users).where(eq(users.email, s.email)).limit(1);
+    if (!u) throw new Error(`Fixture staff missing: ${s.email}. Run the seed first.`);
+    userIds[key] = u.id;
+  }
+  const clinicianIds = {} as FixtureStaff["clinicianIds"];
+  for (const key of ["director", "clinician", "clinician2"] as const) {
+    const [c] = await ctx.tx.select({ id: clinicians.id }).from(clinicians).where(eq(clinicians.userId, userIds[key])).limit(1);
+    clinicianIds[key] = c!.id;
+  }
+  const [svc] = await ctx.tx.select({ id: services.id }).from(services).where(eq(services.slug, "mental-health-leave-assessment")).limit(1);
+  return { userIds, clinicianIds, serviceId: svc!.id };
+}

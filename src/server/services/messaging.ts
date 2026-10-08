@@ -1,12 +1,11 @@
 import "server-only";
 import { and, desc, eq, gt, inArray, isNull, sql } from "drizzle-orm";
 import type { Ctx } from "../db/actor";
-import { cases, clinicians, messageReads, messages, messageThreads, notifications, patients, releaseAuthorizations, userRoles, users } from "../db/schema";
+import { cases, clinicians, messageReads, messages, messageThreads, notifications, patients, releaseAuthorizations, users } from "../db/schema";
 import { audit } from "../audit";
 import { decrypt, encrypt, encryptOptional } from "../crypto";
 import { getSetting } from "../settings";
 import { loadCase, notifyPatient } from "./cases";
-import { notifyUser } from "./notify";
 import { forbidden, invalid, notFound } from "@/domain/errors";
 
 /**

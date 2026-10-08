@@ -555,6 +555,7 @@ export async function requestAccessGrant(ctx: Ctx, input: { caseId: string | nul
     .values({ granteeUserId: ctx.actor.userId, caseId: input.caseId, reason: input.reason.trim(), expiresAt: new Date(Date.now() + hours * 3_600_000) })
     .returning({ id: accessGrants.id });
   await audit(ctx, { action: "access_grant.created", subjectType: "access_grant", subjectId: g!.id, caseId: input.caseId, metadata: { hours, state: "requested" } });
+  return g!.id;
 }
 
 export async function approveAccessGrant(ctx: Ctx, grantId: string) {

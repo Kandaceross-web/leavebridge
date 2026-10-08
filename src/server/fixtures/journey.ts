@@ -146,9 +146,9 @@ export async function intakeAnswers(opts: { safety?: boolean } = {}) {
 }
 
 /** Advances the patient's case through each step up to and including `through`. */
-export async function advancePatient(p: FixturePatient, through: PatientStep, opts: { safetyInIntake?: boolean; serviceSlug?: string } = {}) {
+export async function advancePatient(p: FixturePatient, through: PatientStep, opts: { from?: PatientStep; safetyInIntake?: boolean; serviceSlug?: string } = {}) {
   const last = ORDER.indexOf(through);
-  for (const step of ORDER.slice(0, last + 1)) {
+  for (const step of ORDER.slice(opts.from ? ORDER.indexOf(opts.from) : 0, last + 1)) {
     switch (step) {
       case "service":
         await as(p.actor, async (ctx) => {
@@ -159,7 +159,8 @@ export async function advancePatient(p: FixturePatient, through: PatientStep, op
       case "identity": {
         const pdf = await fixturePdf("photo ID");
         await as(p.actor, (ctx) => submitIdentityDocument(ctx, p.caseId, { name: "fictional-id.pdf", data: pdf }));
-        await as(p.actor, (ctx) => attestLocation(ctx, p.caseId, "TX", "verification"));
+        const { jurisdictionCode } = await caseRow(p.caseId);
+        await as(p.actor, (ctx) => attestLocation(ctx, p.caseId, jurisdictionCode ?? "TX", "verification"));
         break;
       }
       case "consents_payment":
@@ -209,12 +210,12 @@ export type StaffStep = "assign" | "review_session" | "book" | "complete_session
 const STAFF_ORDER: StaffStep[] = ["assign", "review_session", "book", "complete_session", "determine", "document", "sign", "deliver"];
 
 /** Advances a submitted case through clinical steps as the fixture clinician. */
-export async function advanceClinical(staff: FixtureStaff, p: FixturePatient, through: StaffStep, opts: { clinician?: "clinician" | "director"; decision?: string } = {}) {
+export async function advanceClinical(staff: FixtureStaff, p: FixturePatient, through: StaffStep, opts: { from?: StaffStep; clinician?: "clinician" | "director"; decision?: string } = {}) {
   const who = opts.clinician ?? "clinician";
   const clin = staffActor(staff, who);
   const last = STAFF_ORDER.indexOf(through);
   let documentId: string | null = null;
-  for (const step of STAFF_ORDER.slice(0, last + 1)) {
+  for (const step of STAFF_ORDER.slice(opts.from ? STAFF_ORDER.indexOf(opts.from) : 0, last + 1)) {
     switch (step) {
       case "assign":
         await as(staffActor(staff, "director"), (ctx) => assignClinician(ctx, p.caseId, staff.clinicianIds[who]));

@@ -37,7 +37,7 @@ export interface PaymentProvider {
 /** Development provider: simulates a hosted checkout page inside the app. */
 class FakeProvider implements PaymentProvider {
   readonly name = "fake" as const;
-  async createCheckout(req: CheckoutRequest) {
+  async createCheckout(_req: CheckoutRequest) {
     const checkoutRef = `fake_cs_${randomToken(12)}`;
     return { checkoutRef, redirectUrl: `/portal/checkout/simulated?ref=${encodeURIComponent(checkoutRef)}` };
   }

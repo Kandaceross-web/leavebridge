@@ -11,3 +11,8 @@ $$;
 REVOKE ALL ON FUNCTION lb_clinician_busy(uuid, timestamptz, timestamptz) FROM PUBLIC;
 --> statement-breakpoint
 GRANT EXECUTE ON FUNCTION lb_clinician_busy(uuid, timestamptz, timestamptz) TO lb_app;
+--> statement-breakpoint
+-- An EMERGENCY screening happens before any account exists. The anonymous visitor may record
+-- the safety event for their own screening (no case, no read access back).
+CREATE POLICY safety_events_screening_insert ON safety_events FOR INSERT
+  WITH CHECK (lb_actor_kind() = 'anonymous' AND case_id IS NULL AND screening_id IS NOT NULL AND source = 'screening');

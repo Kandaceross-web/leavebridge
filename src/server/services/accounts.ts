@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { Ctx } from "../db/actor";
 import { cases, caseStatusHistory, patients, screenings, userRoles, users } from "../db/schema";
 import { audit } from "../audit";
-import { decrypt, decryptJson, encrypt, encryptOptional } from "../crypto";
+import { decrypt, decryptJson, encrypt } from "../crypto";
 import { DUMMY_HASH, hashPassword, passwordProblems, verifyPassword } from "../auth/password";
 import { generateTotpSecret, verifyTotp } from "../auth/totp";
 import { getSetting } from "../settings";
