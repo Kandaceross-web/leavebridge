@@ -4,8 +4,8 @@ import { expectAccessible, expectNoHorizontalScroll, freshIp } from "./helpers";
 type Answers = Record<string, string | string[]>;
 const AVAILABLE: Answers = {
   age_18: "yes",
-  current_state: "TX",
-  appointment_state: "TX",
+  current_state: "MS",
+  appointment_state: "MS",
   safety_now: "no",
   reason: ["symptoms_affect_work"],
   own_condition: "yes",
@@ -57,7 +57,7 @@ test("a person in a served state reaches the available outcome with neutral copy
   expect(text).not.toContain("you qualify");
   expect(text).not.toContain("approved");
   // Answers are never in the URL.
-  expect(page.url()).not.toContain("TX");
+  expect(page.url()).not.toContain("MS");
   await expectAccessible(page);
 });
 

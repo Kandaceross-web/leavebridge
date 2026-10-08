@@ -46,6 +46,8 @@ export default async function StartPage({
         </ul>
         <form action={beginScreening}>
           <input type="hidden" name="ref" value={sp.ref ?? ""} />
+          {/* Which call to action brought the visitor here (e.g. home-hero). Not personal data. */}
+          <input type="hidden" name="entry" value={/^[a-z0-9-]{1,40}$/.test(sp.entry ?? "") ? sp.entry : ""} />
           <button type="submit" className="btn btn-primary">
             Begin
           </button>

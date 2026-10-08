@@ -1,7 +1,7 @@
 # LeaveBridge Health
 
 Telehealth mental-health leave assessment platform: screening, secure intake, independent clinician determination,
-signed documentation and secure delivery, for a $275 self-pay assessment. Payment covers an assessment, never an
+signed documentation and secure delivery, for a $279.99 self-pay assessment. Payment covers an assessment, never an
 outcome.
 
 > **Not ready for real patients.** `npm run release:check` lists what must be decided first (legal, clinical, owner,

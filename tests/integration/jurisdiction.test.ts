@@ -16,33 +16,33 @@ describe("jurisdiction and credential enforcement", () => {
 
   it("inactive states cannot schedule", async () => {
     const s = await staff();
-    const p = await newPatient("Florida", "Patient", { current_state: "FL", appointment_state: "FL" });
+    const p = await newPatient("Tennessee", "Patient", { current_state: "TN", appointment_state: "TN" });
     await advancePatient(p, "submit", {});
     await advanceClinical(s, p, "review_session", { clinician: "director" });
     expect((await as(p.actor, (ctx) => availableSlots(ctx, p.caseId))).length).toBeGreaterThan(0);
     const admin = staffActor(s, "admin");
-    await as(admin, (ctx) => setJurisdictionActive(ctx, "FL", false));
+    await as(admin, (ctx) => setJurisdictionActive(ctx, "TN", false));
     try {
       expect(await as(p.actor, (ctx) => availableSlots(ctx, p.caseId))).toEqual([]);
       await rejects(as(p.actor, (ctx) => bookAppointment(ctx, p.caseId, new Date(Date.now() + 3 * 86_400_000).toISOString())), "invalid");
     } finally {
-      await as(admin, (ctx) => setJurisdictionActive(ctx, "FL", true));
+      await as(admin, (ctx) => setJurisdictionActive(ctx, "TN", true));
     }
   });
 
   it("an expired or suspended privilege blocks new appointments and assignment", async () => {
     const s = await staff();
-    const priv = await as(system, async (ctx) => (await ctx.tx.select().from(compactPrivileges).where(and(eq(compactPrivileges.clinicianId, s.clinicianIds.director), eq(compactPrivileges.remoteJurisdictionCode, "FL"))).limit(1))[0]!);
-    const p = await newPatient("Privilege", "Expired", { current_state: "FL", appointment_state: "FL" });
+    const priv = await as(system, async (ctx) => (await ctx.tx.select().from(compactPrivileges).where(and(eq(compactPrivileges.clinicianId, s.clinicianIds.director), eq(compactPrivileges.remoteJurisdictionCode, "TN"))).limit(1))[0]!);
+    const p = await newPatient("Privilege", "Expired", { current_state: "TN", appointment_state: "TN" });
     await advancePatient(p, "submit");
     await advanceClinical(s, p, "review_session", { clinician: "director" });
     const admin = staffActor(s, "admin");
     await as(admin, (ctx) => setCredentialStatus(ctx, "privilege", priv.id, "expired"));
     try {
       expect(await as(p.actor, (ctx) => availableSlots(ctx, p.caseId))).toEqual([]);
-      const can = await as(system, (ctx) => checkCanServe(ctx.tx, s.clinicianIds.director, s.serviceId, "FL", new Date()));
+      const can = await as(system, (ctx) => checkCanServe(ctx.tx, s.clinicianIds.director, s.serviceId, "TN", new Date()));
       expect(can.ok).toBe(false);
-      const q = await newPatient("Privilege", "Second", { current_state: "FL", appointment_state: "FL" });
+      const q = await newPatient("Privilege", "Second", { current_state: "TN", appointment_state: "TN" });
       await advancePatient(q, "submit");
       await rejects(as(staffActor(s, "director"), (ctx) => assignClinician(ctx, q.caseId, s.clinicianIds.director)), "invalid");
     } finally {

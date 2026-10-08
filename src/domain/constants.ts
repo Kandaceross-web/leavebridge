@@ -81,6 +81,7 @@ export const DOCUMENTATION_TYPES = [
   "recertification",
   "extension",
   "return_to_work",
+  "follow_up_form",
 ] as const;
 export type DocumentationType = (typeof DOCUMENTATION_TYPES)[number];
 

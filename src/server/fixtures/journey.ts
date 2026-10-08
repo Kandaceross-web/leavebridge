@@ -1,4 +1,5 @@
 import "server-only";
+import type { StoredAttribution } from "@/domain/attribution";
 import { eq } from "drizzle-orm";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { withActor, type Ctx } from "../db/actor";
@@ -37,8 +38,8 @@ export type ScreeningAnswers = Record<string, string | string[]>;
 
 export const AVAILABLE_ANSWERS: ScreeningAnswers = {
   age_18: "yes",
-  current_state: "TX",
-  appointment_state: "TX",
+  current_state: "MS",
+  appointment_state: "MS",
   safety_now: "no",
   reason: ["symptoms_affect_work"],
   own_condition: "yes",
@@ -55,9 +56,9 @@ export const AVAILABLE_ANSWERS: ScreeningAnswers = {
 };
 
 /** Completes a screening step by step. Returns the final row and outcome (or the step where it stopped). */
-export async function runScreening(overrides: ScreeningAnswers = {}, refCode: string | null = null) {
+export async function runScreening(overrides: ScreeningAnswers = {}, refCode: string | null = null, attribution: StoredAttribution | null = null) {
   const answers = { ...AVAILABLE_ANSWERS, ...overrides };
-  const { row } = await withActor(anonymous, (ctx) => createScreening(ctx, refCode));
+  const { row } = await withActor(anonymous, (ctx) => createScreening(ctx, refCode, attribution));
   let outcome: string | undefined;
   for (const step of ["location", "safety", "situation", "leave"]) {
     const res = await withActor(anonymous, async (ctx) => saveScreeningStep(ctx, await screeningById(ctx, row.id), step, answers));
@@ -136,7 +137,7 @@ export async function intakeAnswers(opts: { safety?: boolean } = {}) {
       else if (q.kind === "multi") a[q.key] = [q.options![0]!.value];
       else if (q.options?.length) a[q.key] = q.kind === "yesno" ? "no" : q.options[0]!.value;
       else if (q.kind === "date") a[q.key] = "2026-08-01";
-      else if (q.kind === "state") a[q.key] = "TX";
+      else if (q.kind === "state") a[q.key] = "MS";
       else if (/phone/.test(q.key)) a[q.key] = "555-0100";
       else a[q.key] = "Fictional answer for development and testing.".slice(0, q.maxLength ?? 4000);
     }
@@ -160,7 +161,7 @@ export async function advancePatient(p: FixturePatient, through: PatientStep, op
         const pdf = await fixturePdf("photo ID");
         await as(p.actor, (ctx) => submitIdentityDocument(ctx, p.caseId, { name: "fictional-id.pdf", data: pdf }));
         const { jurisdictionCode } = await caseRow(p.caseId);
-        await as(p.actor, (ctx) => attestLocation(ctx, p.caseId, jurisdictionCode ?? "TX", "verification"));
+        await as(p.actor, (ctx) => attestLocation(ctx, p.caseId, jurisdictionCode ?? "MS", "verification"));
         break;
       }
       case "consents_payment":

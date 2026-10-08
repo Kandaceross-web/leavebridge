@@ -15,27 +15,29 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`.
 
 | ID | Decision | Priority | Blocks production | Safe default in this build | Where it lives | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| OWN-01 | Launch clinician(s): license types, home states, compacts | P0 | Yes | Fictional clinicians (TX psychologist with PSYPACT privilege for FL; TX LPC; TX LCSW) in dev seed only | Admin → Clinicians & licenses | Open |
-| OWN-02 | Initial jurisdictions | P1 | Yes | Every state inactive in production; TX and FL activated by the dev fixture only | Admin → States (activation checklist) | Open |
+| OWN-01 | Launch clinician(s): license types, home states, compacts | P0 | Yes | **Decided 2026-10-08 (owner):** Kandace Ross, LPC, NCC, licensed in Mississippi and Tennessee. Enter her real license numbers in Admin → Clinicians after verification against the MS and TN boards (STR-01). Dev seed mirrors the setup with fictional clinicians only. | Admin → Clinicians & licenses | Closed (2026-10-08, Zxryeni) |
+| OWN-02 | Initial jurisdictions | P1 | Yes | **Owner direction 2026-10-08:** launch in MS and TN; three Counseling Compact expansion states are being researched in a separate thread. Each state still needs its activation checklist and compliance review. Dev fixture activates MS and TN. | Admin → States (activation checklist) | Open (MS, TN chosen; expansion pending) |
 | OWN-03 | Coverage and backup clinician; target clinician count | P1 | Yes | Any authorized clinician in the state can be assigned by a director; no auto-assignment | Ops → case → assign | Open |
 | OWN-04 | Identity verification requirement and method | P1 | Yes | Required: photo ID upload reviewed by staff; patient may continue while pending; vendor adapter seam exists | `services.requires_identity_verification`, `features.identityVerification`, `IDV_PROVIDER` | Open |
-| OWN-05 | Confirm $275 and exactly what it includes | P0 | Yes | $275 self-pay; inclusions/exclusions listed in the `pricing` setting (one assessment, one leave request's documentation when supported) | Admin → Services & pricing; Business rules → pricing | Open |
+| OWN-05 | Price and exactly what it includes | P0 | Yes | **Owner decision 2026-10-08:** $279.99 covers the assessment and its paperwork only. Recertification visit $119.99. Follow-up forms $9.99 each. *Assumption to confirm:* "$9.99 a visit" means $9.99 per follow-up form request, separate from the $119.99 recertification visit. | Admin → Services & pricing; Business rules → pricing | Open (confirm $9.99 meaning) |
 | OWN-06 | When payment is taken | P1 | Yes | After service selection, identity and financial consents, before intake (newest instruction) | `src/domain/cases/checklist.ts` gate order | Open |
 | OWN-07 | Cancellation, late-cancel, no-show and refund amounts | P1 | Yes | 100% before intake submitted; placeholders elsewhere; refunds above policy need a second approver | Business rules → refundPolicy | Open |
 | OWN-08 | Support and clinical hours; response commitments | P1 | Yes | Placeholder hours and `example.invalid` contact details | Business rules → brand | Open |
 | OWN-09 | Public turnaround statement | P1 | No | Non-committal message, no time promise | Business rules → turnaround | Open |
-| OWN-10 | Recertification, extension, return-to-work: in or out of V1 | P1 | No | Built as services, **disabled** | Admin → Services | Open |
+| OWN-10 | Recertification, extension, return-to-work: in or out of V1 | P1 | No | **Owner priced recertification ($119.99, visit) and follow-up forms ($9.99) on 2026-10-08**, so both are enabled. Extension and return-to-work stay disabled. Recertification and follow-up forms currently start as a new case; a one-click "order from my delivered case" flow is on the roadmap. | Admin → Services | Open (extension and return-to-work) |
 | OWN-11 | Clinician contact with employers; fee | P2 | No | Not offered; external delivery disabled | `features.externalDelivery` | Open |
 | OWN-12 | Secure messaging: who answers, how fast, limits | P1 | Yes | Enabled; administrative and clinical threads; "not monitored in real time" notice | `features.messaging` | Open |
-| OWN-13 | Hosting approach | P0 | Yes | AWS-native target (ECS Fargate, RDS, S3+KMS, SES/SNS, Bedrock) with provider adapters; nothing deployed | `docs/DEPLOYMENT.md`, `infra/` | Open |
+| OWN-13 | Hosting approach | P0 | Yes | **Decided 2026-10-08 (owner): AWS** (ECS Fargate, RDS, S3+KMS, SES/SNS). Requires an AWS BAA before PHI (SEC-09). | `docs/DEPLOYMENT.md`, `infra/` | Closed (2026-10-08, Zxryeni) |
 | OWN-14 | RPO/RTO | P1 | Yes | Proposed RPO 5 min (PITR), RTO 4 h | `docs/DEPLOYMENT.md` | Open |
 | OWN-15 | Video vendor and BAAs | P1 | Yes | Stub provider: no video; join shows "not configured" | `VIDEO_PROVIDER`, `src/server/providers/video.ts` | Open |
-| OWN-16 | Domains for site and app | P0 | Yes | `HOST_MODE=split` supported (marketing vs app host); single host in dev | `SITE_ORIGIN`, `APP_ORIGIN`, `src/proxy.ts` | Open |
+| OWN-16 | Domains for site and app | P0 | Yes | **Decided 2026-10-08 (owner): split domains**, www for the public site and app for portals (`HOST_MODE=split`). No domain purchased yet; placeholders `www.example.invalid` / `app.example.invalid` until it is. | `SITE_ORIGIN`, `APP_ORIGIN`, `ATTRIBUTION_COOKIE_DOMAIN`, `src/proxy.ts` | Open (buy domain) |
 | OWN-17 | Support/Billing/Compliance roles at launch | P2 | No | All roles exist; admin can grant them | Admin → Staff & roles | Open |
 | OWN-18 | Approve visual direction | P0 | No | Built to the Sprint 0 visual direction artifact | `src/app/globals.css` | Open |
 | OWN-19 | Waitlist for inactive states | P2 | No | On (email + state only) | `features.waitlist` | Open |
 | OWN-20 | Advertising platforms | P1 | Yes | None; optional analytics script allowed on marketing pages only, never in the app | `SITE_ANALYTICS_SRC` | Open |
 | OWN-21 *(new)* | Self-service password reset by email | P1 | Yes | Not built; page directs to support | `src/app/(auth)/forgot-password` | Open |
+| OWN-22 *(new)* | Ad platforms and conversion tracking | P1 | Yes | First-party attribution only (no ad pixels anywhere; nothing sent to ad platforms). Paid campaigns should tag links with UTM parameters. Uploading conversions to Google/Microsoft/Meta is not built. | `src/domain/attribution.ts`, Admin → Acquisition, `docs/MEASUREMENT.md` | Open |
+| OWN-23 *(new)* | Which credential signs which form type | P0 | Yes | Site copy says forms are completed by a licensed mental-health clinician and tells people to check whether their employer, insurer or leave administrator accepts that provider type. Forum evidence shows some administrators refuse counselor or LMFT signatures (see research report). Tied to LEG-01. | Screening `provider_type_accepted`; FAQ | Open |
 
 ## Legal
 

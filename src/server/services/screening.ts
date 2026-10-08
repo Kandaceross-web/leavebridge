@@ -1,4 +1,5 @@
 import "server-only";
+import type { StoredAttribution } from "@/domain/attribution";
 import { and, desc, eq, lt, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 import type { Ctx } from "../db/actor";
@@ -64,7 +65,7 @@ export async function currentScreening(ctx: Ctx): Promise<ScreeningRow | null> {
 }
 
 /** Creates a screening row. Cookie handling stays in startScreening so this also runs outside a request. */
-export async function createScreening(ctx: Ctx, refCode: string | null): Promise<{ row: ScreeningRow; token: string; maxAgeSeconds: number }> {
+export async function createScreening(ctx: Ctx, refCode: string | null, attribution: StoredAttribution | null = null): Promise<{ row: ScreeningRow; token: string; maxAgeSeconds: number }> {
   const ruleset = await publishedRuleset(ctx.tx);
   const retention = await getSetting(ctx.tx, "retention");
   const token = randomToken(32);
@@ -80,6 +81,7 @@ export async function createScreening(ctx: Ctx, refCode: string | null): Promise
       rulesetId: ruleset.id,
       answers: encryptJson({}),
       referralOrganizationId,
+      attribution,
       expiresAt: new Date(Date.now() + retention.abandonedScreeningDays * 86_400_000),
     })
     .returning();

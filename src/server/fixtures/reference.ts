@@ -38,7 +38,8 @@ export const FIXTURE_PASSWORD = "Fictional-Dev-Pass-1";
 /** Base32 TOTP secret shared by fixture staff so local sign-in and e2e tests can compute codes. */
 export const FIXTURE_TOTP_SECRET = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP";
 /** Jurisdictions the fixtures activate so the journey can run locally. Not a launch decision (OWN-02). */
-export const FIXTURE_ACTIVE_STATES = ["TX", "FL"] as const;
+/** Mirrors the owner's launch decision (OWN-01/OWN-02, 2026-10-08): Mississippi and Tennessee. Clinicians are fictional. */
+export const FIXTURE_ACTIVE_STATES = ["MS", "TN"] as const;
 
 export const FIXTURE_STAFF = {
   admin: { email: "admin@leavebridge.test", roles: ["admin"] as Role[] },
@@ -181,25 +182,30 @@ export async function seedStaff(ctx: Ctx): Promise<FixtureStaff> {
       .returning();
     return l!.id;
   };
-  const authorize = (clinicianId: string, code: string, basis: "license" | "compact_privilege", credentialId: string) =>
-    ctx.tx.insert(serviceAuthorizations).values({ clinicianId, serviceId, jurisdictionCode: code, basis, licenseId: basis === "license" ? credentialId : null, compactPrivilegeId: basis === "compact_privilege" ? credentialId : null, effectiveOn: iso(addDays(-30)), authorizedBy: userIds.admin });
+  const enabled = await ctx.tx.select({ id: services.id }).from(services).where(eq(services.enabled, true));
+  const authorize = async (clinicianId: string, code: string, basis: "license" | "compact_privilege", credentialId: string) => {
+    for (const svcRow of enabled)
+      await ctx.tx.insert(serviceAuthorizations).values({ clinicianId, serviceId: svcRow.id, jurisdictionCode: code, basis, licenseId: basis === "license" ? credentialId : null, compactPrivilegeId: basis === "compact_privilege" ? credentialId : null, effectiveOn: iso(addDays(-30)), authorizedBy: userIds.admin });
+  };
 
-  // Director: TX psychologist license, FL via PSYPACT privilege.
-  const dTx = await license(clinicianIds.director, "TX", "Licensed Psychologist", 400);
-  await authorize(clinicianIds.director, "TX", "license", dTx);
-  const [dFl] = await ctx.tx
+  // Director: MS psychologist license, TN via PSYPACT privilege (exercises the compact path).
+  const dMs = await license(clinicianIds.director, "MS", "Licensed Psychologist", 400);
+  await authorize(clinicianIds.director, "MS", "license", dMs);
+  const [dTn] = await ctx.tx
     .insert(compactPrivileges)
-    .values({ clinicianId: clinicianIds.director, compact: "psypact", homeLicenseId: dTx, remoteJurisdictionCode: "FL", privilegeIdentifier: "FIC-PSYPACT-0001", effectiveOn: iso(addDays(-60)), expiresOn: iso(addDays(300)), verifiedBy: userIds.admin, verifiedAt: new Date() })
+    .values({ clinicianId: clinicianIds.director, compact: "psypact", homeLicenseId: dMs, remoteJurisdictionCode: "TN", privilegeIdentifier: "FIC-PSYPACT-0001", effectiveOn: iso(addDays(-60)), expiresOn: iso(addDays(300)), verifiedBy: userIds.admin, verifiedAt: new Date() })
     .returning();
-  await authorize(clinicianIds.director, "FL", "compact_privilege", dFl!.id);
+  await authorize(clinicianIds.director, "TN", "compact_privilege", dTn!.id);
 
-  // Clinician: TX LPC.
-  const cTx = await license(clinicianIds.clinician, "TX", "Licensed Professional Counselor", 500);
-  await authorize(clinicianIds.clinician, "TX", "license", cTx);
+  // Clinician: LPC licensed in both MS and TN, like the launch clinician (fictional person).
+  const cMs = await license(clinicianIds.clinician, "MS", "Licensed Professional Counselor", 500);
+  await authorize(clinicianIds.clinician, "MS", "license", cMs);
+  const cTn = await license(clinicianIds.clinician, "TN", "Licensed Professional Counselor", 500);
+  await authorize(clinicianIds.clinician, "TN", "license", cTn);
 
-  // Clinician 2: TX LCSW expiring soon (shows the expiring-credentials alert).
-  const c2Tx = await license(clinicianIds.clinician2, "TX", "Licensed Clinical Social Worker", 20);
-  await authorize(clinicianIds.clinician2, "TX", "license", c2Tx);
+  // Clinician 2: MS LCSW expiring soon (shows the expiring-credentials alert).
+  const c2Ms = await license(clinicianIds.clinician2, "MS", "Licensed Clinical Social Worker", 20);
+  await authorize(clinicianIds.clinician2, "MS", "license", c2Ms);
 
   return { userIds, clinicianIds, serviceId };
 }

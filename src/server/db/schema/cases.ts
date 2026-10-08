@@ -2,6 +2,7 @@ import { bigserial, boolean, check, date, index, integer, jsonb, pgTable, text, 
 import { sql } from "drizzle-orm";
 import { clinicians, createdAt, patients, ts, updatedAt, users } from "./identity";
 import { consentVersions, jurisdictions, organizations, prices, questionnaires, screeningRulesets, services, serviceAuthorizations } from "./config";
+import type { StoredAttribution } from "@/domain/attribution";
 import type {
   AppointmentStatus,
   CaseStatus,
@@ -32,6 +33,8 @@ export const screenings = pgTable(
     reasonCodes: text("reason_codes").array().notNull().default(sql`'{}'::text[]`),
     status: text("status").$type<"in_progress" | "completed" | "promoted" | "expired">().notNull().default("in_progress"),
     referralOrganizationId: uuid("referral_organization_id").references(() => organizations.id),
+    /** First-party campaign attribution (src/domain/attribution.ts). Marketing data only; never sent to third parties. */
+    attribution: jsonb("attribution").$type<StoredAttribution>(),
     patientId: uuid("patient_id").references(() => patients.id),
     createdAt: createdAt(),
     completedAt: ts("completed_at"),
@@ -57,6 +60,7 @@ export const cases = pgTable(
     /** NEEDS_REVIEW screenings must be cleared by a clinician before payment opens. */
     screeningReview: text("screening_review").$type<"none" | "pending" | "cleared" | "declined">().notNull().default("none"),
     referralOrganizationId: uuid("referral_organization_id").references(() => organizations.id),
+    attribution: jsonb("attribution").$type<StoredAttribution>(),
     documentationDeadline: date("documentation_deadline"),
     /** Encrypted. */
     employerName: text("employer_name"),
@@ -501,6 +505,7 @@ export const contactMessages = pgTable("contact_messages", {
   /** Encrypted: people sometimes include health details despite the warning. */
   message: text("message").notNull(),
   status: text("status").$type<"new" | "handled">().notNull().default("new"),
+  attribution: jsonb("attribution").$type<StoredAttribution>(),
   createdAt: createdAt(),
 });
 

@@ -19,7 +19,7 @@ test("home answers what, who, how, cost, next steps and what is not guaranteed",
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("heading", { name: /who this is for/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /how it works|seven steps/i }).first()).toBeVisible();
-  await expect(page.getByText("$275").first()).toBeVisible();
+  await expect(page.getByText("$279.99").first()).toBeVisible();
   await expect(page.getByRole("heading", { name: /doesn.t guarantee/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /your next step/i })).toBeVisible();
   const text = (await page.locator("main").innerText()).toLowerCase();

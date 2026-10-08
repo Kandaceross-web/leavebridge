@@ -12,6 +12,7 @@ import {
   SCREENING_COOKIE,
 } from "@/server/services/screening";
 import { env } from "@/server/env";
+import { readAttribution } from "@/server/web/attribution";
 import { handle, formAnswers, type ActionState } from "@/server/web/action";
 
 const anon = { kind: "anonymous" as const };
@@ -20,7 +21,8 @@ export async function beginScreening(fd: FormData) {
   await rateLimit("screening", await clientIpKey());
   const ref = String(fd.get("ref") ?? "") || null;
   const meta = await requestMeta();
-  const { token, maxAgeSeconds } = await withActor(anon, (ctx) => createScreening(ctx, ref), meta);
+  const attribution = await readAttribution(String(fd.get("entry") ?? "") || null);
+  const { token, maxAgeSeconds } = await withActor(anon, (ctx) => createScreening(ctx, ref, attribution), meta);
   const jar = await cookies();
   jar.set(SCREENING_COOKIE, token, {
     httpOnly: true,

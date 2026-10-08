@@ -52,6 +52,7 @@ export async function promoteScreeningToCase(ctx: Ctx, screening: ScreeningRow, 
       screeningId: screening.id,
       screeningReview: screening.outcome === "NEEDS_REVIEW" ? "pending" : "none",
       referralOrganizationId: screening.referralOrganizationId,
+      attribution: screening.attribution,
       documentationDeadline: deadline,
       priority: deadline ? "normal" : "normal",
     })

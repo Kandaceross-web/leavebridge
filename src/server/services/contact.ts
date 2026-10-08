@@ -1,4 +1,5 @@
 import "server-only";
+import type { StoredAttribution } from "@/domain/attribution";
 import { and, asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import type { Ctx } from "../db/actor";
@@ -30,7 +31,7 @@ export const contactSchema = z.object({
 });
 export type ContactInput = z.infer<typeof contactSchema>;
 
-export async function submitContactMessage(ctx: Ctx, input: unknown): Promise<{ id: string }> {
+export async function submitContactMessage(ctx: Ctx, input: unknown, attribution: StoredAttribution | null = null): Promise<{ id: string }> {
   const data = contactSchema.parse(input);
   const [row] = await ctx.tx
     .insert(contactMessages)
@@ -40,6 +41,7 @@ export async function submitContactMessage(ctx: Ctx, input: unknown): Promise<{ 
       topic: data.topic,
       // Encrypted at rest: people sometimes include health details despite the warning.
       message: encrypt(data.message),
+      attribution,
     })
     .returning({ id: contactMessages.id });
   if (!row) throw new Error("contact insert failed");

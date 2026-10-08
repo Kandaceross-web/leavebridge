@@ -5,7 +5,12 @@ import type { ConsentStage, DocumentationType, ReviewTag } from "@/domain/consta
  * in production happens in the console (audited), not by editing this file.
  */
 
-export const LAUNCH_PRICE_CENTS = 27500;
+/** Owner decision 2026-10-08 (OWN-05): $279.99 covers the assessment and its paperwork only. */
+export const LAUNCH_PRICE_CENTS = 27999;
+/** Owner decision 2026-10-08: recertification visit. */
+export const RECERTIFICATION_PRICE_CENTS = 11999;
+/** Owner decision 2026-10-08: each follow-up form. Assumed to mean per form request, no visit (confirm with owner). */
+export const FOLLOW_UP_FORM_PRICE_CENTS = 999;
 
 export interface ServiceSeed {
   slug: string;
@@ -38,7 +43,7 @@ export const SERVICES: ServiceSeed[] = [
     sessionMinutes: 50,
     displayOrder: 1,
     priceCents: LAUNCH_PRICE_CENTS,
-    reviewTag: "OWNER_DECISION_REQUIRED",
+    reviewTag: null,
   },
   {
     slug: "leave-recertification",
@@ -47,13 +52,29 @@ export const SERVICES: ServiceSeed[] = [
     description:
       "For people whose employer or leave administrator has asked for recertification. The clinician reassesses your current condition and functioning; recertification is not automatic.",
     documentationType: "recertification",
-    enabled: false,
+    enabled: true,
     requiresSession: true,
     requiresIdentityVerification: true,
     requiresEmployerForm: true,
     sessionMinutes: 30,
     displayOrder: 2,
-    priceCents: LAUNCH_PRICE_CENTS,
+    priceCents: RECERTIFICATION_PRICE_CENTS,
+    reviewTag: null,
+  },
+  {
+    slug: "follow-up-form",
+    name: "Follow-up Form",
+    summary: "An additional or updated form after your assessment, such as a follow-up form your employer sends.",
+    description:
+      "For existing patients whose employer or leave administrator sends an additional or updated form after the assessment. Your clinician completes it only if it is consistent with their clinical findings; if a new evaluation is needed, they will tell you before anything else is charged.",
+    documentationType: "follow_up_form",
+    enabled: true,
+    requiresSession: false,
+    requiresIdentityVerification: true,
+    requiresEmployerForm: true,
+    sessionMinutes: 0,
+    displayOrder: 3,
+    priceCents: FOLLOW_UP_FORM_PRICE_CENTS,
     reviewTag: "OWNER_DECISION_REQUIRED",
   },
   {
@@ -67,7 +88,7 @@ export const SERVICES: ServiceSeed[] = [
     requiresIdentityVerification: true,
     requiresEmployerForm: false,
     sessionMinutes: 30,
-    displayOrder: 3,
+    displayOrder: 4,
     priceCents: LAUNCH_PRICE_CENTS,
     reviewTag: "OWNER_DECISION_REQUIRED",
   },
@@ -82,7 +103,7 @@ export const SERVICES: ServiceSeed[] = [
     requiresIdentityVerification: true,
     requiresEmployerForm: false,
     sessionMinutes: 30,
-    displayOrder: 4,
+    displayOrder: 5,
     priceCents: LAUNCH_PRICE_CENTS,
     reviewTag: "CLINICAL_REVIEW_REQUIRED",
   },
@@ -213,7 +234,7 @@ export const CONTENT: ContentSeed[] = [
   faq("about", 3, "guarantee", "Does paying guarantee I will get documentation?", "No. Your payment covers the professional assessment. The clinician may determine that documentation is not clinically supported, that more information is needed, or that a different kind of care is more appropriate."),
   faq("fmla", 1, "eligibility", "Does LeaveBridge decide whether I am eligible for FMLA?", "No. FMLA eligibility depends on your employer and your employment history, and leave decisions are made by your employer or leave administrator. Our clinicians provide a clinical assessment and, when supported, medical documentation."),
   faq("fmla", 2, "types", "What is the difference between continuous and intermittent leave?", "Continuous leave is a single block of time away from work. Intermittent leave is time off in separate periods as needed. A reduced schedule means working fewer hours. The clinician documents what is clinically supported, which may differ from what was requested."),
-  faq("payment", 1, "cost", "How much does it cost?", "The Mental Health Leave Assessment is $275, self-pay. We do not bill insurance.", "OWNER_DECISION_REQUIRED"),
+  faq("payment", 1, "cost", "How much does it cost?", "The Mental Health Leave Assessment is $279.99, self-pay, and covers the assessment and its paperwork. A recertification visit is $119.99 and each follow-up form is $9.99. We do not bill insurance.", "OWNER_DECISION_REQUIRED"),
   faq("payment", 2, "refunds", "Can I get a refund?", "Refunds depend on how far your case has progressed. The current cancellation and refund rules are shown on the pricing page and before you pay."),
   faq("documentation", 1, "what-docs", "What documentation can the clinician complete?", "When clinically supported, the clinician can complete employer or leave-administrator medical certification forms and supporting letters within their professional scope."),
   faq("documentation", 2, "provider-type", "Will my employer accept a form from your clinician?", "Employers and leave administrators set their own rules about which provider types may complete their forms. Please check with your HR department or leave administrator before you pay."),
