@@ -18,6 +18,9 @@ vi.mock("next/navigation", () => ({
   redirect: (url: string) => {
     throw new Error(`redirect:${url}`);
   },
+  unstable_rethrow: (err: unknown) => {
+    if (err instanceof Error && /^(redirect|notFound)/.test(err.message)) throw err;
+  },
   notFound: () => {
     throw new Error("notFound");
   },
