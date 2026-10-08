@@ -1,0 +1,24 @@
+.inline { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0; }
+.inline > div:empty { display: none; }
+.yesno { display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+.pre {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--lb-mist);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 420px;
+  overflow: auto;
+}
+.meta { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; max-width: 36ch; display: inline-block; }
+.code { font-family: var(--mono); font-size: 13px; }
+.details > summary { cursor: pointer; font-weight: 600; color: var(--lb-navy); min-height: 44px; display: flex; align-items: center; }
+.preview { border: 1px dashed var(--lb-line); border-radius: var(--r-md); padding: 16px; background: var(--lb-surface); }
+.rules { display: grid; gap: 8px; min-width: 0; }
+/* Keeps visually-hidden (absolutely positioned) labels inside the scroll container. */
+.rel { position: relative; }
+.details { min-width: 0; }
+.detailsBtn { min-width: 0; }

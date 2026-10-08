@@ -93,7 +93,7 @@ export function aiProvider(): AiProvider {
     case "stub":
       return new StubProvider();
     case "bedrock":
-      return new BedrockProvider(process.env.BEDROCK_MODEL_ID ?? "");
+      return new BedrockProvider(env.BEDROCK_MODEL_ID ?? "");
     default:
       return new DisabledProvider();
   }

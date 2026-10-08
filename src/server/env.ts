@@ -34,6 +34,8 @@ const schema = z.object({
   EMAIL_FROM: z.string().default("LeaveBridge Health <no-reply@example.invalid>"),
   VIDEO_PROVIDER: z.enum(["stub"]).default("stub"),
   AI_PROVIDER: z.enum(["disabled", "stub", "bedrock"]).default("disabled"),
+  /** Model id for AI_PROVIDER=bedrock. Only use a model covered by your BAA with no training or retention (LEG-06, SEC-04). */
+  BEDROCK_MODEL_ID: z.string().optional(),
   IDV_PROVIDER: z.enum(["manual"]).default("manual"),
   /** Optional privacy-preserving analytics script for marketing pages only. Never loaded in the app. */
   SITE_ANALYTICS_SRC: z.string().url().optional(),
@@ -58,6 +60,9 @@ function load(): Env {
       if (data.STORAGE_PROVIDER === "local") problems.push("STORAGE_PROVIDER=local");
       if (data.EMAIL_PROVIDER === "outbox") problems.push("EMAIL_PROVIDER=outbox");
       if (data.AI_PROVIDER === "stub") problems.push("AI_PROVIDER=stub");
+      if (data.AI_PROVIDER === "bedrock" && !data.BEDROCK_MODEL_ID) problems.push("BEDROCK_MODEL_ID missing");
+      if (data.PAYMENTS_PROVIDER === "stripe" && (!data.STRIPE_SECRET_KEY || !data.STRIPE_WEBHOOK_SECRET)) problems.push("Stripe keys missing");
+      if (data.STORAGE_PROVIDER === "s3" && !data.S3_BUCKET) problems.push("S3_BUCKET missing");
     }
     if (problems.length) throw new Error(`Refusing to start ${data.APP_ENV}: ${problems.join("; ")}`);
   }

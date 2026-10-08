@@ -154,7 +154,8 @@ export function flagsFor(c: OpsCaseRow, t: Thresholds, now = Date.now()): OpsFla
   if ((c.requiresForm && c.formsCount === 0 && c.paid) || c.status === "awaiting_documents") flags.push("missing_forms");
   if (c.measuresToReview > 0 && !preSubmit) flags.push("measures_review");
   if (c.nextAppointment && c.nextAppointment.getTime() - now < 7 * 86_400_000) flags.push("upcoming_appointments");
-  if (["submitted", "clinical_review", "provider_review"].includes(c.status) || c.formsUnreviewed > 0 && !preSubmit) flags.push("awaiting_clinician");
+  const finished = ["completed", "delivered", "closed", "cancelled"].includes(c.status);
+  if (["submitted", "clinical_review", "provider_review"].includes(c.status) || (c.formsUnreviewed > 0 && !preSubmit && !finished)) flags.push("awaiting_clinician");
   if (c.docsToSign > 0) flags.push("needs_signature");
   if (c.status === "completed" || c.docsSignedUndelivered > 0) flags.push("completed");
   if (c.openRequests > 0 && days(c.lastActivityAt) > t.followUpDays) flags.push("follow_up");

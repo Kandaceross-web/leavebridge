@@ -1,0 +1,19 @@
+/* Small additions for public marketing pages. */
+table.refunds th[scope="row"] { text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; color: var(--lb-navy); white-space: normal; background: none; border-bottom: 1px solid #efede8; }
+table.refunds tr:last-child th[scope="row"] { border-bottom: 0; }
+
+.crisisList { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+.crisisItem { display: grid; gap: 4px; padding: clamp(18px, 4vw, 28px); border-radius: var(--r-lg); background: var(--lb-surface); border: 1px solid var(--lb-line); }
+.crisisItem a, .crisisItem b { font-family: var(--display); font-size: clamp(26px, 6vw, 36px); line-height: 1.15; color: var(--lb-navy); font-weight: 400; }
+.crisisItem a { text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+.stateList { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.stateList li { padding: 10px 16px; border-radius: 999px; background: var(--lb-surface); border: 1px solid var(--lb-line); color: var(--lb-navy); font-weight: 600; }
+
+.clinicianName { font-family: var(--display); font-size: 22px; font-weight: 400; color: var(--lb-navy); }
+
+/* Layout helpers (inline style attributes are blocked by the CSP). */
+.centered { justify-items: center; }
+.centerRow { justify-content: center; }
+.alignStart { align-items: start; }
+.tight { --gap: 10px; gap: 10px; }

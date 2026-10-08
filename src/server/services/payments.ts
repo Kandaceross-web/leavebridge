@@ -23,6 +23,7 @@ export async function currentPrice(ctx: Ctx, serviceId: string) {
 }
 
 export async function casePayments(ctx: Ctx, caseId: string) {
+  await loadCase(ctx, caseId, "owner");
   return ctx.tx.select().from(payments).where(eq(payments.caseId, caseId)).orderBy(desc(payments.createdAt));
 }
 

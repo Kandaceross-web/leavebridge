@@ -5,16 +5,27 @@ import { beginScreening } from "./actions";
 
 export const metadata: Metadata = { title: "Check if we can help" };
 
-export default async function StartPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+export default async function StartPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const sp = await searchParams;
   return (
     <div className="container-narrow page stack stack-lg">
       <header className="stack stack-sm">
         <p className="eyebrow">Step 1 of 7 · About 2 minutes</p>
         <h1>Let&rsquo;s see if we can help</h1>
-        <p className="lede">A few questions about where you are, your safety, and your leave request. No account or payment needed.</p>
+        <p className="lede">
+          A few questions about where you are, your safety, and your leave request. No account or
+          payment needed.
+        </p>
       </header>
-      {sp.expired ? <Banner tone="info">Your previous answers expired for your privacy. Please start again.</Banner> : null}
+      {sp.expired ? (
+        <Banner tone="info">
+          Your previous answers expired for your privacy. Please start again.
+        </Banner>
+      ) : null}
       <div className="card stack">
         <ul className="list-check">
           <li>
@@ -23,7 +34,10 @@ export default async function StartPage({ searchParams }: { searchParams: Promis
           </li>
           <li>
             <Icon name="check" />
-            <span>We don&rsquo;t decide FMLA eligibility. A licensed clinician makes every clinical decision later.</span>
+            <span>
+              We don&rsquo;t decide FMLA eligibility. A licensed clinician makes every clinical
+              decision later.
+            </span>
           </li>
           <li>
             <Icon name="check" />

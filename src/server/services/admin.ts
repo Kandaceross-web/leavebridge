@@ -604,6 +604,7 @@ export async function searchAudit(ctx: Ctx, filters: { caseId?: string; action?:
 }
 
 export async function caseAudit(ctx: Ctx, caseId: string) {
+  requireRole(ctx.actor, ["admin", "compliance"]);
   return ctx.tx.select({ e: auditEvents, email: users.email }).from(auditEvents).leftJoin(users, eq(users.id, auditEvents.actorUserId)).where(eq(auditEvents.caseId, caseId)).orderBy(desc(auditEvents.id)).limit(300);
 }
 

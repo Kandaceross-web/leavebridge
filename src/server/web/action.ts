@@ -1,5 +1,6 @@
 import "server-only";
-import { unstable_rethrow } from "next/navigation";
+import { headers } from "next/headers";
+import { redirect, unstable_rethrow } from "next/navigation";
 import { z } from "zod";
 import { isDomainError } from "@/domain/errors";
 import { log } from "../logger";
@@ -18,6 +19,11 @@ export async function handle(fn: () => Promise<ActionState | void>, fd?: FormDat
     return { ok: true, at: Date.now(), ...(res ?? {}) };
   } catch (err) {
     unstable_rethrow(err);
+    if (isDomainError(err) && (err.code === "step_up_required" || err.code === "mfa_required")) {
+      // Sensitive actions send the user to re-authenticate, then back to the page they were on.
+      const back = await returnPath();
+      redirect(`${err.code === "step_up_required" ? "/step-up" : "/mfa"}?next=${encodeURIComponent(back)}`);
+    }
     const values = fd ? echoValues(fd) : undefined;
     if (isDomainError(err)) return { error: err.message, at: Date.now(), values };
     if (err instanceof z.ZodError) {
@@ -61,6 +67,18 @@ export async function formFile(fd: FormData, key: string): Promise<{ name: strin
 /** Text values to restore after a failed submit. Passwords and codes are never echoed. */
 function echoValues(fd: FormData): Record<string, string | string[]> {
   const out = formAnswers(fd);
-  for (const k of Object.keys(out)) if (/password|code|secret|token/i.test(k)) delete out[k];
+  for (const k of Object.keys(out)) if (/password|secret|token|^code$|^otp|totp/i.test(k)) delete out[k];
   return out;
+}
+
+async function returnPath(): Promise<string> {
+  const h = await headers();
+  const ref = h.get("referer");
+  try {
+    const u = ref ? new URL(ref) : null;
+    if (u && /^\/(portal|ops)(\/|$)/.test(u.pathname)) return u.pathname + u.search;
+  } catch {
+    // fall through
+  }
+  return "/ops";
 }

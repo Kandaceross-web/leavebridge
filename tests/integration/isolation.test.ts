@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { sql } from "drizzle-orm";
 import { advanceClinical, advancePatient, as, staffActor } from "@/server/fixtures/journey";
-import { loadCase, patientCases } from "@/server/services/cases";
+import { loadCase, patientCases, statusHistory } from "@/server/services/cases";
+import { caseAudit } from "@/server/services/admin";
 import { getIntake } from "@/server/services/intake";
 import { caseFiles, authorizeFileDownload } from "@/server/services/files";
-import { recordDetermination } from "@/server/services/clinical";
+import { listCaseNotes, openRequests, recordDetermination } from "@/server/services/clinical";
+import { casePayments } from "@/server/services/payments";
 import { threadMessages } from "@/server/services/messaging";
 import { requestAccessGrant, approveAccessGrant } from "@/server/services/admin";
 import { newPatient, rejects, staff } from "./helpers";
@@ -33,6 +35,23 @@ describe("client cannot access another client's information", () => {
     const aFiles = await as(a.actor, (ctx) => caseFiles(ctx, a.caseId, { includeIdentity: true }));
     expect(aFiles.length).toBeGreaterThan(0);
     await rejects(as(b.actor, (ctx) => authorizeFileDownload(ctx, aFiles[0]!.id)));
+  });
+
+  it("case-scoped read helpers check access themselves, not only their callers", async () => {
+    const s = await staff();
+    const a = await newPatient("Ana", "Helpers");
+    const b = await newPatient("Ben", "Helpers");
+    await advancePatient(a, "submit");
+    await rejects(as(b.actor, (ctx) => casePayments(ctx, a.caseId)));
+    await rejects(as(b.actor, (ctx) => statusHistory(ctx, a.caseId)));
+    await rejects(as(b.actor, (ctx) => openRequests(ctx, a.caseId)));
+    await rejects(as(b.actor, (ctx) => caseFiles(ctx, a.caseId, { includeIdentity: false })));
+    // Support may see operational notes but never clinical request text or the audit trail.
+    const support = staffActor(s, "support");
+    await rejects(as(support, (ctx) => openRequests(ctx, a.caseId)));
+    await rejects(as(support, (ctx) => caseAudit(ctx, a.caseId)));
+    const notes = await as(support, (ctx) => listCaseNotes(ctx, a.caseId, true));
+    expect(notes.every((n) => n.visibility === "operational")).toBe(true);
   });
 
   it("anonymous visitors see no patient rows", async () => {

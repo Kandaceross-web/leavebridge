@@ -248,6 +248,7 @@ export async function patientCases(ctx: Ctx) {
 }
 
 export async function statusHistory(ctx: Ctx, caseId: string) {
+  await loadCase(ctx, caseId, "owner");
   return ctx.tx.select().from(caseStatusHistory).where(eq(caseStatusHistory.caseId, caseId)).orderBy(caseStatusHistory.createdAt);
 }
 

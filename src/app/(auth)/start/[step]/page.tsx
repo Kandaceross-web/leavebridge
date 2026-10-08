@@ -23,20 +23,35 @@ export default async function ScreeningStepPage({ params }: { params: Promise<{ 
   if (idx < 0) notFound();
   if (idx > data.row.stepIndex) redirect(`/start/${steps[data.row.stepIndex]!.key}`);
   const s = steps[idx]!;
-  const questions = visibleQuestions(data.ruleset.def, step, data.answers, data.env).map((q) => ({ ...q, value: data.answers[q.key] }));
+  const questions = visibleQuestions(data.ruleset.def, step, data.answers, data.env).map((q) => ({
+    ...q,
+    value: data.answers[q.key],
+  }));
   return (
     <div className="container-narrow page stack stack-lg">
       <header className="stack stack-sm">
         <p className="eyebrow">
           Question set {idx + 1} of {steps.length}
         </p>
-        <div className="progress" role="progressbar" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={idx} aria-label="Screening progress">
+        <div
+          className="progress"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={steps.length}
+          aria-valuenow={idx}
+          aria-label="Screening progress"
+        >
           <i style={{ width: `${Math.round((idx / steps.length) * 100)}%` }} />
         </div>
         <h1>{s.title}</h1>
         {s.description ? <p className="lede">{s.description}</p> : null}
       </header>
-      <ScreeningStepForm step={step} questions={questions} backHref={idx > 0 ? `/start/${steps[idx - 1]!.key}` : "/start"} isLast={idx === steps.length - 1} />
+      <ScreeningStepForm
+        step={step}
+        questions={questions}
+        backHref={idx > 0 ? `/start/${steps[idx - 1]!.key}` : "/start"}
+        isLast={idx === steps.length - 1}
+      />
     </div>
   );
 }

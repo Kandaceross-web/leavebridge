@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { withActor } from "@/server/db/actor";
 import { currentScreening } from "@/server/services/screening";
@@ -15,8 +14,10 @@ export const metadata: Metadata = { title: "Your results" };
 const PATIENT_REASON: Record<string, string> = {
   UNDER_18: "This service is for adults 18 and older.",
   STATE_NOT_ACTIVE: "We are not yet available in the state where you are now.",
-  APPOINTMENT_STATE_NOT_ACTIVE: "We are not yet available in the state where you will be during your assessment.",
-  NOT_OWN_CONDITION: "This service assesses your own health. Leave to care for a family member needs documentation from that person's provider.",
+  APPOINTMENT_STATE_NOT_ACTIVE:
+    "We are not yet available in the state where you will be during your assessment.",
+  NOT_OWN_CONDITION:
+    "This service assesses your own health. Leave to care for a family member needs documentation from that person's provider.",
 };
 
 export default async function ScreeningResultPage() {
@@ -46,7 +47,10 @@ export default async function ScreeningResultPage() {
               </li>
             ))}
           </ul>
-          <p className="small muted">We have not created an account or a case. When you are safe, you are welcome to come back.</p>
+          <p className="small muted">
+            We have not created an account or a case. When you are safe, you are welcome to come
+            back.
+          </p>
         </div>
       </div>
     );
@@ -77,11 +81,15 @@ export default async function ScreeningResultPage() {
               </li>
               <li>
                 <Icon name="check" />
-                <span>Payment happens after you choose your service, before your intake opens.</span>
+                <span>
+                  Payment happens after you choose your service, before your intake opens.
+                </span>
               </li>
               <li>
                 <Icon name="check" />
-                <span>A licensed clinician reviews everything and makes an independent decision.</span>
+                <span>
+                  A licensed clinician reviews everything and makes an independent decision.
+                </span>
               </li>
             </ul>
             <div className="btn-row">
@@ -94,7 +102,8 @@ export default async function ScreeningResultPage() {
         ) : (
           <div className="stack stack-sm">
             <p className="muted">
-              If you need support now, your primary care provider or a local mental-health provider can help. If you are in crisis, call or text <a href="tel:988">988</a>.
+              If you need support now, your primary care provider or a local mental-health provider
+              can help. If you are in crisis, call or text <a href="tel:988">988</a>.
             </p>
             <div className="btn-row">
               <ButtonLink href="/availability" variant="secondary">
@@ -108,7 +117,10 @@ export default async function ScreeningResultPage() {
         )}
       </div>
       {process.env.APP_ENV !== "production" && row.reasonCodes?.length ? (
-        <p className="fine">Development note · rule codes: {row.reasonCodes.map((c) => REASON_CODE_LABEL[c] ?? c).join("; ")}</p>
+        <p className="fine">
+          Development note · rule codes:{" "}
+          {row.reasonCodes.map((c) => REASON_CODE_LABEL[c] ?? c).join("; ")}
+        </p>
       ) : null}
     </div>
   );

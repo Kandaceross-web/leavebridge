@@ -1,0 +1,142 @@
+import type { Metadata } from "next";
+import { ActionForm, Checkbox, SubmitButton } from "@/components/forms";
+import { Banner, ButtonLink, DateTime, Icon, Money, ReviewTag } from "@/components/ui";
+import { env } from "@/server/env";
+import { caseFacts } from "@/server/services/cases";
+import { casePayments } from "@/server/services/payments";
+import { serviceSummary } from "@/server/services/portal-queries";
+import { getSetting } from "@/server/settings";
+import { SETTING_DEFS } from "@/config/settings";
+import { gate } from "@/domain/cases/checklist";
+import { ownedCase } from "../../../_lib/load";
+import { caseHref, stepHref } from "../../../_lib/steps";
+import { StepHead } from "../../../_components/step-head";
+import { beginCheckout } from "./actions";
+
+export const metadata: Metadata = { title: "Payment" };
+
+export default async function CheckoutPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const { id } = await params;
+  const sp = await searchParams;
+  const { row, steps, extra } = await ownedCase(id, async (ctx, r) => ({
+    service: await serviceSummary(ctx, r.serviceId),
+    payments: await casePayments(ctx, r.id),
+    pricing: await getSetting(ctx.tx, "pricing"),
+    refund: await getSetting(ctx.tx, "refundPolicy"),
+    gate: gate(await caseFacts(ctx, r), "payment"),
+  }));
+  const { service, payments, pricing, refund } = extra;
+  const paid = payments.find((p) => p.status === "paid" || p.status === "partially_refunded");
+  const showTags = env.APP_ENV !== "production";
+
+  return (
+    <div className="stack stack-lg" style={{ maxWidth: 760 }}>
+      <StepHead
+        caseId={row.id}
+        reference={row.reference}
+        steps={steps}
+        step="payment"
+        title="Pay securely"
+        lede="Your payment covers a professional clinical assessment. It does not guarantee any particular outcome."
+      />
+
+      {sp.cancelled ? (
+        <Banner tone="info" icon="info">
+          Payment was not completed. You have not been charged. You can try again when you are ready.
+        </Banner>
+      ) : null}
+
+      {paid ? (
+        <div className="stack">
+          <Banner tone="sage" icon="check">
+            Payment of <Money cents={paid.amountCents} currency={paid.currency} /> received <DateTime value={paid.paidAt} />. Thank you.
+          </Banner>
+          <div className="btn-row">
+            <ButtonLink href={stepHref(row.id, "consents_intake")}>Continue to consents</ButtonLink>
+          </div>
+        </div>
+      ) : null}
+
+      {!paid && !extra.gate.ok ? (
+        <Banner tone="info" icon="lock">
+          {extra.gate.reason} <a href={caseHref(row.id)}>Back to your steps</a>
+        </Banner>
+      ) : null}
+
+      <section className="card stack" aria-labelledby="summary-heading">
+        <div className="card-head">
+          <h2 id="summary-heading">Summary</h2>
+          {showTags ? <ReviewTag tag={SETTING_DEFS.pricing.reviewTag} /> : null}
+        </div>
+        <div className="row row-between">
+          <b>{service?.name ?? "Service not chosen"}</b>
+          <b>{service?.priceCents != null ? <Money cents={service.priceCents} currency={service.currency} /> : "—"}</b>
+        </div>
+        <p className="small muted">Self-pay. We do not bill insurance. {pricing.paymentTiming}</p>
+        <div className="grid g2">
+          <div className="stack stack-sm">
+            <h3>What the fee covers</h3>
+            <ul className="list-check small">
+              {pricing.includes.map((t) => (
+                <li key={t}>
+                  <Icon name="check" />
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="stack stack-sm">
+            <h3>What it does not include</h3>
+            <ul className="list-check small">
+              {pricing.excludes.map((t) => (
+                <li key={t}>
+                  <Icon name="x" />
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="card-flat stack stack-sm" aria-labelledby="refund-heading">
+        <div className="card-head">
+          <h2 id="refund-heading">Cancellations and refunds</h2>
+          {showTags ? <ReviewTag tag={SETTING_DEFS.refundPolicy.reviewTag} /> : null}
+        </div>
+        <p className="small">{refund.summary}</p>
+        <ul className="list-plain small">
+          {refund.rules.map((r) => (
+            <li key={r.trigger}>
+              <b>{r.refundPercent}% refund</b> · {r.note}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {!paid && extra.gate.ok ? (
+        <ActionForm action={beginCheckout.bind(null, row.id)}>
+          <Banner tone="info" icon="info">
+            Payment does not guarantee a diagnosis, documentation, or approval of leave. A licensed clinician makes an independent clinical determination, and leave decisions are made by your employer or leave administrator.
+          </Banner>
+          <Checkbox name="understand" value="yes" required>
+            I understand that I am paying for a professional assessment, not a particular outcome.
+          </Checkbox>
+          <SubmitButton pendingText="Opening secure checkout…">
+            Continue to secure payment{service?.priceCents != null ? " · " : ""}
+            {service?.priceCents != null ? <Money cents={service.priceCents} currency={service.currency} /> : null}
+          </SubmitButton>
+          <p className="fine">
+            <Icon name="lock" /> You will complete payment on our payment processor&rsquo;s secure page. It receives only the amount and your email for a receipt.
+          </p>
+        </ActionForm>
+      ) : null}
+    </div>
+  );
+}

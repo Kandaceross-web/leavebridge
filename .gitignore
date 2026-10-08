@@ -12,3 +12,5 @@ next-env.d.ts
 .env.*.local
 .DS_Store
 .test-storage/
+test-results/
+playwright-report/

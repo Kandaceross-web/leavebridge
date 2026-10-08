@@ -113,6 +113,7 @@ export async function authorizeFileDownload(ctx: Ctx, fileId: string): Promise<{
 }
 
 export async function caseFiles(ctx: Ctx, caseId: string, opts: { includeIdentity: boolean }) {
+  await loadCase(ctx, caseId, "owner");
   const rows = await ctx.tx.select().from(files).where(eq(files.caseId, caseId)).orderBy(files.createdAt);
   return rows.filter((r) => opts.includeIdentity || r.category !== "identity").map((r) => ({ ...r, name: displayName(r) }));
 }

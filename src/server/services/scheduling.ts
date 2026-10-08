@@ -174,6 +174,7 @@ export async function upcomingAppointments(ctx: Ctx, opts: { clinicianId?: strin
 }
 
 export async function clinicianAvailability(ctx: Ctx, clinicianId: string) {
+  requireRole(ctx.actor, ["clinician", "clinical_director", "admin", "support"]);
   return ctx.tx.select().from(availabilityRules).where(eq(availabilityRules.clinicianId, clinicianId)).orderBy(availabilityRules.weekday, availabilityRules.startMinute);
 }
 

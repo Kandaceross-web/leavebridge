@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ButtonLink, Icon, Money } from "@/components/ui";
 import { activeStates, enabledServices, launchPriceCents, siteSettings } from "@/server/web/public";
+import styles from "./site.module.css";
 
 export default async function HomePage() {
-  const [{ pricing, turnaround }, price, states, services] = await Promise.all([siteSettings(), launchPriceCents(), activeStates(), enabledServices()]);
+  const [{ pricing, turnaround, crisis }, price, states, services] = await Promise.all([siteSettings(), launchPriceCents(), activeStates(), enabledServices()]);
   const primary = services[0];
   return (
     <>
@@ -86,7 +87,16 @@ export default async function HomePage() {
               ))}
             </ul>
             <p className="small muted">
-              If you are in crisis, call or text <a href="tel:988">988</a> or call <a href="tel:911">911</a>.
+              Not for emergencies. If you are in crisis:{" "}
+              {crisis.resources
+                .filter((r) => r.href)
+                .map((r, i) => (
+                  <span key={r.label}>
+                    {i > 0 ? " · " : ""}
+                    <a href={r.href}>{r.label}</a>
+                  </span>
+                ))}
+              . <Link href="/crisis">More crisis resources</Link>
             </p>
           </div>
         </div>
@@ -181,10 +191,10 @@ export default async function HomePage() {
       </section>
 
       <section className="section" aria-labelledby="next-title">
-        <div className="container stack text-center" style={{ justifyItems: "center" }}>
+        <div className={`container stack text-center ${styles.centered}`}>
           <h2 id="next-title">Your next step</h2>
           <p className="lede">Answer a few questions to see whether this service is available to you. No account or payment needed to check.</p>
-          <div className="btn-row" style={{ justifyContent: "center" }}>
+          <div className={`btn-row ${styles.centerRow}`}>
             <ButtonLink href="/start">Check if we can help</ButtonLink>
             <ButtonLink href="/faq" variant="quiet">
               Read common questions

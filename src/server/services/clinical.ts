@@ -98,6 +98,8 @@ export async function createRequest(ctx: Ctx, caseId: string, kind: RequestKind,
 }
 
 export async function openRequests(ctx: Ctx, caseId: string) {
+  // Request text can be clinical: patients see their own; staff need clinical access.
+  await loadCase(ctx, caseId, ctx.actor.kind === "patient" ? "owner" : "clinical");
   const rows = await ctx.tx.select().from(documentRequests).where(eq(documentRequests.caseId, caseId)).orderBy(desc(documentRequests.createdAt));
   return rows.map((r) => ({ ...r, message: decrypt(r.message), response: decryptOptional(r.response) }));
 }
@@ -260,6 +262,8 @@ export async function addCaseNote(ctx: Ctx, caseId: string, visibility: "clinica
 }
 
 export async function listCaseNotes(ctx: Ctx, caseId: string, includeClinical: boolean) {
+  const { access } = await loadCase(ctx, caseId, "operational");
+  includeClinical = includeClinical && access === "clinical";
   const rows = await ctx.tx.select().from(caseNotes).where(eq(caseNotes.caseId, caseId)).orderBy(desc(caseNotes.createdAt));
   return rows.filter((r) => includeClinical || r.visibility === "operational").map((r) => ({ ...r, body: decrypt(r.body) }));
 }
@@ -287,6 +291,8 @@ export async function releaseSafetyHold(ctx: Ctx, caseId: string, note: string) 
 }
 
 export async function openSafetyEvents(ctx: Ctx, caseId?: string) {
+  if (caseId) await loadCase(ctx, caseId, "clinical");
+  else requireRole(ctx.actor, ["clinician", "clinical_director", "compliance", "admin"]);
   const rows = await ctx.tx
     .select()
     .from(safetyEvents)

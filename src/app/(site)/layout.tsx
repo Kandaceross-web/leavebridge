@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { Lockup } from "@/components/ui";
 import { NavLink } from "@/components/nav";
 import { DevBanner } from "@/components/dev-banner";
 import { legalPages, siteSettings } from "@/server/web/public";
+import { env } from "@/server/env";
 
 const NAV = [
   { href: "/how-it-works", label: "How it works" },
@@ -16,8 +18,12 @@ const NAV = [
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   const [{ brand, crisis }, legal] = await Promise.all([siteSettings(), legalPages()]);
+  // Optional privacy-preserving analytics, marketing pages only (LEG-14). Never rendered in the portal, ops or screening.
+  const analyticsSrc = env.SITE_ANALYTICS_SRC;
+  const nonce = analyticsSrc ? ((await headers()).get("x-nonce") ?? undefined) : undefined;
   return (
     <>
+      {analyticsSrc ? <script src={analyticsSrc} nonce={nonce} defer /> : null}
       <DevBanner />
       <header className="site-header">
         <div className="container bar">
