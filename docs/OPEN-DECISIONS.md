@@ -71,7 +71,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | LEG-10 | Retention of screening data from people who never book | P1 | Yes | Answers purged after 30 days (`purgeExpiredScreenings` job) | Business rules → retention; `scripts/jobs.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-11 | Identity verification permissibility and handling | P1 | Yes | ID images encrypted, staff-only, audited | Identity service | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-12 | Payment processor data | P1 | Yes | Only an opaque payment id and neutral description sent | Payment provider | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| LEG-13 | Email/SMS consent and content | P1 | Yes | Email "something is waiting" only; SMS off and opt-in | Templates; `features.smsNotifications` | Open |
+| LEG-13 | Email/SMS consent and content | P1 | Yes | Email "something is waiting" only; SMS off and opt-in | Templates; `features.smsNotifications` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-14 | Analytics, cookies, consent banner | P1 | Yes | No analytics, no third-party cookies; only essential cookies | `SITE_ANALYTICS_SRC` unset | Open |
 | LEG-15 | Terms, privacy policy, NPP text | P1 | Yes | Placeholder pages, tagged | Admin → Content | Open |
 | LEG-16 | E-signature validity; employer acceptance of e-signed forms | P1 | Yes | Typed-name consent with hash and auth evidence; clinician signature bound to content hash with step-up | Consents, signatures | Open |
