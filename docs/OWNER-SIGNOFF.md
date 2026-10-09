@@ -23,7 +23,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 5 | CLN-12 | Should forms let you write a diagnosis, given your LPC scope in MS and TN? | No diagnosis field; findings are free text | **Signed off 2026-10-09:** "Keep it" (decision card). |
 | 6 | STR-01 | Will you look up and record your MS and TN license numbers (and any compact privileges) from the state boards before launch? | Entered by hand with who verified and when | **Signed off 2026-10-09:** "Yes, before launch" (decision card). |
 | 7 | SEC-01 | Sign-in: passwords plus an authenticator app for staff, re-confirm before signing documents, sign out after 15 minutes idle (staff) and 30 (patients). Keep? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). |
-| 8 | SEC-02 | Health data is encrypted and each person only sees their own records (checked by the database itself). Accept this design? | As described; automated check runs every release | |
+| 8 | SEC-02 | Health data is encrypted and each person only sees their own records (checked by the database itself). Accept this design? | As described; automated check runs every release || **Signed off 2026-10-09:** "Accept it" (decision card). |
 | 9 | LEG-02 | What business name and entity will patients pay, and what should appear on card statements? | "Professional assessment service" | |
 | 10 | LEG-03 | Will you operate as a HIPAA covered entity and publish a Notice of Privacy Practices you approve? | Built as if HIPAA applies; NPP placeholder | |
 | 11 | LEG-04 | Approve the consent documents' wording (you'll get each one to read). | Placeholders | |
