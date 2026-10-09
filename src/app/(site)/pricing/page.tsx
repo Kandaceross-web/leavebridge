@@ -3,10 +3,12 @@ import type { Metadata } from "next";
 import { Banner, ButtonLink, Icon, Money, PageHead } from "@/components/ui";
 import styles from "../site.module.css";
 import { enabledServices, isProduction, launchPriceCents, siteSettings } from "@/server/web/public";
+import { appHref } from "@/server/web/app-link";
 
 export const metadata: Metadata = {
   title: "Pricing and refunds",
-  description: "What the self-pay assessment fee covers, what it does not, when you pay, and how refunds work.",
+  description:
+    "What the self-pay assessment fee covers, what it does not, when you pay, and how refunds work.",
 };
 
 const TRIGGER_LABELS: Record<string, string> = {
@@ -20,7 +22,11 @@ const TRIGGER_LABELS: Record<string, string> = {
 };
 
 export default async function PricingPage() {
-  const [{ pricing, refundPolicy }, price, services] = await Promise.all([siteSettings(), launchPriceCents(), enabledServices()]);
+  const [{ pricing, refundPolicy }, price, services] = await Promise.all([
+    siteSettings(),
+    launchPriceCents(),
+    enabledServices(),
+  ]);
   const primary = services[0];
   return (
     <div className="container page stack stack-xl">
@@ -46,7 +52,7 @@ export default async function PricingPage() {
               </li>
             ))}
           </ul>
-          <ButtonLink href="/start?entry=pricing">Check if we can help</ButtonLink>
+          <ButtonLink href={appHref("/start?entry=pricing")}>Check if we can help</ButtonLink>
         </section>
 
         <div className="stack">
@@ -68,7 +74,8 @@ export default async function PricingPage() {
           <section className="card-flat stack stack-sm" aria-labelledby="ins-title">
             <h2 id="ins-title">Self-pay only</h2>
             <p className="muted">
-              We do not bill insurance. We cannot tell you whether your insurer or benefits plan will reimburse the fee.
+              We do not bill insurance. We cannot tell you whether your insurer or benefits plan
+              will reimburse the fee.
             </p>
           </section>
         </div>
@@ -78,11 +85,17 @@ export default async function PricingPage() {
         <h2 id="refund-title">Cancellations and refunds</h2>
         {!isProduction ? (
           <Banner tone="warn" icon="alert">
-            <b>Pending legal review.</b> This refund policy is a draft and is not final until it has been reviewed.
+            <b>Pending legal review.</b> This refund policy is a draft and is not final until it has
+            been reviewed.
           </Banner>
         ) : null}
         <p className="muted">{refundPolicy.summary}</p>
-        <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens">
+        <div
+          className="tbl-wrap"
+          tabIndex={0}
+          role="region"
+          aria-label="Table, scrolls sideways on small screens"
+        >
           <table className={`t ${styles.refunds}`}>
             <caption className="visually-hidden">Refund amount by situation</caption>
             <thead>
@@ -95,9 +108,7 @@ export default async function PricingPage() {
             <tbody>
               {refundPolicy.rules.map((r) => (
                 <tr key={r.trigger}>
-                  <th scope="row">
-                    {TRIGGER_LABELS[r.trigger] ?? r.trigger}
-                  </th>
+                  <th scope="row">{TRIGGER_LABELS[r.trigger] ?? r.trigger}</th>
                   <td className="nowrap">{r.refundPercent}%</td>
                   <td className="muted">{r.note}</td>
                 </tr>
@@ -106,8 +117,9 @@ export default async function PricingPage() {
           </table>
         </div>
         <p className="small muted">
-          A late cancellation means cancelling a video appointment less than {refundPolicy.lateCancelHours} hours before it starts. The complete policy is shown
-          before you pay. Questions about a charge? <Link href="/contact">Contact billing support</Link>.
+          A late cancellation means cancelling a video appointment less than{" "}
+          {refundPolicy.lateCancelHours} hours before it starts. The complete policy is shown before
+          you pay. Questions about a charge? <Link href="/contact">Contact billing support</Link>.
         </p>
       </section>
     </div>

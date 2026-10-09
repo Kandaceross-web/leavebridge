@@ -3,6 +3,7 @@ import { ActionForm, SubmitButton, TextArea, TextField } from "@/components/form
 import { Banner, Icon, PageHead } from "@/components/ui";
 import { employerInquiryAction } from "../actions";
 import styles from "../site.module.css";
+import { OpensAtLaunch } from "@/components/opens-at-launch";
 
 export const metadata: Metadata = {
   title: "Employer services",
@@ -49,19 +50,22 @@ export default function EmployersPage() {
             <li>
               <Icon name="check" />
               <span>
-                <b>A referral pathway.</b> A simple way to direct employees to an assessment by a licensed mental-health clinician.
+                <b>A referral pathway.</b> A simple way to direct employees to an assessment by a
+                licensed mental-health clinician.
               </span>
             </li>
             <li>
               <Icon name="check" />
               <span>
-                <b>A dedicated landing link.</b> A page for your organization that explains the service in neutral terms and starts the same screening everyone uses.
+                <b>A dedicated landing link.</b> A page for your organization that explains the
+                service in neutral terms and starts the same screening everyone uses.
               </span>
             </li>
             <li>
               <Icon name="check" />
               <span>
-                <b>Plain-language information</b> your HR team can share about how the process works.
+                <b>Plain-language information</b> your HR team can share about how the process
+                works.
               </span>
             </li>
           </ul>
@@ -76,15 +80,21 @@ export default function EmployersPage() {
             </li>
             <li>
               <Icon name="lock" />
-              <span>Employers never receive clinical information without the patient&rsquo;s written authorization.</span>
+              <span>
+                Employers never receive clinical information without the patient&rsquo;s written
+                authorization.
+              </span>
             </li>
             <li>
               <Icon name="lock" />
-              <span>We do not tell your organization whether an individual employee used the link.</span>
+              <span>
+                We do not tell your organization whether an individual employee used the link.
+              </span>
             </li>
           </ul>
           <Banner tone="info" icon="info">
-            We do not make leave decisions, determine FMLA eligibility, or act as a leave administrator. Clinicians make independent clinical determinations only.
+            We do not make leave decisions, determine FMLA eligibility, or act as a leave
+            administrator. Clinicians make independent clinical determinations only.
           </Banner>
         </section>
       </div>
@@ -93,24 +103,45 @@ export default function EmployersPage() {
         <div className="stack">
           <h2 id="inquiry-title">Ask about a referral link</h2>
           <p className="muted">
-            Tell us about your organization and we will reply by email. Please do not include information about any individual employee.
+            Tell us about your organization and we will reply by email. Please do not include
+            information about any individual employee.
           </p>
         </div>
         <div className="card">
-          <ActionForm action={employerInquiryAction}>
-            <TextField name="name" label="Your name" autoComplete="name" maxLength={120} required />
-            <TextField name="email" label="Work email" type="email" autoComplete="email" maxLength={254} required />
-            <TextField name="organization" label="Organization" autoComplete="organization" maxLength={200} />
-            <TextArea
-              name="message"
-              label="How can we help?"
-              hint="No employee names or health details, please."
-              maxLength={3500}
-              rows={5}
-              required
-            />
-            <SubmitButton pendingText="Sending…">Send inquiry</SubmitButton>
-          </ActionForm>
+          <OpensAtLaunch>
+            <ActionForm action={employerInquiryAction}>
+              <TextField
+                name="name"
+                label="Your name"
+                autoComplete="name"
+                maxLength={120}
+                required
+              />
+              <TextField
+                name="email"
+                label="Work email"
+                type="email"
+                autoComplete="email"
+                maxLength={254}
+                required
+              />
+              <TextField
+                name="organization"
+                label="Organization"
+                autoComplete="organization"
+                maxLength={200}
+              />
+              <TextArea
+                name="message"
+                label="How can we help?"
+                hint="No employee names or health details, please."
+                maxLength={3500}
+                rows={5}
+                required
+              />
+              <SubmitButton pendingText="Sending…">Send inquiry</SubmitButton>
+            </ActionForm>
+          </OpensAtLaunch>
         </div>
       </section>
     </div>

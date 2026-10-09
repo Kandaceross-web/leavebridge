@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Badge, Banner, ButtonLink, Icon, Money, PageHead } from "@/components/ui";
 import { allServices, enabledServices } from "@/server/web/public";
+import { appHref } from "@/server/web/app-link";
 
 export const metadata: Metadata = {
   title: "FMLA and leave services",
@@ -49,7 +50,9 @@ export default async function ServicesPage() {
                 <p className="muted">{s.summary}</p>
                 <p className="small">{s.description}</p>
                 <div className="btn-row">
-                  <ButtonLink href="/start?entry=services">Check if we can help</ButtonLink>
+                  <ButtonLink href={appHref("/start?entry=services")}>
+                    Check if we can help
+                  </ButtonLink>
                   <ButtonLink href="/pricing" variant="quiet">
                     What&rsquo;s included
                   </ButtonLink>
@@ -58,15 +61,18 @@ export default async function ServicesPage() {
             ))}
           </div>
         ) : (
-          <p className="muted">We are not accepting new assessments right now. Please check back soon.</p>
+          <p className="muted">
+            We are not accepting new assessments right now. Please check back soon.
+          </p>
         )}
       </section>
 
       <section className="card-quiet stack" aria-labelledby="types-title">
         <h2 id="types-title">Types of leave documentation</h2>
         <p className="muted">
-          When the clinician determines it is clinically supported, they can complete documentation for one of these arrangements, as appropriate to your situation.
-          The clinician decides what, if anything, is supported.
+          When the clinician determines it is clinically supported, they can complete documentation
+          for one of these arrangements, as appropriate to your situation. The clinician decides
+          what, if anything, is supported.
         </p>
         <div className="grid g3">
           {LEAVE_TYPES.map((t) => (
@@ -94,15 +100,16 @@ export default async function ServicesPage() {
             ))}
           </ul>
           <p className="small muted">
-            Documentation is completed only when the clinician finds it clinically supported. It is not completed automatically, and the outcome may be that no
-            documentation is supported.
+            Documentation is completed only when the clinician finds it clinically supported. It is
+            not completed automatically, and the outcome may be that no documentation is supported.
           </p>
         </div>
         <div className="stack">
           <h2>Check with HR first</h2>
           <p className="muted">
-            Employers and leave administrators decide which provider types they accept for medical certification, and whether you are eligible for FMLA or other
-            leave. Before you start, ask your HR team or leave administrator:
+            Employers and leave administrators decide which provider types they accept for medical
+            certification, and whether you are eligible for FMLA or other leave. Before you start,
+            ask your HR team or leave administrator:
           </p>
           <ul className="list-check">
             {[
@@ -117,7 +124,8 @@ export default async function ServicesPage() {
             ))}
           </ul>
           <Banner tone="info" icon="info">
-            We do not decide FMLA eligibility or approve leave. Those decisions belong to your employer or leave administrator.
+            We do not decide FMLA eligibility or approve leave. Those decisions belong to your
+            employer or leave administrator.
           </Banner>
         </div>
       </section>
@@ -141,7 +149,8 @@ export default async function ServicesPage() {
       ) : null}
 
       <p className="small muted">
-        Have a question about a service? <Link href="/faq">Read common questions</Link> or <Link href="/contact">contact us</Link>.
+        Have a question about a service? <Link href="/faq">Read common questions</Link> or{" "}
+        <Link href="/contact">contact us</Link>.
       </p>
     </div>
   );

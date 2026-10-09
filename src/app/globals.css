@@ -217,6 +217,7 @@ legend { font-weight: 600; font-size: 15px; color: var(--lb-navy); padding: 0; m
 .banner-alert { background: var(--lb-rose-tint); color: #6e2323; }
 .banner-sage { background: var(--lb-sage-tint); color: #2f4638; }
 .dev-banner { background: repeating-linear-gradient(-45deg, #fff6e0, #fff6e0 8px, #fbebc5 8px, #fbebc5 16px); color: #5e3f07; text-align: center; font-size: 12.5px; padding: 6px var(--gutter); border-bottom: 1px dashed #c79a3c; }
+.preview-banner { background: var(--lb-sun-tint); color: var(--lb-ink); border-bottom: 1px solid var(--lb-line); font-size: 14px; }
 
 /* Site header / footer -------------------------------------------------------------- */
 .site-header { background: var(--lb-paper); border-bottom: 1px solid var(--lb-line); position: sticky; top: 0; z-index: 20; }

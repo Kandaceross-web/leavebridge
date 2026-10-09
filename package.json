@@ -23,7 +23,8 @@
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
     "release:check": "tsx --conditions=react-server scripts/release-check.ts",
     "security:check": "tsx --conditions=react-server scripts/security-check.ts",
-    "jobs": "tsx --conditions=react-server scripts/jobs.ts"
+    "jobs": "tsx --conditions=react-server scripts/jobs.ts",
+    "public:export": "tsx scripts/export-public-site.ts"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1148.0",

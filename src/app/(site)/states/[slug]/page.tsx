@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ButtonLink, Markdown, Money, ReviewTag } from "@/components/ui";
 import { launchPriceCents, statePage, summaryOf } from "@/server/web/public";
+import { appHref } from "@/server/web/app-link";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -10,7 +11,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const page = await statePage(slug);
   if (!page) return { title: "Not found" };
-  return { title: page.title, description: summaryOf(page.bodyMd), alternates: { canonical: `/states/${slug}` } };
+  return {
+    title: page.title,
+    description: summaryOf(page.bodyMd),
+    alternates: { canonical: `/states/${slug}` },
+  };
 }
 
 export default async function StatePage({ params }: Props) {
@@ -40,7 +45,9 @@ export default async function StatePage({ params }: Props) {
             You must be physically located in {page.state.name} during your visit.
           </p>
           <div className="btn-row">
-            <ButtonLink href={`/start?entry=state-${slug}`}>Check if we can help</ButtonLink>
+            <ButtonLink href={appHref(`/start?entry=state-${slug}`)}>
+              Check if we can help
+            </ButtonLink>
           </div>
         </div>
       ) : (

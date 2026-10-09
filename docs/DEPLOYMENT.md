@@ -33,6 +33,8 @@ Run the `ops` image with `npm run jobs -- <name>`:
 
 ## Domain and DNS
 
+Before launch, www is served by Cloudflare Pages as a static public-only site; see PUBLIC-SITE.md.
+
 The domain is `leavebridgehealth.com`, registered at Cloudflare Registrar with DNS at Cloudflare (bought 2026-10-09).
 
 | Name | Points to | Notes |

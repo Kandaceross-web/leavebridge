@@ -5,6 +5,7 @@ import { ButtonLink, Markdown, ReviewTag } from "@/components/ui";
 import { JsonLd } from "@/components/json-ld";
 import { publishedResources, resourcePage, siteSettings, summaryOf } from "@/server/web/public";
 import { articleLd } from "@/server/web/structured-data";
+import { appHref } from "@/server/web/app-link";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -13,17 +14,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await resourcePage(slug);
   if (!page) return { title: "Not found" };
   const description = summaryOf(page.bodyMd);
-  return { title: page.title, description, alternates: { canonical: `/resources/${slug}` }, openGraph: { type: "article", title: page.title, description } };
+  return {
+    title: page.title,
+    description,
+    alternates: { canonical: `/resources/${slug}` },
+    openGraph: { type: "article", title: page.title, description },
+  };
 }
 
 export default async function ResourcePage({ params }: Props) {
   const { slug } = await params;
-  const [page, all, { brand }] = await Promise.all([resourcePage(slug), publishedResources(), siteSettings()]);
+  const [page, all, { brand }] = await Promise.all([
+    resourcePage(slug),
+    publishedResources(),
+    siteSettings(),
+  ]);
   if (!page) notFound();
   const related = all.filter((r) => r.key !== page.key).slice(0, 3);
   return (
     <article className="container-narrow page stack stack-lg">
-      <JsonLd data={articleLd({ title: page.title, description: summaryOf(page.bodyMd), path: `/resources/${slug}`, updatedAt: page.updatedAt, brandName: brand.name })} />
+      <JsonLd
+        data={articleLd({
+          title: page.title,
+          description: summaryOf(page.bodyMd),
+          path: `/resources/${slug}`,
+          updatedAt: page.updatedAt,
+          brandName: brand.name,
+        })}
+      />
       <header className="page-head">
         <p className="eyebrow">
           <Link href="/resources">Guides</Link>
@@ -33,16 +51,22 @@ export default async function ResourcePage({ params }: Props) {
         <div className="row">
           <ReviewTag tag={page.reviewTag} />
           <span className="small muted">
-            Last updated {new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(page.updatedAt)}
+            Last updated{" "}
+            {new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(
+              page.updatedAt,
+            )}
           </span>
         </div>
       </header>
       <Markdown source={page.bodyMd} />
       <div className="card card-sun stack stack-sm">
         <h2>See if an assessment is right for you</h2>
-        <p className="muted">A licensed clinician decides independently whether documentation is clinically supported. Payment never guarantees an outcome.</p>
+        <p className="muted">
+          A licensed clinician decides independently whether documentation is clinically supported.
+          Payment never guarantees an outcome.
+        </p>
         <div className="btn-row">
-          <ButtonLink href={`/start?entry=guide-${slug}`}>Check if we can help</ButtonLink>
+          <ButtonLink href={appHref(`/start?entry=guide-${slug}`)}>Check if we can help</ButtonLink>
         </div>
       </div>
       {related.length ? (

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Banner, ButtonLink, Icon, Money, PageHead } from "@/components/ui";
 import { launchPriceCents, siteSettings } from "@/server/web/public";
 import styles from "../site.module.css";
+import { appHref } from "@/server/web/app-link";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HowItWorksPage() {
-  const [{ pricing, turnaround, crisis }, price] = await Promise.all([siteSettings(), launchPriceCents()]);
+  const [{ pricing, turnaround, crisis }, price] = await Promise.all([
+    siteSettings(),
+    launchPriceCents(),
+  ]);
   const steps: { title: ReactNode; body: ReactNode; clinical?: boolean }[] = [
     {
       title: "Answer a few screening questions",
@@ -24,7 +28,12 @@ export default async function HowItWorksPage() {
     },
     {
       title: <>Pay {price !== null ? <Money cents={price} /> : "the assessment fee"} securely</>,
-      body: <>{pricing.paymentTiming} Payment covers the professional assessment, not a particular result. <Link href="/pricing">Pricing and refunds</Link></>,
+      body: (
+        <>
+          {pricing.paymentTiming} Payment covers the professional assessment, not a particular
+          result. <Link href="/pricing">Pricing and refunds</Link>
+        </>
+      ),
     },
     {
       title: "Complete your secure intake",
@@ -59,7 +68,9 @@ export default async function HowItWorksPage() {
             <li key={i} className={s.clinical ? "clin" : undefined}>
               <b>
                 {s.title}
-                {s.clinical ? <span className="visually-hidden"> (clinician-only step)</span> : null}
+                {s.clinical ? (
+                  <span className="visually-hidden"> (clinician-only step)</span>
+                ) : null}
               </b>
               <span>{s.body}</span>
             </li>
@@ -68,20 +79,27 @@ export default async function HowItWorksPage() {
 
         <div className="stack">
           <Banner tone="sage" icon="info">
-            <b>Clinical steps are clinician-only.</b> Steps 5 and 6 (shaded) are carried out by a licensed clinician alone. No software makes clinical decisions,
-            and payment never determines the outcome.
+            <b>Clinical steps are clinician-only.</b> Steps 5 and 6 (shaded) are carried out by a
+            licensed clinician alone. No software makes clinical decisions, and payment never
+            determines the outcome.
           </Banner>
           <div className="card-flat stack stack-sm">
             <h2>How long it takes</h2>
             <p className="muted">
-              {turnaround.showPublicly ? turnaround.publicMessage : "Timelines depend on your case and are shown in your portal."}
+              {turnaround.showPublicly
+                ? turnaround.publicMessage
+                : "Timelines depend on your case and are shown in your portal."}
             </p>
-            <p className="small muted">If you have a documentation deadline, tell us during screening so the clinical team can see it.</p>
+            <p className="small muted">
+              If you have a documentation deadline, tell us during screening so the clinical team
+              can see it.
+            </p>
           </div>
           <div className="card-flat stack stack-sm">
             <h2>You control sharing</h2>
             <p className="muted">
-              Your records stay in your private portal. Nothing is released to an employer, insurer or leave administrator without your written authorization.
+              Your records stay in your private portal. Nothing is released to an employer, insurer
+              or leave administrator without your written authorization.
             </p>
           </div>
         </div>
@@ -98,7 +116,8 @@ export default async function HowItWorksPage() {
         <ul className="list-plain stack stack-sm">
           {crisis.resources.map((r) => (
             <li key={r.label}>
-              {r.href ? <a href={r.href}>{r.label}</a> : <b>{r.label}</b>} <span className="muted">— {r.detail}</span>
+              {r.href ? <a href={r.href}>{r.label}</a> : <b>{r.label}</b>}{" "}
+              <span className="muted">— {r.detail}</span>
             </li>
           ))}
         </ul>
@@ -111,7 +130,7 @@ export default async function HowItWorksPage() {
         <h2 id="next-title">Ready to see if we can help?</h2>
         <p className="lede">Answering the screening questions takes about two minutes.</p>
         <div className={`btn-row ${styles.centerRow}`}>
-          <ButtonLink href="/start?entry=how-it-works">Check if we can help</ButtonLink>
+          <ButtonLink href={appHref("/start?entry=how-it-works")}>Check if we can help</ButtonLink>
           <ButtonLink href="/faq" variant="quiet">
             Common questions
           </ButtonLink>
