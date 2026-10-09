@@ -44,7 +44,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 26 | LEG-20 / SEC-16 | Approve a short breach and incident plan (who you notify and when). | Not written | |
 | 27 | CLN-04 | Approve the intake questions. | Intake v1 | |
 | 28 | CLN-05 | Use the PHQ-9 and GAD-7, with scores shown only to you. | On || **Signed off 2026-10-09:** "Show patients too" (decision card). Patients see their own total score ("Your score: N out of M") with a note that the clinician interprets it; severity bands stay clinician-only. |
-| 29 | CLN-07 | Patients can message you through a secure thread that isn't monitored in real time. Keep? | As described | |
+| 29 | CLN-07 | Patients can message you through a secure thread that isn't monitored in real time. Keep? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). |
 | 30 | CLN-09 | Who can see all cases and reassign them (clinical director)? | Directors see all | |
 | 31 | CLN-10 | You write the outcome message to each patient yourself, no canned text. Keep? | As described | |
 | 32 | CLN-11 | Assessment video visits are 50 minutes. Keep? | 50 minutes | |

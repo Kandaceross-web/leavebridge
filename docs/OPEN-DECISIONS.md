@@ -90,7 +90,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | CLN-04 | Intake template content | P1 | Yes | Intake v1, tagged | Questionnaires | Open |
 | CLN-05 | Validated instruments, licensing, scoring | P2 | Yes | PHQ-9 and GAD-7 with published items/scoring; scores visible to clinicians only; can be disabled | Admin → Screening & measures | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-06 | AI suggestion boundaries | P1 | Yes | Off; when on, only fields marked `aiAllowed`, cited, clinician must accept | `src/config/document-templates.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| CLN-07 | Clinical messaging policy | P1 | Yes | Clinical thread visible to patient, assigned clinician and directors | Messaging | Open |
+| CLN-07 | Clinical messaging policy | P1 | Yes | Clinical thread visible to patient, assigned clinician and directors | Messaging | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-08 | Sustainable turnaround | P1 | No | No promise published | Business rules → turnaround | Open |
 | CLN-09 | Director role, supervision, reassignment | P1 | Yes | Directors see all clinical data and can reassign | Policy | Open |
 | CLN-10 | Patient-facing determination messages | P1 | Yes | Clinician writes the patient message per case; no canned outcome text | Determination form | Open |
