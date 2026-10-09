@@ -59,7 +59,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 41 | SEC-06 | Uploads limited to 15 MB PDF, JPG or PNG, virus-scanned. Keep? | As described | **Signed off 2026-10-09:** "Keep it" (decision card). Uploads stay 15 MB, PDF/JPG/PNG only. ClamAV must be running on AWS before launch (not set up yet). |
 | 42 | SEC-08 | Which video service will you use? | None chosen | **Signed off 2026-10-09:** "Amazon video (built in)" (decision card). Visits run in the portal on Amazon Chime SDK under the AWS BAA. Build in progress. |
 | 43 | SEC-11 / SEC-12 | No third-party error monitoring; logs only keep fields on an allow-list. Keep? | As described |  **Signed off 2026-10-09:** "Add Sentry" (decision card). Errors also go to Sentry, only after Sentry signs a BAA (business plan), with PHI scrubbed before sending. Build in progress; the log allow-list stays. |
-| 44 | SEC-13 | Audit log can't be edited and is checked for tampering. Accept? | As described | |
+| 44 | SEC-13 | Audit log can't be edited and is checked for tampering. Accept? | As described |  **Signed off 2026-10-09:** "Accept it" (decision card). Audit log stays append-only with a hash chain checked for tampering. |
 | 45 | SEC-15 | HIPAA expects a written security risk analysis. Will you sign the one generated from this build's controls? | Not done | |
 | 46 | OWN-25 | No referral fees, credits or commissions to anyone, ever (ACA A.10.b). Keep that stated on the therapist page? | Stated | |
 | 47 | OWN-25 | The therapist page says you may ask a referring therapist for treatment history, only with the client's written authorization. Keep? | As described | |

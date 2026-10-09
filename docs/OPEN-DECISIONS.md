@@ -127,7 +127,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | SEC-10 | Backup, restore drill, DR *(evidence required)* | P1 | Yes | RDS PITR + snapshot plan documented | `docs/DEPLOYMENT.md` | Open |
 | SEC-11 | Error monitoring PHI scrubbing | P1 | Yes | Owner chose Sentry (Q43, 2026-10-09). Server-only reports with no messages, paths, headers or users; off until `SENTRY_BAA_SIGNED=1` | `src/server/error-reporting.ts`, `src/instrumentation.ts` | Open (needs Sentry BAA evidence) |
 | SEC-12 | Logging allow-list review | P1 | Yes | Allow-list enforced in code | `src/server/logger.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| SEC-13 | Audit log tamper resistance | P1 | Yes | Append-only triggers + hash chain + verify tool; Object Lock archive planned | `src/server/audit.ts` | Open |
+| SEC-13 | Audit log tamper resistance | P1 | Yes | Append-only triggers + hash chain + verify tool; Object Lock archive planned | `src/server/audit.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-14 | Penetration test of sign-in, MFA, sessions and access control *(evidence required)* | P1 | Yes | Not done. Automated tools are acceptable; the result and fixes must be recorded. Built-in coverage today: E2E role-isolation tests and `npm run security:check` | — | Open |
 | SEC-15 | Formal security risk assessment | P1 | Yes | Not done | — | Open |
 | SEC-16 | Incident response plan | P1 | Yes | Not done | — | Open |
