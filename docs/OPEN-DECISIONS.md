@@ -65,7 +65,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | LEG-04 | All consent documents | P1 | Yes | Placeholder text marked `[LEGAL REVIEW REQUIRED]`, versioned, hash-signed | Admin → Consents | Open |
 | LEG-05 | Consumer-facing copy and status labels | P1 | Yes | Neutral labels; no outcome words; determinations shown as clinician message | `src/domain/cases/state-machine.ts`, site pages | Open |
 | LEG-06 | AI drafting/OCR vendor agreements | P1 | Yes | `features.aiDrafting` and `formExtraction` off; Bedrock adapter only | Business rules → features | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| LEG-07 | Release authorization content; communication with employers | P1 | Yes | Patient-created releases recorded; external sending disabled | `features.externalDelivery`; release consent placeholder | Open |
+| LEG-07 | Release authorization content; communication with employers | P1 | Yes | Patient-created releases recorded; external sending disabled | `features.externalDelivery`; release consent placeholder | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-08 | Good Faith Estimate obligations | P1 | Yes | Price shown before payment; no GFE document generated | Pricing page; checkout | Open |
 | LEG-09 | Refund policy under consumer law; chargebacks | P1 | Yes | Placeholder policy, tagged | Business rules → refundPolicy | Open |
 | LEG-10 | Retention of screening data from people who never book | P1 | Yes | Answers purged after 30 days (`purgeExpiredScreenings` job) | Business rules → retention; `scripts/jobs.ts` | Open |
