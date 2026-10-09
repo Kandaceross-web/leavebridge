@@ -70,7 +70,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | LEG-09 | Refund policy under consumer law; chargebacks | P1 | Yes | Placeholder policy, tagged | Business rules → refundPolicy | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-10 | Retention of screening data from people who never book | P1 | Yes | Answers purged after 30 days (`purgeExpiredScreenings` job) | Business rules → retention; `scripts/jobs.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-11 | Identity verification permissibility and handling | P1 | Yes | ID images encrypted, staff-only, audited | Identity service | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| LEG-12 | Payment processor data | P1 | Yes | Only an opaque payment id and neutral description sent | Payment provider | Open |
+| LEG-12 | Payment processor data | P1 | Yes | Only an opaque payment id and neutral description sent | Payment provider | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-13 | Email/SMS consent and content | P1 | Yes | Email "something is waiting" only; SMS off and opt-in | Templates; `features.smsNotifications` | Open |
 | LEG-14 | Analytics, cookies, consent banner | P1 | Yes | No analytics, no third-party cookies; only essential cookies | `SITE_ANALYTICS_SRC` unset | Open |
 | LEG-15 | Terms, privacy policy, NPP text | P1 | Yes | Placeholder pages, tagged | Admin → Content | Open |
@@ -119,7 +119,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | SEC-02 | Encryption and RLS review | P0 | Yes | AES-256-GCM field/file encryption with keyring; RLS on all PHI tables; runtime role is not owner | `drizzle/0001_security_controls.sql`, `src/server/crypto.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-03 | Break-glass model | P1 | Yes | Time-boxed grant requested with reason, approved by another director/admin, audited | Admin → Access grants | Open |
 | SEC-04 | AI vendor configuration | P1 | Yes | Bedrock adapter (no training by AWS terms; verify); off by default | `AI_PROVIDER` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| SEC-05 | Payment data minimization | P1 | Yes | Hosted checkout; no card data touches the app | Payment provider | Open |
+| SEC-05 | Payment data minimization | P1 | Yes | Hosted checkout; no card data touches the app | Payment provider | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-06 | Upload pipeline | P1 | Yes | 15 MB, magic-byte type check, PDF structure check, EICAR test; ClamAV adapter for production | `src/server/providers/scan.ts` | Open |
 | SEC-07 | Screening purge job | P1 | Yes | `npm run jobs -- purge-screenings` (schedule daily) | `scripts/jobs.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-08 | Video vendor security review | P1 | Yes | No vendor | — | Open |
