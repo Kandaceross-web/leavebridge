@@ -46,7 +46,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | OWN-15 | Video vendor and BAAs | P1 | Yes | Stub provider: no video; join shows "not configured" | `VIDEO_PROVIDER`, `src/server/providers/video.ts` | Open |
 | OWN-16 | Domains for site and app | P0 | Yes | **Decided 2026-10-08 (owner): split domains**, www for the public site and app for portals (`HOST_MODE=split`). No domain purchased yet; placeholders `www.example.invalid` / `app.example.invalid` until it is. | `SITE_ORIGIN`, `APP_ORIGIN`, `ATTRIBUTION_COOKIE_DOMAIN`, `src/proxy.ts` | Open (buy domain) |
 | OWN-17 | Support/Billing/Compliance roles at launch | P2 | No | All roles exist; admin can grant them | Admin → Staff & roles | Open |
-| OWN-18 | Approve visual direction | P0 | No | Built to the Sprint 0 visual direction artifact | `src/app/globals.css` | Open |
+| OWN-18 | Approve visual direction | P0 | No | Built to the Sprint 0 visual direction artifact **Revised 2026-10-09 (v0.2)** after owner feedback ("more therapy and happy bold but professional but welcoming"): Fraunces soft serif, lagoon teal, coral, sunshine; applied in `src/app/globals.css`; artifact https://claude.ai/artifact/9i1Af2LTEoGWh8XVfM35ut awaiting owner approval. | `src/app/globals.css` | Open |
 | OWN-19 | Waitlist for inactive states | P2 | No | On (email + state only) | `features.waitlist` | Open |
 | OWN-20 | Advertising platforms | P1 | Yes | None; optional analytics script allowed on marketing pages only, never in the app | `SITE_ANALYTICS_SRC` | Open |
 | OWN-21 *(new)* | Self-service password reset by email | P1 | Yes | Not built; page directs to support | `src/app/(auth)/forgot-password` | Open |
