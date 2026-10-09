@@ -95,7 +95,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | CLN-09 | Director role, supervision, reassignment | P1 | Yes | Directors see all clinical data and can reassign | Policy | Open |
 | CLN-10 | Patient-facing determination messages | P1 | Yes | Clinician writes the patient message per case; no canned outcome text | Determination form | Open |
 | CLN-11 | Session length and structure | P1 | Yes | 50 minutes for the assessment service | Admin → Services | Open |
-| CLN-12 | Diagnosis within scope per license type | P0 | Yes | Templates have no diagnosis field; findings are free text | Document templates | Open |
+| CLN-12 | Diagnosis within scope per license type | P0 | Yes | Templates have no diagnosis field; findings are free text | Document templates | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-13 | Telehealth suitability; in-session identity/location check | P1 | Yes | Location re-attested at join; canServe re-checked | Scheduling | Open |
 | CLN-14 | Assessment note and documentation templates | P1 | Yes | Draft templates for continuous, intermittent, reduced schedule, RTW, summary letter, employer form | `src/config/document-templates.ts` | Open |
 
