@@ -51,10 +51,6 @@ export default function ForTherapistsPage() {
           <ul className="list-check">
             <li>
               <Icon name="x" />
-              <span>Pay or accept referral fees, credits or commissions</span>
-            </li>
-            <li>
-              <Icon name="x" />
               <span>Provide ongoing therapy or take over your client&rsquo;s care</span>
             </li>
             <li>
