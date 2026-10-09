@@ -92,7 +92,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | CLN-06 | AI suggestion boundaries | P1 | Yes | Off; when on, only fields marked `aiAllowed`, cited, clinician must accept | `src/config/document-templates.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-07 | Clinical messaging policy | P1 | Yes | Clinical thread visible to patient, assigned clinician and directors | Messaging | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-08 | Sustainable turnaround | P1 | No | No promise published | Business rules → turnaround | Open |
-| CLN-09 | Director role, supervision, reassignment | P1 | Yes | Directors see all clinical data and can reassign | Policy | Open |
+| CLN-09 | Director role, supervision, reassignment | P1 | Yes | Directors see all clinical data and can reassign | Policy | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-10 | Patient-facing determination messages | P1 | Yes | Clinician writes the patient message per case; no canned outcome text | Determination form | Open |
 | CLN-11 | Session length and structure | P1 | Yes | 50 minutes for the assessment service | Admin → Services | Open |
 | CLN-12 | Diagnosis within scope per license type | P0 | Yes | Templates have no diagnosis field; findings are free text | Document templates | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
