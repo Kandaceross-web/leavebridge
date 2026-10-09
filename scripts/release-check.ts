@@ -4,7 +4,7 @@
  *
  *   APP_ENV=production DATABASE_URL=... npm run release:check
  *
- * It checks five things:
+ * It checks six things:
  *  1. docs/OPEN-DECISIONS.md: every row marked "Blocks production: Yes" must have status "Closed".
  *     The owner waived outside legal and security review on 2026-10-08, so LEG, CLN, STR and most SEC
  *     rows close with the owner's recorded sign-off. Technical rows (TECHNICAL below) close only with
@@ -14,7 +14,9 @@
  *     every active state has an approved compliance review within 12 months.
  *  4. Settings: every setting whose default carries a review tag has an admin override with the
  *     tag cleared (meaning someone decided it).
- *  5. Automated security review (scripts/security-findings.ts): dependency audit, database role
+ *  5. Good Faith Estimate (LEG-08): the provider NPI, TIN and service code are filled in, even when
+ *     the setting's review tag was cleared, because every estimate a patient receives prints them.
+ *  6. Automated security review (scripts/security-findings.ts): dependency audit, database role
  *     and row-level security, console logging, hard-coded secrets and tracking hosts.
  */
 import { readFileSync } from "node:fs";
@@ -22,6 +24,8 @@ import { and, eq, gte, isNotNull, sql } from "drizzle-orm";
 import { db, pool } from "@/server/db/client";
 import { complianceReviews, consentVersions, contentEntries, jurisdictions, notificationTemplates, questionnaires, screeningRulesets, services, settings, users } from "@/server/db/schema";
 import { SETTING_DEFS, SETTING_KEYS } from "@/config/settings";
+import { getSetting } from "@/server/settings";
+import { ESTIMATE_OWNER_FIELDS, missingEstimateFields } from "@/domain/payments/good-faith-estimate";
 import { securityFindings } from "./security-findings";
 
 /** Rows that an acknowledgement cannot close: they need proof that something was done. */
@@ -96,8 +100,17 @@ async function dbFindings(): Promise<Finding[]> {
     const o = overrides.find((s) => s.key === key);
     if (!o || o.reviewTag) out.push({ area: "Setting", item: key, detail: `${o?.reviewTag ?? def.reviewTag}: ${def.reviewNote}` });
   }
+
+  const gfe = await getSetting(db, "goodFaithEstimate");
+  for (const field of missingEstimateFields(gfe)) out.push({ area: "Good Faith Estimate", item: field, detail: `${ESTIMATE_FIELD_LABEL[field]} is empty; every patient's written estimate must show it (LEG-08)` });
   return out;
 }
+
+const ESTIMATE_FIELD_LABEL: Record<(typeof ESTIMATE_OWNER_FIELDS)[number], string> = {
+  providerNpi: "provider NPI",
+  providerTin: "provider TIN",
+  serviceCode: "service (CPT) code",
+};
 
 async function main() {
   const security = await securityFindings();

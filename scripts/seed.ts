@@ -47,11 +47,15 @@ async function main() {
   await advancePatient(henry, "consents_payment");
   const iris = await make("Iris", "Moreno");
   await advancePatient(iris, "submit", { safetyInIntake: true });
+  // Ready to pay: shows the written Good Faith Estimate on the checkout step (e2e).
+  const kai = await make("Kai", "Rivera", {}, "checkout@leavebridge.test");
+  await advancePatient(kai, "consents_payment");
 
   console.log("Seeded fictional data.");
   console.log(`  Staff password: ${FIXTURE_PASSWORD}   TOTP secret: ${FIXTURE_TOTP_SECRET}`);
   for (const s of Object.values(FIXTURE_STAFF)) console.log(`  ${s.email.padEnd(32)} ${s.roles.join(", ")}`);
   console.log(`  patient@leavebridge.test         patient (case awaiting appointment)`);
+  console.log(`  checkout@leavebridge.test        patient (case at the payment step)`);
 }
 
 main()

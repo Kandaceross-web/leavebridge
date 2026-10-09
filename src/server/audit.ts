@@ -34,6 +34,8 @@ export type AuditAction =
   | "payment.succeeded"
   | "payment.refund_requested"
   | "payment.refund_processed"
+  | "estimate.issued"
+  | "estimate.downloaded"
   | "intake.saved"
   | "intake.submitted"
   | "intake.viewed"

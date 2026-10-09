@@ -39,6 +39,30 @@ rules (CLN-01, CLN-02, CLN-03), validated measures (CLN-05), retention periods (
 (LEG-04, STR-04), HIPAA status and privacy notices (LEG-03, LEG-15), identity verification (OWN-04, LEG-11), video vendor
 (OWN-15, SEC-08), AI vendor and limits (LEG-06, SEC-04, CLN-06), and email/SMS consent (LEG-13).
 
+## Good Faith Estimate (LEG-08)
+
+Owner decision 2026-10-09: self-pay patients get a written Good Faith Estimate (45 CFR 149.610) before they pay.
+
+* **When.** The checkout step issues the estimate once the payment gate is open and shows it above the payment button.
+  `startCheckout` will not create a payment without one, and refuses if the estimate the patient was shown is no longer
+  current. A new estimate is issued only when the service or the amount changes; otherwise the existing one is shown.
+* **Content** (`src/domain/payments/good-faith-estimate.ts`): patient name and date of birth; the service's name and
+  description, and the visit date if one is booked; one line item for the service being bought at its current self-pay
+  price; the diagnosis-code statement; provider name (brand setting), NPI, TIN and where services are furnished
+  (telehealth to the patient's state); and the four disclaimers, including the $400 dispute threshold and
+  https://www.cms.gov/nosurprises.
+* **Owner data.** NPI, TIN, service (CPT) code, the diagnosis-code statement (CLN-12: no diagnosis field), the
+  disclaimer wording and the dispute link live in the `goodFaithEstimate` setting, tagged `OWNER_DECISION_REQUIRED`.
+  NPI, TIN and service code start empty and read "Not yet provided" outside production. `npm run release:check` fails
+  while any of the three is empty, even with the tag cleared, and production refuses to issue an estimate without them.
+* **Record.** Each estimate is a row in `good_faith_estimates` (append-only trigger, RLS like payments) holding the exact
+  content encrypted, the amount, the issue time and a SHA-256 of the canonical content. Issuing and PDF downloads are
+  audited (`estimate.issued`, `estimate.downloaded`). Retention follows the clinical record setting (7 years by
+  default, above the rule's 6).
+* **Copies.** `/portal/cases/[id]/estimate` is a print-friendly page (print or save as PDF), and `/api/estimates/[id]`
+  returns a PDF rendered from the stored content. Staff see every estimate on the case's Payments tab. Only ids appear
+  in URLs; the payment processor still receives only the amount and the neutral description.
+
 ## Out of scope
 
 Tennessee DMH services, general therapy, IV hydration, wellness shots, med spa, primary care, urgent care, medication

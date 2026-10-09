@@ -3,13 +3,16 @@ import { ActionForm, Checkbox, SubmitButton } from "@/components/forms";
 import { Banner, ButtonLink, DateTime, Icon, Money, ReviewTag } from "@/components/ui";
 import { env } from "@/server/env";
 import { caseFacts } from "@/server/services/cases";
+import { ensureEstimate, latestEstimate } from "@/server/services/estimates";
 import { casePayments } from "@/server/services/payments";
 import { serviceSummary } from "@/server/services/portal-queries";
 import { getSetting } from "@/server/settings";
 import { SETTING_DEFS } from "@/config/settings";
 import { gate } from "@/domain/cases/checklist";
+import { isDomainError } from "@/domain/errors";
 import { ownedCase } from "../../../_lib/load";
 import { caseHref, stepHref } from "../../../_lib/steps";
+import { EstimateBody } from "../../../_components/estimate";
 import { StepHead } from "../../../_components/step-head";
 import { beginCheckout } from "./actions";
 
@@ -24,14 +27,35 @@ export default async function CheckoutPage({
 }) {
   const { id } = await params;
   const sp = await searchParams;
-  const { row, steps, extra } = await ownedCase(id, async (ctx, r) => ({
-    service: await serviceSummary(ctx, r.serviceId),
-    payments: await casePayments(ctx, r.id),
-    pricing: await getSetting(ctx.tx, "pricing"),
-    refund: await getSetting(ctx.tx, "refundPolicy"),
-    gate: gate(await caseFacts(ctx, r), "payment"),
-  }));
-  const { service, payments, pricing, refund } = extra;
+  const { row, steps, extra } = await ownedCase(id, async (ctx, r) => {
+    const payments = await casePayments(ctx, r.id);
+    const g = gate(await caseFacts(ctx, r), "payment");
+    const isPaid = payments.some((p) => p.status === "paid" || p.status === "partially_refunded");
+    // The written Good Faith Estimate is issued before payment opens (LEG-08); afterwards the
+    // issued one is shown as it stands. Without an estimate the payment form stays closed.
+    let estimate = null;
+    let estimateProblem: string | null = null;
+    if (!isPaid && g.ok) {
+      try {
+        estimate = await ensureEstimate(ctx, r);
+      } catch (e) {
+        if (!isDomainError(e) || e.code !== "invalid") throw e;
+        estimateProblem = e.message;
+      }
+    } else {
+      estimate = await latestEstimate(ctx, r.id);
+    }
+    return {
+      service: await serviceSummary(ctx, r.serviceId),
+      payments,
+      pricing: await getSetting(ctx.tx, "pricing"),
+      refund: await getSetting(ctx.tx, "refundPolicy"),
+      gate: g,
+      estimate,
+      estimateProblem,
+    };
+  });
+  const { service, payments, pricing, refund, estimate, estimateProblem } = extra;
   const paid = payments.find((p) => p.status === "paid" || p.status === "partially_refunded");
   const showTags = env.APP_ENV !== "production";
 
@@ -105,6 +129,27 @@ export default async function CheckoutPage({
         </div>
       </section>
 
+      {estimate ? (
+        <section className="card stack" aria-labelledby="estimate-heading">
+          <div className="card-head">
+            <h2 id="estimate-heading">Good Faith Estimate</h2>
+            {showTags ? <ReviewTag tag={SETTING_DEFS.goodFaithEstimate.reviewTag} /> : null}
+          </div>
+          <p className="small muted">
+            Because you are paying for this service yourself, you have the right to a written estimate of the expected charges before you pay. This estimate is saved to your record.
+          </p>
+          <EstimateBody content={estimate.content} hash={estimate.row.contentHash} level={3} />
+          <div className="btn-row">
+            <ButtonLink href={`${caseHref(row.id)}/estimate`} variant="secondary">
+              Open a printable copy
+            </ButtonLink>
+            <a className="btn btn-quiet" href={`/api/estimates/${estimate.row.id}`}>
+              Download PDF
+            </a>
+          </div>
+        </section>
+      ) : null}
+
       <section className="card-flat stack stack-sm" aria-labelledby="refund-heading">
         <div className="card-head">
           <h2 id="refund-heading">Cancellations and refunds</h2>
@@ -120,8 +165,15 @@ export default async function CheckoutPage({
         </ul>
       </section>
 
-      {!paid && extra.gate.ok ? (
+      {estimateProblem ? (
+        <Banner tone="warn" icon="info">
+          {estimateProblem}
+        </Banner>
+      ) : null}
+
+      {!paid && extra.gate.ok && estimate ? (
         <ActionForm action={beginCheckout.bind(null, row.id)}>
+          <input type="hidden" name="estimateId" value={estimate.row.id} />
           <Banner tone="info" icon="info">
             Payment does not guarantee a diagnosis, documentation, or approval of leave. A licensed clinician makes an independent clinical determination, and leave decisions are made by your employer or leave administrator. Your employer also decides whether it accepts a form from your clinician&rsquo;s license type, so please check with HR before you pay.
           </Banner>

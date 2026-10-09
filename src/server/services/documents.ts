@@ -1,7 +1,7 @@
 import "server-only";
 import { actorUserId } from "@/domain/actor";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
 import type { Ctx } from "../db/actor";
 import { aiSuggestions, clinicians, deliveries, determinations, documents, documentVersions, files, intakes, patients, signatures } from "../db/schema";
 import { audit } from "../audit";
@@ -9,6 +9,7 @@ import { decrypt, decryptJson, encrypt, encryptJson, sha256Hex } from "../crypto
 import { getSetting } from "../settings";
 import { aiProvider, type RecordSource } from "../providers/ai";
 import { storage } from "../providers/storage";
+import { PDF_NAVY, textPdf } from "../pdf";
 import { checkCanServe } from "./jurisdiction";
 import { getCaseRow, loadCase, notifyPatient, transition } from "./cases";
 import { storeUpload } from "./files";
@@ -215,52 +216,21 @@ export async function markReadyForSignature(ctx: Ctx, documentId: string) {
 }
 
 async function renderPdf(input: { title: string; template: (typeof DOCUMENT_TEMPLATES)[DocumentKind]; content: DocContent; signer: string; signedAt: Date; hash: string; reference: string; brand: string }): Promise<Buffer> {
-  const pdf = await PDFDocument.create();
-  const font = await pdf.embedFont(StandardFonts.Helvetica);
-  const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
-  let page = pdf.addPage([612, 792]);
-  let y = 740;
-  const margin = 56;
-  const width = 612 - margin * 2;
-  const navy = rgb(0.08, 0.14, 0.23);
-  const write = (text: string, opts: { size?: number; f?: typeof font; color?: ReturnType<typeof rgb>; gap?: number } = {}) => {
-    const size = opts.size ?? 10.5;
-    const f = opts.f ?? font;
-    const words = text.replace(/[^\x20-\x7E\n]/g, " ").split(/\s+/);
-    let line = "";
-    const flush = () => {
-      if (y < 72) {
-        page = pdf.addPage([612, 792]);
-        y = 740;
-      }
-      page.drawText(line, { x: margin, y, size, font: f, color: opts.color ?? rgb(0.1, 0.12, 0.16) });
-      y -= size * 1.45;
-      line = "";
-    };
-    for (const w of words) {
-      const next = line ? `${line} ${w}` : w;
-      if (f.widthOfTextAtSize(next, size) > width) flush();
-      line = line ? `${line} ${w}` : w;
-    }
-    if (line) flush();
-    y -= opts.gap ?? 4;
-  };
-  write(input.brand, { size: 11, f: bold, color: navy, gap: 2 });
-  write(input.title, { size: 16, f: bold, color: navy, gap: 10 });
+  const { write, space, save } = await textPdf();
+  write(input.brand, { size: 11, bold: true, color: PDF_NAVY, gap: 2 });
+  write(input.title, { size: 16, bold: true, color: PDF_NAVY, gap: 10 });
   write(`Reference: ${input.reference}`, { size: 9 });
   for (const field of input.template.fields) {
     const value = input.content.fields[field.key]?.trim();
     if (!value) continue;
-    write(field.label, { size: 9.5, f: bold, gap: 1 });
+    write(field.label, { size: 9.5, bold: true, gap: 1 });
     write(value, { gap: 8 });
   }
-  y -= 8;
-  write(`Electronically signed by ${input.signer} on ${input.signedAt.toUTCString()}.`, { f: bold });
+  space(8);
+  write(`Electronically signed by ${input.signer} on ${input.signedAt.toUTCString()}.`, { bold: true });
   write(`Content hash: ${input.hash.slice(0, 32)}`, { size: 8 });
   write(DOCUMENT_DISCLAIMER, { size: 8.5, gap: 2 });
-  pdf.setTitle(input.title);
-  pdf.setProducer(input.brand);
-  return Buffer.from(await pdf.save());
+  return save({ title: input.title, producer: input.brand });
 }
 
 /**
