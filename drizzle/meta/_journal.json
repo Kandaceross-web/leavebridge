@@ -29,6 +29,13 @@
       "when": 1791494640492,
       "tag": "0003_attribution",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791582815901,
+      "tag": "0004_good_faith_estimates",
+      "breakpoints": true
     }
   ]
 }

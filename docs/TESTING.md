@@ -19,7 +19,8 @@ Case state machine (whitelisted transitions, labels never say approved/qualified
 outcomes, emergency precedence, inactive states); `canServe` (license, compact privilege, expiry, suspension, location);
 close-out checklist and role policy; instrument scoring (PHQ-9, GAD-7 item safety flags), notification template linting
 (no PHI variables), refund policy; security primitives (AES-GCM round trip and tamper detection, key rotation, scrypt,
-TOTP, token hashing, logger allow-list).
+TOTP, token hashing, logger allow-list); Good Faith Estimate content, canonical hashing, re-issue rule and setting
+defaults.
 
 ## Integration (`tests/integration`), driving the real services
 
@@ -35,6 +36,8 @@ TOTP, token hashing, logger allow-list).
   never see drafts; undelivered documents cannot be downloaded.
 * **Isolation:** patient-to-patient isolation enforced by services and by RLS; anonymous sees nothing; unassigned
   clinicians are refused; operations staff need an approved grant for clinical data; MFA required for clinical actions.
+* **Good Faith Estimate:** issued once before payment and reused, re-issued when the amount changes, linked to the
+  checkout audit event, stored encrypted and append-only, hidden from other patients by RLS, PDF copy renders.
 * **Jurisdiction:** states need an approved review to activate; inactive states cannot schedule; expired or suspended
   privileges block appointments and assignment; a license expiring soon only offers earlier slots.
 
@@ -45,5 +48,6 @@ TOTP, token hashing, logger allow-list).
 * Screening: available path with neutral copy and no answers in the URL; emergency path shows crisis resources and no
   sign-up; unavailable state.
 * Portal: sign-in redirect, case page language, accessibility on every portal section, no access to ops, 404 for
-  someone else's case id, file route requires a session.
+  someone else's case id, file route requires a session; checkout shows the Good Faith Estimate (amount,
+  diagnosis-code statement, all four disclaimers) above the payment button, with a printable page and a PDF copy.
 * Ops: staff MFA, clinician and admin pages accessible, support cannot reach admin or audit.

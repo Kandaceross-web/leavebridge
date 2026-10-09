@@ -2,6 +2,7 @@ import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/f
 import { Badge, DateTime, Empty, Money } from "@/components/ui";
 import { run } from "@/server/auth/guards";
 import { casePaymentDetail } from "@/server/services/ops-queries";
+import { caseEstimates } from "@/server/services/estimates";
 import { refundPreview } from "@/server/services/payments";
 import { formatCents, policyRefundCents, type RefundTrigger } from "@/domain/payments/refunds";
 import { hasRole } from "@/domain/policy";
@@ -21,15 +22,50 @@ export const TRIGGER_LABEL: Record<RefundTrigger, string> = {
 
 export async function PaymentsTab({ ws, actor }: TabProps) {
   const canRefund = hasRole(actor, ["billing", "admin"]);
-  const { payments, previews } = await run(actor, async (ctx) => {
+  const { payments, previews, estimates } = await run(actor, async (ctx) => {
     const detail = await casePaymentDetail(ctx, ws.row.id);
     const previews = canRefund ? await Promise.all(detail.payments.map((p) => refundPreview(ctx, detail.row, p.amountCents, p.refundedCents))) : [];
-    return { payments: detail.payments, previews };
+    return { payments: detail.payments, previews, estimates: await caseEstimates(ctx, ws.row.id) };
   });
-  if (!payments.length) return <Empty title="No payments on this case" />;
 
   return (
     <div className="stack stack-lg">
+      <section className="card-flat stack stack-sm" aria-labelledby="gfe-heading">
+        <h2 id="gfe-heading">Good Faith Estimates</h2>
+        {estimates.length ? (
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Good Faith Estimates issued on this case">
+            <table className="t">
+              <thead>
+                <tr>
+                  <th scope="col">Issued</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Record hash</th>
+                  <th scope="col">Copy</th>
+                </tr>
+              </thead>
+              <tbody>
+                {estimates.map((e) => (
+                  <tr key={e.id}>
+                    <td className="nowrap">
+                      <DateTime value={e.issuedAt} />
+                    </td>
+                    <td className="num">
+                      <Money cents={e.amountCents} currency={e.currency} />
+                    </td>
+                    <td className="mono small">{e.contentHash.slice(0, 16)}</td>
+                    <td>
+                      <a href={`/api/estimates/${e.id}`}>PDF</a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="small muted">No estimate has been issued. The patient receives one on the payment step.</p>
+        )}
+      </section>
+      {!payments.length ? <Empty title="No payments on this case" /> : null}
       {payments.map((p, i) => {
         const preview = previews[i];
         const refundable = ["paid", "partially_refunded"].includes(p.status);

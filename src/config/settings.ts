@@ -55,6 +55,35 @@ export const SETTING_DEFS = {
     reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
     reviewNote: "OWN-05, OWN-06: exact inclusions and payment timing.",
   },
+  goodFaithEstimate: {
+    label: "Good Faith Estimate (self-pay)",
+    // 45 CFR 149.610(c)(1). Provider identifiers and the service code are the owner's facts, so
+    // they start empty; the release check refuses production until all three are filled in.
+    schema: z.object({
+      providerNpi: z.string().regex(/^(\d{10})?$/, "A National Provider Identifier is 10 digits."),
+      providerTin: z.string().regex(/^(\d{2}-?\d{7})?$/, "A Taxpayer Identification Number is 9 digits (12-3456789)."),
+      serviceCode: z.string().regex(/^([0-9A-Z]{5})?$/, "A service (CPT/HCPCS) code is 5 characters."),
+      diagnosisCodes: z.string().min(1),
+      disclaimers: z.array(z.string().min(1)).min(1),
+      disputeUrl: z.string().url(),
+    }),
+    default: {
+      providerNpi: "",
+      providerTin: "",
+      serviceCode: "",
+      // CLN-12: forms carry no diagnosis field, so the estimate lists none.
+      diagnosisCodes: "Not applicable: this assessment is not billed to insurance",
+      disclaimers: [
+        "This Good Faith Estimate shows the costs of items and services that are reasonably expected for the service listed, based on information known when the estimate was created. It is only an estimate. Actual items, services or charges may differ from this estimate.",
+        "If other items or services are recommended, such as a follow-up visit or another form, they may need to be scheduled separately and are not included in this estimate.",
+        "If you are billed substantially more than this estimate, meaning $400 or more above the total expected charges, you have the right to dispute the bill through the patient-provider dispute resolution process. To learn how, visit https://www.cms.gov/nosurprises. Starting the dispute process will not affect the quality of the care you receive.",
+        "This Good Faith Estimate is not a contract and does not require you to get the items or services from the provider named in it.",
+      ],
+      disputeUrl: "https://www.cms.gov/nosurprises",
+    },
+    reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
+    reviewNote: "LEG-08: provider NPI, TIN and the service (CPT) code for the written Good Faith Estimate; confirm the disclaimer wording.",
+  },
   refundPolicy: {
     label: "Cancellation and refund rules",
     schema: z.object({

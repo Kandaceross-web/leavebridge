@@ -402,6 +402,29 @@ export const payments = pgTable(
   (t) => [index("payments_case_idx").on(t.caseId), uniqueIndex("payments_checkout_ref").on(t.providerCheckoutRef)],
 );
 
+/**
+ * Written Good Faith Estimates (45 CFR 149.610, LEG-08). Append-only and part of the record:
+ * a changed service or amount adds a new row, never edits an old one.
+ */
+export const goodFaithEstimates = pgTable(
+  "good_faith_estimates",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    caseId: uuid("case_id").notNull().references(() => cases.id),
+    serviceId: uuid("service_id").notNull().references(() => services.id),
+    priceId: uuid("price_id").notNull().references(() => prices.id),
+    amountCents: integer("amount_cents").notNull(),
+    currency: text("currency").notNull(),
+    /** Encrypted JSON of the exact estimate shown (src/domain/payments/good-faith-estimate.ts). */
+    content: text("content").notNull(),
+    /** SHA-256 of the canonical plaintext content. */
+    contentHash: text("content_hash").notNull(),
+    issuedBy: uuid("issued_by").references(() => users.id),
+    issuedAt: ts("issued_at").notNull().defaultNow(),
+  },
+  (t) => [index("good_faith_estimates_case_idx").on(t.caseId, t.issuedAt)],
+);
+
 export const refunds = pgTable("refunds", {
   id: uuid("id").primaryKey().defaultRandom(),
   paymentId: uuid("payment_id").notNull().references(() => payments.id),

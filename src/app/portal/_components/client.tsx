@@ -83,6 +83,15 @@ export function ShowIf({ field, equals, initial, children }: { field: string; eq
   );
 }
 
+/** Opens the browser's print dialog, which can also save the page as a PDF. Hidden when printing. */
+export function PrintButton({ children }: { children: ReactNode }) {
+  return (
+    <button type="button" className="btn btn-secondary" onClick={() => window.print()}>
+      {children}
+    </button>
+  );
+}
+
 /** Result of the appointment join check, read from the enclosing ActionForm. */
 export function JoinOutcome() {
   const state = useFormResult();

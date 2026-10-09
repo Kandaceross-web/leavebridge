@@ -16,7 +16,7 @@ npm run db:reset              # migrate + seed fictional data (needs Postgres 16
 npm run dev                   # http://localhost:3000
 ```
 
-Sign in as `patient@leavebridge.test` or a staff account (`admin@`, `director@`, `clinician@`, `support@`, `billing@`,
+Sign in as `patient@leavebridge.test`, `checkout@leavebridge.test` (at the payment step) or a staff account (`admin@`, `director@`, `clinician@`, `support@`, `billing@`,
 `compliance@leavebridge.test`) with password `Fictional-Dev-Pass-1`. Staff need a TOTP code from
 `JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP`.
 

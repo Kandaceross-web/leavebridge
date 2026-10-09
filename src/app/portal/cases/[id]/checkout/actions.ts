@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requirePatientSession, run } from "@/server/auth/guards";
 import { startCheckout } from "@/server/services/payments";
@@ -10,8 +11,12 @@ export async function beginCheckout(caseId: string, _: ActionState, fd: FormData
   const res = await handle(async () => {
     const { actor } = await requirePatientSession();
     if (fd.get("understand") !== "yes") return { ok: false, error: "Please confirm you understand what payment covers.", fieldErrors: { understand: "Check this box to continue." } };
-    url = await run(actor, (ctx) => startCheckout(ctx, caseId));
+    url = await run(actor, (ctx) => startCheckout(ctx, caseId, String(fd.get("estimateId") ?? "")));
   }, fd);
-  if (res.error || !url) return res;
+  if (res.error || !url) {
+    // A changed estimate is issued on the next render; show it rather than the stale one.
+    revalidatePath(`/portal/cases/${caseId}/checkout`);
+    return res;
+  }
   redirect(url);
 }

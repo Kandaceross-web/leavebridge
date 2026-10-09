@@ -23,6 +23,11 @@ test("clinician pages are accessible and fit the viewport", async ({ page }) => 
   await expectOneH1(page);
   await expectAccessible(page);
   await expectNoHorizontalScroll(page);
+  // Issued Good Faith Estimates are part of the record staff can see.
+  await page.goto(`${new URL(page.url()).pathname}?tab=payments`);
+  await expect(page.getByRole("heading", { name: "Good Faith Estimates" })).toBeVisible();
+  await expectAccessible(page);
+  await expectNoHorizontalScroll(page);
 });
 
 test("support staff cannot reach admin configuration or audit", async ({ page }) => {

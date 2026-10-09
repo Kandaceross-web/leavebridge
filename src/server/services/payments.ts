@@ -6,6 +6,7 @@ import { audit } from "../audit";
 import { env } from "../env";
 import { payments as provider } from "../providers/payments";
 import { getSetting } from "../settings";
+import { ensureEstimate } from "./estimates";
 import { getCaseRow, loadCase, notifyPatient, requireGate, syncPreSubmissionStatus, type CaseRow } from "./cases";
 import { requireRole, requireStepUp } from "@/domain/policy";
 import { conflict, forbidden, invalid, notFound } from "@/domain/errors";
@@ -27,8 +28,12 @@ export async function casePayments(ctx: Ctx, caseId: string) {
   return ctx.tx.select().from(payments).where(eq(payments.caseId, caseId)).orderBy(desc(payments.createdAt));
 }
 
-/** Creates a pending payment and returns the processor checkout URL. */
-export async function startCheckout(ctx: Ctx, caseId: string): Promise<string> {
+/**
+ * Creates a pending payment and returns the processor checkout URL. `shownEstimateId` is the
+ * estimate the checkout page displayed; if the service or price changed since, the patient is
+ * sent back to read the new one before paying.
+ */
+export async function startCheckout(ctx: Ctx, caseId: string, shownEstimateId?: string): Promise<string> {
   if (ctx.actor.kind !== "patient") throw forbidden();
   const { row } = await loadCase(ctx, caseId, "owner");
   await requireGate(ctx, row, "payment");
@@ -36,6 +41,9 @@ export async function startCheckout(ctx: Ctx, caseId: string): Promise<string> {
   if (existing.some((p) => p.status === "paid" || p.status === "partially_refunded")) throw conflict("This case is already paid.");
   const price = await currentPrice(ctx, row.serviceId!);
   if (!price) throw invalid("Pricing for this service is not available yet.");
+  // The written Good Faith Estimate is issued (or reused) before any charge (LEG-08).
+  const estimate = await ensureEstimate(ctx, row);
+  if (shownEstimateId !== undefined && shownEstimateId !== estimate.row.id) throw conflict("Your estimate has changed. Please review the updated estimate before paying.");
   const [u] = await ctx.tx.select({ email: users.email }).from(users).where(eq(users.id, ctx.actor.userId)).limit(1);
   const [pay] = await ctx.tx
     .insert(payments)
@@ -50,7 +58,7 @@ export async function startCheckout(ctx: Ctx, caseId: string): Promise<string> {
     cancelUrl: `${env.APP_ORIGIN}/portal/cases/${row.id}/checkout?cancelled=1`,
   });
   await ctx.tx.update(payments).set({ providerCheckoutRef: session.checkoutRef }).where(eq(payments.id, pay!.id));
-  await audit(ctx, { action: "payment.checkout_started", subjectType: "payment", subjectId: pay!.id, caseId: row.id, metadata: { amountCents: price.amountCents, provider: provider().name } });
+  await audit(ctx, { action: "payment.checkout_started", subjectType: "payment", subjectId: pay!.id, caseId: row.id, metadata: { amountCents: price.amountCents, provider: provider().name, estimateId: estimate.row.id } });
   return session.redirectUrl;
 }
 
