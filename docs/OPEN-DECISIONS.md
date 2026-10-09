@@ -88,7 +88,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | CLN-02 | Crisis content | P0 | Yes | 988 / 911 / nearest ER placeholder content Mississippi DMH helpline and Tennessee Statewide Crisis Line added site-wide 2026-10-09. | Business rules → crisis | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-03 | Screening questions and outcome rules | P0 | Yes | Conservative v1 ruleset, tagged | Admin → Screening & measures | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-04 | Intake template content | P1 | Yes | Intake v1, tagged | Questionnaires | Open |
-| CLN-05 | Validated instruments, licensing, scoring | P2 | Yes | PHQ-9 and GAD-7 with published items/scoring; scores visible to clinicians only; can be disabled | Admin → Screening & measures | Open |
+| CLN-05 | Validated instruments, licensing, scoring | P2 | Yes | PHQ-9 and GAD-7 with published items/scoring; scores visible to clinicians only; can be disabled | Admin → Screening & measures | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-06 | AI suggestion boundaries | P1 | Yes | Off; when on, only fields marked `aiAllowed`, cited, clinician must accept | `src/config/document-templates.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-07 | Clinical messaging policy | P1 | Yes | Clinical thread visible to patient, assigned clinician and directors | Messaging | Open |
 | CLN-08 | Sustainable turnaround | P1 | No | No promise published | Business rules → turnaround | Open |

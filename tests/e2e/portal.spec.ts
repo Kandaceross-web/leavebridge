@@ -25,6 +25,14 @@ test("a patient sees their case with neutral status language and accessible page
   const text = (await page.locator("main").innerText()).toLowerCase();
   for (const banned of ["approved", "qualified", "certified", "guaranteed"]) expect(text).not.toContain(banned);
 
+  // CLN-05: completed questionnaires show the patient their own total score, never a severity label.
+  const caseId = page.url().match(/\/portal\/cases\/([0-9a-f-]{36})/)![1];
+  await page.goto(`/portal/cases/${caseId}/measures`);
+  await expect(page.getByText(/Your score: \d+ out of 27/)).toBeVisible();
+  await expect(page.getByText(/A score is not a diagnosis/)).toBeVisible();
+  expect((await page.locator("main").innerText()).toLowerCase()).not.toMatch(/moderately severe|severe|mild|minimal/);
+  await expectAccessible(page);
+
   for (const path of ["/portal/messages", "/portal/documents", "/portal/notifications", "/portal/account"]) {
     await page.goto(path);
     await expectOneH1(page);

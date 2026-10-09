@@ -2,9 +2,9 @@ import { z } from "zod";
 
 /**
  * Validated measures. Definitions carry the instrument text and scoring exactly as published by
- * the instrument authors; nothing here invents scoring or interpretation. Scores are shown to
- * clinicians only, as context for their independent judgment. Production enablement of each
- * instrument is gated by CLN-05.
+ * the instrument authors; nothing here invents scoring or interpretation. Clinicians see scores
+ * and bands as context for their independent judgment; patients see only their own total score
+ * with a note that their clinician interprets it (CLN-05, owner sign-off 2026-10-09).
  */
 export const instrumentSchema = z.object({
   key: z.string(),
