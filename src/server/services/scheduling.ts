@@ -91,7 +91,8 @@ export async function bookAppointment(ctx: Ctx, caseId: string, startsAtIso: str
   const slots = await availableSlots(ctx, caseId);
   const slot = slots.find((s) => s.startsAt.toISOString() === startsAtIso);
   if (!slot) throw invalid("That time is no longer available. Please choose another.");
-  const can = await checkCanServe(ctx.tx, row.assignedClinicianId!, row.serviceId!, row.jurisdictionCode!, slot.startsAt);
+  // STR-02: license expiry is rechecked only before signing (owner sign-off 2026-10-09); state match is still enforced.
+  const can = await checkCanServe(ctx.tx, row.assignedClinicianId!, row.serviceId!, row.jurisdictionCode!, slot.startsAt, { checkLicenseExpiry: false });
   if (!can.ok) throw invalid("That time can't be booked for your state.");
   const [appt] = await ctx.tx
     .insert(appointments)
@@ -133,7 +134,7 @@ export async function joinAppointment(ctx: Ctx, appointmentId: string, stateCode
   if (!appt || appt.status !== "booked") throw notFound("Appointment");
   const row = await getCaseRow(ctx, appt.caseId);
   await attestLocation(ctx, row.id, stateCode, "appointment_join", appt.id);
-  const can = await checkCanServe(ctx.tx, appt.clinicianId, row.serviceId!, stateCode, new Date());
+  const can = await checkCanServe(ctx.tx, appt.clinicianId, row.serviceId!, stateCode, new Date(), { checkLicenseExpiry: false });
   return { allowed: can.ok, joinUrl: can.ok ? video().joinUrl(appt.videoRef ?? "", "patient") : null };
 }
 

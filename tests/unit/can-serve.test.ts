@@ -27,6 +27,12 @@ describe("canServe", () => {
     expect(reasons(run({ authorizations: [auth({ credential: { id: "l1", status: "active", expiresOn: "2026-10-07", effectiveOn: null } })] }))).toContain("credential_expired");
     expect(reasons(run({ clinician: { ...clinician, malpracticeExpiresOn: "2026-10-01" } }))).toContain("malpractice_missing_or_expired");
   });
+  it("can skip only the license expiry date (STR-02: booking and visit join)", () => {
+    const expired = auth({ credential: { id: "l1", status: "active", expiresOn: "2026-10-07", effectiveOn: null } });
+    expect(run({ authorizations: [expired], checkLicenseExpiry: false }).ok).toBe(true);
+    expect(reasons(run({ authorizations: [expired], checkLicenseExpiry: false, jurisdiction: null }))).toContain("jurisdiction_inactive");
+    expect(reasons(run({ authorizations: [auth({ credential: { id: "l1", status: "inactive", expiresOn: "2026-10-07", effectiveOn: null } })], checkLicenseExpiry: false }))).toContain("credential_inactive");
+  });
   it("denies suspended credentials, ended authorizations and future-dated privileges", () => {
     expect(reasons(run({ authorizations: [auth({ credential: { id: "l1", status: "suspended", expiresOn: "2027-01-01", effectiveOn: null } })] }))).toContain("credential_inactive");
     expect(reasons(run({ authorizations: [auth({ endsOn: "2026-10-01" })] }))).toContain("authorization_not_in_effect");

@@ -50,7 +50,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 32 | CLN-11 | Assessment video visits are 50 minutes. Keep? | 50 minutes || **Signed off 2026-10-09:** "30 minutes" (decision card). Seed catalog set to 30; on an existing database, change it in Admin -> Services. |
 | 33 | CLN-13 | Patients confirm their location every time they join a video visit. Keep? | As described || **Signed off 2026-10-09:** "Keep it" (decision card): patients confirm their state before every visit. |
 | 34 | CLN-14 | Approve the document templates (continuous, intermittent, reduced schedule, summary letter). | Drafts | |
-| 35 | STR-02 | Recheck your license is current at booking, at the visit and at signing. Keep? | As described | |
+| 35 | STR-02 | Recheck your license is current at booking, at the visit and at signing. Keep? | As described || **Signed off 2026-10-09:** "Signing only" (decision card). License expiry is now checked only before signing (and at determination/assignment, unchanged); booking and visit join still require an active license matching the patient's state but skip the expiry date. |
 | 36 | STR-03 | Block a visit when the patient's location doesn't match a state you're licensed in. Keep? | As described | |
 | 37 | STR-04 | Approve MS and TN telehealth consent wording. | Not written | |
 | 38 | STR-05 | Keep clinical and audit records for 7 years? | 7 years | |

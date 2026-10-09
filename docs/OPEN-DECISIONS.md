@@ -104,7 +104,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | ID | Decision | Priority | Blocks production | Safe default in this build | Where it lives | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | STR-01 | Compact privilege verification and recognition | P0 | Yes | Privileges recorded manually with verifier and dates; never inferred Owner will enter verified MS and TN license numbers from the board lookups before launch; state activation already refuses a state with no verified authorization. | Admin → Clinicians | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| STR-02 | Credential expiring between booking and session | P1 | Yes | canServe evaluated on the appointment date at booking and again at join and signing | Scheduling; documents | Open |
+| STR-02 | Credential expiring between booking and session | P1 | Yes | canServe evaluated on the appointment date at booking and again at join and signing | Scheduling; documents | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | STR-03 | Patient location at time of service | P1 | Yes | Attested at verification and at every join; mismatch blocks join | Identity; scheduling | Open |
 | STR-04 | State telehealth consent/disclosures | P1 | Yes | Per-state disclosure text field and per-state consent documents supported; none authored | Admin → States; Consents | Open |
 | STR-05 | Retention periods | P1 | Yes | 7 years clinical and audit (placeholder) | Business rules → retention | Open |

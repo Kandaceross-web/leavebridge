@@ -37,12 +37,12 @@ export async function loadAuthorizations(tx: DbOrTx, filter: { jurisdictionCode?
   });
 }
 
-export async function checkCanServe(tx: DbOrTx, clinicianId: string, serviceId: string, jurisdictionCode: string, on: Date): Promise<CanServeResult> {
+export async function checkCanServe(tx: DbOrTx, clinicianId: string, serviceId: string, jurisdictionCode: string, on: Date, opts: { checkLicenseExpiry?: boolean } = {}): Promise<CanServeResult> {
   const [j] = await tx.select().from(jurisdictions).where(eq(jurisdictions.code, jurisdictionCode)).limit(1);
   const [c] = await tx.select().from(clinicians).where(eq(clinicians.id, clinicianId)).limit(1);
   if (!c) return { ok: false, reasons: ["clinician_inactive"] };
   const auths = await loadAuthorizations(tx, { jurisdictionCode, serviceId, clinicianId });
-  return canServe({ jurisdiction: j ?? null, clinician: c, serviceId, authorizations: auths, on });
+  return canServe({ jurisdiction: j ?? null, clinician: c, serviceId, authorizations: auths, on, ...opts });
 }
 
 /** Clinicians who can serve this jurisdiction + service on the date. */

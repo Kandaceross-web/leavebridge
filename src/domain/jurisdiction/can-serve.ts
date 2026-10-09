@@ -59,6 +59,11 @@ export function canServe(input: {
   serviceId: string;
   authorizations: readonly AuthorizationRecord[];
   on: Date;
+  /**
+   * false skips the license expiration date (STR-02, owner sign-off 2026-10-09: rechecked only before signing).
+   * The license must still exist, be active and match the patient's state.
+   */
+  checkLicenseExpiry?: boolean;
 }): CanServeResult {
   const reasons: DenyReason[] = [];
   const onDay = day(input.on);
@@ -84,7 +89,7 @@ export function canServe(input: {
     if (!a.credential) r.push("credential_missing");
     else {
       if (a.credential.status !== "active") r.push("credential_inactive");
-      if (a.credential.expiresOn < onDay) r.push("credential_expired");
+      if (input.checkLicenseExpiry !== false && a.credential.expiresOn < onDay) r.push("credential_expired");
       if (a.credential.effectiveOn && a.credential.effectiveOn > onDay) r.push("authorization_not_in_effect");
     }
     if (r.length === 0 && reasons.length === 0) return { ok: true, authorizationId: a.id };
