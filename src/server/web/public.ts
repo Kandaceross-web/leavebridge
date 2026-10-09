@@ -61,3 +61,45 @@ export const referralOrg = cache(async (code: string) => {
   const rows = await db.select({ id: organizations.id, name: organizations.name, kind: organizations.kind, headline: organizations.landingHeadline, code: organizations.referralCode, active: organizations.active }).from(organizations);
   return rows.find((r) => r.active && r.code.toLowerCase() === code.toLowerCase()) ?? null;
 });
+
+const slugOk = (slug: string) => /^[a-z0-9-]{2,80}$/.test(slug);
+
+export const publishedResources = cache(() =>
+  db
+    .select({ key: contentEntries.key, title: contentEntries.title, category: contentEntries.category, bodyMd: contentEntries.bodyMd, updatedAt: contentEntries.updatedAt })
+    .from(contentEntries)
+    .where(and(eq(contentEntries.kind, "resource"), eq(contentEntries.status, "published")))
+    .orderBy(asc(contentEntries.sortOrder)),
+);
+
+export const resourcePage = cache(async (slug: string) => {
+  if (!slugOk(slug)) return null;
+  const [row] = await db.select().from(contentEntries).where(and(eq(contentEntries.kind, "resource"), eq(contentEntries.key, `resource.${slug}`), eq(contentEntries.status, "published"))).limit(1);
+  return row ?? null;
+});
+
+/** The first paragraph of a guide, used as its summary and meta description. */
+export function summaryOf(bodyMd: string): string {
+  const first = bodyMd.replace(/\r/g, "").split(/\n{2,}/).find((b) => b.trim() && !/^[#>-]/.test(b.trim())) ?? "";
+  return first.replace(/\*\*|\[([^\]]+)\]\([^)]+\)/g, "$1").trim().slice(0, 300);
+}
+
+export const stateSlug = (name: string) => name.toLowerCase().replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "");
+
+/**
+ * State pages: a published "state" content entry whose slug matches a configured jurisdiction.
+ * A state with no real state-specific content has no page, so there are no doorway pages.
+ */
+export const statePages = cache(async () => {
+  const [rows, states] = await Promise.all([
+    db.select().from(contentEntries).where(and(eq(contentEntries.kind, "state"), eq(contentEntries.status, "published"))).orderBy(asc(contentEntries.sortOrder)),
+    db.select({ code: jurisdictions.code, name: jurisdictions.name, isActive: jurisdictions.isActive }).from(jurisdictions),
+  ]);
+  return rows.flatMap((row) => {
+    const slug = row.key.replace(/^state\./, "");
+    const state = states.find((s) => stateSlug(s.name) === slug);
+    return state ? [{ ...row, slug, state }] : [];
+  });
+});
+
+export const statePage = cache(async (slug: string) => (slugOk(slug) ? ((await statePages()).find((p) => p.slug === slug) ?? null) : null));

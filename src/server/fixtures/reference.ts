@@ -24,6 +24,7 @@ import {
 import { encrypt, sha256Hex } from "../crypto";
 import { hashPassword } from "../auth/password";
 import { CONSENTS, CONTENT, JURISDICTIONS, SERVICES, TEMPLATES } from "@/config/catalog";
+import { RESOURCES, STATE_PAGES } from "@/config/resources";
 import { INTAKE_V1, intakeDefinitionSchema } from "@/config/intake";
 import { SCREENING_V1 } from "@/config/screening";
 import { DEFAULT_INSTRUMENTS } from "@/domain/instruments";
@@ -85,7 +86,7 @@ export async function seedReference(ctx: Ctx) {
     await ctx.tx.insert(consentVersions).values({ documentId: doc!.id, version: 1, bodyMd: c.body, bodyHash: sha256Hex(c.body), status: "published", reviewTag: "LEGAL_REVIEW_REQUIRED", effectiveFrom: new Date(Date.now() - 86_400_000) });
   }
 
-  for (const c of CONTENT) {
+  for (const c of [...CONTENT, ...RESOURCES, ...STATE_PAGES]) {
     await ctx.tx.insert(contentEntries).values({ kind: c.kind, key: c.key, category: c.category ?? null, title: c.title, bodyMd: c.body, status: "published", reviewTag: c.reviewTag, sortOrder: c.order });
   }
 

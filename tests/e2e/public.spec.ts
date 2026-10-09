@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { expectAccessible, expectNoHorizontalScroll, expectOneH1, freshIp } from "./helpers";
 
-const PAGES = ["/", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/contact", "/about", "/availability", "/crisis", "/start", "/sign-in", "/sign-up"];
+const PAGES = ["/", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/resources", "/resources/who-can-complete-fmla-forms", "/states/mississippi", "/states/tennessee", "/contact", "/about", "/availability", "/crisis", "/start", "/sign-in", "/sign-up"];
 
 for (const path of PAGES) {
   test(`public page ${path} is accessible and fits the viewport`, async ({ page }) => {
@@ -24,6 +24,30 @@ test("home answers what, who, how, cost, next steps and what is not guaranteed",
   await expect(page.getByRole("heading", { name: /your next step/i })).toBeVisible();
   const text = (await page.locator("main").innerText()).toLowerCase();
   for (const banned of ["guaranteed approval", "you qualify", "get approved"]) expect(text).not.toContain(banned);
+  await expect(page.getByRole("link", { name: /check if we can help/i }).first()).toHaveAttribute("href", /\/start\?entry=/);
+});
+
+test("guides and state pages carry structured data, review tags and no doorway pages", async ({ page, request }) => {
+  await page.goto("/resources");
+  await page.getByRole("link", { name: /who can complete fmla paperwork/i }).first().click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/who can complete/i);
+  await expect(page.getByText("LEGAL_REVIEW_REQUIRED")).toBeVisible();
+  const ld = await page.locator('script[type="application/ld+json"]').first().textContent();
+  expect(JSON.parse(ld ?? "{}")["@type"]).toBe("Article");
+  expect(ld).not.toMatch(/aggregateRating|review/i);
+
+  await page.goto("/states/tennessee");
+  await expect(page.getByText(/855-274-7471/)).toBeVisible();
+  // A state with no state-specific content has no page.
+  expect((await request.get("/states/alabama")).status()).toBe(404);
+
+  const home = await request.get("/");
+  const html = await home.text();
+  expect(html).toContain('"@type":"MedicalBusiness"');
+  expect(html).not.toMatch(/aggregateRating/);
+  // Non-production hosts are never indexable.
+  expect(await (await request.get("/robots.txt")).text()).toMatch(/Disallow: \/\s*$/m);
+  expect(await (await request.get("/sitemap.xml")).text()).toContain("/states/mississippi");
 });
 
 test("security headers are present and app paths are not cacheable", async ({ request }) => {

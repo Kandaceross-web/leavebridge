@@ -1,9 +1,10 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/forms";
 import { ButtonLink, Empty, PageHead } from "@/components/ui";
 import { db } from "@/server/db/client";
 import { waitlistStates } from "@/server/services/contact";
-import { activeStates, siteSettings } from "@/server/web/public";
+import { activeStates, siteSettings, statePages, stateSlug } from "@/server/web/public";
 import { waitlistAction } from "../actions";
 import styles from "../site.module.css";
 
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AvailabilityPage() {
-  const [{ features }, states] = await Promise.all([siteSettings(), activeStates()]);
+  const [{ features }, states, pages] = await Promise.all([siteSettings(), activeStates(), statePages()]);
+  const withPage = new Set(pages.map((p) => p.slug));
   // Jurisdictions are public configuration (no PHI, no row-level security).
   const others = features.waitlist ? await waitlistStates(db) : [];
   return (
@@ -29,7 +31,7 @@ export default async function AvailabilityPage() {
         {states.length ? (
           <ul className={styles.stateList}>
             {states.map((s) => (
-              <li key={s.code}>{s.name}</li>
+              <li key={s.code}>{withPage.has(stateSlug(s.name)) ? <Link href={`/states/${stateSlug(s.name)}`}>{s.name}</Link> : s.name}</li>
             ))}
           </ul>
         ) : (
@@ -50,7 +52,7 @@ export default async function AvailabilityPage() {
           <h2 id="check-title">Check if we can help</h2>
           <p className="muted">A few quick questions confirm your location and whether this service fits what you need.</p>
           <div>
-            <ButtonLink href="/start">Start screening</ButtonLink>
+            <ButtonLink href="/start?entry=availability">Start screening</ButtonLink>
           </div>
         </section>
       </div>

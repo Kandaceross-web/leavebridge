@@ -49,7 +49,7 @@ export default async function ServicesPage() {
                 <p className="muted">{s.summary}</p>
                 <p className="small">{s.description}</p>
                 <div className="btn-row">
-                  <ButtonLink href="/start">Check if we can help</ButtonLink>
+                  <ButtonLink href="/start?entry=services">Check if we can help</ButtonLink>
                   <ButtonLink href="/pricing" variant="quiet">
                     What&rsquo;s included
                   </ButtonLink>

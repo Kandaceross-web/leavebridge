@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { Lockup } from "@/components/ui";
 import { NavLink } from "@/components/nav";
 import { DevBanner } from "@/components/dev-banner";
-import { legalPages, siteSettings } from "@/server/web/public";
+import { legalPages, siteSettings, statePages } from "@/server/web/public";
 import { env } from "@/server/env";
 
 const NAV = [
@@ -13,11 +13,12 @@ const NAV = [
   { href: "/pricing", label: "Pricing" },
   { href: "/employers", label: "Employers" },
   { href: "/faq", label: "FAQ" },
+  { href: "/resources", label: "Guides" },
   { href: "/contact", label: "Contact" },
 ];
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
-  const [{ brand, crisis }, legal] = await Promise.all([siteSettings(), legalPages()]);
+  const [{ brand, crisis }, legal, states] = await Promise.all([siteSettings(), legalPages(), statePages()]);
   // Optional privacy-preserving analytics, marketing pages only (LEG-14). Never rendered in the portal, ops or screening.
   const analyticsSrc = env.SITE_ANALYTICS_SRC;
   const nonce = analyticsSrc ? ((await headers()).get("x-nonce") ?? undefined) : undefined;
@@ -39,7 +40,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             <Link href="/sign-in" className="btn btn-quiet hide-mobile">
               Sign in
             </Link>
-            <Link href="/start" className="btn btn-primary btn-sm">
+            <Link href="/start?entry=header" className="btn btn-primary btn-sm">
               Get started
             </Link>
             <details className="menu-toggle">
@@ -82,7 +83,10 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                 <li><Link href="/services">Leave services</Link></li>
                 <li><Link href="/pricing">Pricing</Link></li>
                 <li><Link href="/availability">Where we serve</Link></li>
-                <li><Link href="/start">Check availability</Link></li>
+                {states.map((st) => (
+                  <li key={st.slug}><Link href={`/states/${st.slug}`}>{st.state.name}</Link></li>
+                ))}
+                <li><Link href="/start?entry=footer">Check availability</Link></li>
                 <li><Link href="/sign-in">Patient portal</Link></li>
               </ul>
             </div>
@@ -92,6 +96,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                 <li><Link href="/about">About and clinical team</Link></li>
                 <li><Link href="/employers">Employer services</Link></li>
                 <li><Link href="/faq">FAQ</Link></li>
+                <li><Link href="/resources">Guides</Link></li>
                 <li><Link href="/contact">Contact</Link></li>
               </ul>
             </div>

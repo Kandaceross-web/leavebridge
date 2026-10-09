@@ -410,7 +410,7 @@ export const contentSchema = z.object({
   sortOrder: z.number().int(),
 });
 
-export async function saveContent(ctx: Ctx, id: string | null, kind: "faq" | "legal", key: string | null, input: z.infer<typeof contentSchema>) {
+export async function saveContent(ctx: Ctx, id: string | null, kind: "faq" | "legal" | "resource" | "state", key: string | null, input: z.infer<typeof contentSchema>) {
   await adminGate(ctx);
   if (input.status === "published") assertPublishable(input.reviewTag);
   const userId = (ctx.actor as { userId: string }).userId;
@@ -423,7 +423,7 @@ export async function saveContent(ctx: Ctx, id: string | null, kind: "faq" | "le
   await audit(ctx, { action: input.status === "published" ? "content.published" : "config.updated", subjectType: "content", subjectId: id ?? key ?? "new" });
 }
 
-export async function publishedContent(tx: Ctx["tx"], kind: "faq" | "legal") {
+export async function publishedContent(tx: Ctx["tx"], kind: "faq" | "legal" | "resource" | "state") {
   return tx.select().from(contentEntries).where(and(eq(contentEntries.kind, kind), eq(contentEntries.status, "published"))).orderBy(contentEntries.category, contentEntries.sortOrder);
 }
 

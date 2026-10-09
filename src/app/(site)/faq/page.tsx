@@ -3,10 +3,13 @@ import type { Metadata } from "next";
 import { FAQ_CATEGORIES } from "@/config/catalog";
 import { Markdown, PageHead, ReviewTag } from "@/components/ui";
 import { publishedFaq } from "@/server/web/public";
+import { JsonLd } from "@/components/json-ld";
+import { faqLd } from "@/server/web/structured-data";
 
 export const metadata: Metadata = {
   title: "Frequently asked questions",
   description: "Answers about the assessment, FMLA and workplace leave, payment, documentation, telehealth, privacy, appointments and employer forms.",
+  alternates: { canonical: "/faq" },
 };
 
 export default async function FaqPage() {
@@ -18,6 +21,7 @@ export default async function FaqPage() {
   ].filter((g) => g.items.length);
   return (
     <div className="container-narrow page stack stack-xl">
+      {entries.length ? <JsonLd data={faqLd(entries)} /> : null}
       <PageHead eyebrow="FAQ" title="Common questions" lede="Plain answers about how the assessment works and what it can and cannot do." />
       {groups.length > 1 ? (
         <nav aria-label="FAQ topics" className="row">

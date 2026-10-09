@@ -197,7 +197,7 @@ export const CONSENTS: ConsentSeed[] = [
 ];
 
 export interface ContentSeed {
-  kind: "faq" | "legal" | "page_section" | "resource";
+  kind: "faq" | "legal" | "page_section" | "resource" | "state";
   key: string;
   category?: string;
   title: string;

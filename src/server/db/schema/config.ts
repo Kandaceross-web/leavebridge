@@ -161,7 +161,7 @@ export const contentEntries = pgTable(
   "content_entries",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    kind: text("kind").$type<"faq" | "page_section" | "disclosure" | "crisis" | "legal" | "resource">().notNull(),
+    kind: text("kind").$type<"faq" | "page_section" | "disclosure" | "crisis" | "legal" | "resource" | "state">().notNull(),
     key: text("key").notNull().unique(),
     category: text("category"),
     title: text("title").notNull(),

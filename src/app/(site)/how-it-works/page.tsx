@@ -111,7 +111,7 @@ export default async function HowItWorksPage() {
         <h2 id="next-title">Ready to see if we can help?</h2>
         <p className="lede">Answering the screening questions takes about two minutes.</p>
         <div className={`btn-row ${styles.centerRow}`}>
-          <ButtonLink href="/start">Check if we can help</ButtonLink>
+          <ButtonLink href="/start?entry=how-it-works">Check if we can help</ButtonLink>
           <ButtonLink href="/faq" variant="quiet">
             Common questions
           </ButtonLink>

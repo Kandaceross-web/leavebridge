@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 /* Server-safe presentational components shared by the site, portal and ops console. */
 
 export function LogoMark({ size = 28, reverse = false }: { size?: number; reverse?: boolean }) {
-  const bg = reverse ? "#FBFAF7" : "#15233B";
-  const arch = reverse ? "#4C6857" : "#9DB7A5";
-  const deck = reverse ? "#15233B" : "#FBFAF7";
+  const bg = reverse ? "#FFF9F2" : "#0F4C4A";
+  const arch = reverse ? "#B84227" : "#F6C453";
+  const deck = reverse ? "#0F4C4A" : "#FFF9F2";
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
       <rect x="0" y="0" width="48" height="48" rx="12" fill={bg} />
@@ -79,8 +79,8 @@ export function Icon({
     strokeLinejoin: "round" as const,
   };
   const paths: Record<IconName, ReactNode> = {
-    check: <path d="M3 8.5l3 3 7-7" {...p} stroke="#4C6857" strokeWidth={1.9} />,
-    x: <path d="M4 4l8 8M12 4l-8 8" {...p} stroke="#9C3535" strokeWidth={1.8} />,
+    check: <path d="M3 8.5l3 3 7-7" {...p} stroke="#2E7D5B" strokeWidth={2.1} />,
+    x: <path d="M4 4l8 8M12 4l-8 8" {...p} stroke="#B84227" strokeWidth={1.9} />,
     lock: (
       <>
         <rect x="3" y="7" width="10" height="7" rx="1.5" {...p} />

@@ -23,9 +23,11 @@ const revalidate = (id?: string) => {
   if (id) revalidatePath(`/ops/admin/content/${id}`);
   revalidatePath("/ops/admin/reviews");
   revalidatePath("/faq");
+  revalidatePath("/resources", "layout");
+  revalidatePath("/states", "layout");
 };
 
-export async function saveContentAction(id: string, kind: "faq" | "legal", _: ActionState, fd: FormData): Promise<ActionState> {
+export async function saveContentAction(id: string, kind: "faq" | "legal" | "resource" | "state", _: ActionState, fd: FormData): Promise<ActionState> {
   return handle(async () => {
     const { actor } = await requireStaffSession(["admin"]);
     const input = parse(fd);

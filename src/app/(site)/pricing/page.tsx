@@ -46,7 +46,7 @@ export default async function PricingPage() {
               </li>
             ))}
           </ul>
-          <ButtonLink href="/start">Check if we can help</ButtonLink>
+          <ButtonLink href="/start?entry=pricing">Check if we can help</ButtonLink>
         </section>
 
         <div className="stack">
