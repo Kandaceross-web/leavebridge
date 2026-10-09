@@ -107,7 +107,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | STR-02 | Credential expiring between booking and session | P1 | Yes | canServe evaluated on the appointment date at booking and again at join and signing | Scheduling; documents | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | STR-03 | Patient location at time of service | P1 | Yes | Attested at verification and at every join; mismatch blocks join | Identity; scheduling | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | STR-04 | State telehealth consent/disclosures | P1 | Yes | Per-state disclosure text field and per-state consent documents supported; none authored | Admin → States; Consents | Open |
-| STR-05 | Retention periods | P1 | Yes | 7 years clinical and audit (placeholder) | Business rules → retention | Open |
+| STR-05 | Retention periods | P1 | Yes | 7 years clinical and audit (placeholder) | Business rules → retention | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | STR-06 | Mandatory reporting / duty to warn effects on consent | P1 | Yes | Not authored | Consents | Open |
 | STR-07 | State paid-leave forms | P2 | No | Out of scope | — | Open |
 

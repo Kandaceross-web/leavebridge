@@ -331,8 +331,9 @@ export const SETTING_DEFS = {
       auditLogYears: z.number().int().min(1),
     }),
     default: { abandonedScreeningDays: 30, clinicalRecordYears: 7, auditLogYears: 7 },
-    reviewTag: "STATE_RULE_REQUIRED" as ReviewTag,
-    reviewNote: "STR-05, LEG-10: retention periods per state and license type.",
+    // STR-05 and LEG-10: owner sign-off 2026-10-09 (7 years; 30 days for abandoned screenings).
+    reviewTag: null,
+    reviewNote: "STR-05, LEG-10: retention periods per state and license type. No job deletes clinical records yet; one is needed before the first records reach 7 years.",
   },
 } as const;
 
