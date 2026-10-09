@@ -84,7 +84,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 
 | ID | Decision | Priority | Blocks production | Safe default in this build | Where it lives | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| CLN-01 | Emergency workflow at every touchpoint | P0 | Yes | Screening EMERGENCY ends the flow with crisis resources and no account; intake/measure safety answers raise a safety event, mark the case urgent and show crisis resources; ops Safety queue with acknowledge/hold | Screening ruleset; intake; Ops → Safety | Open |
+| CLN-01 | Emergency workflow at every touchpoint | P0 | Yes | Screening EMERGENCY ends the flow with crisis resources and no account; intake/measure safety answers raise a safety event, mark the case urgent and show crisis resources; ops Safety queue with acknowledge/hold | Screening ruleset; intake; Ops → Safety | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-02 | Crisis content | P0 | Yes | 988 / 911 / nearest ER placeholder content | Business rules → crisis | Open |
 | CLN-03 | Screening questions and outcome rules | P0 | Yes | Conservative v1 ruleset, tagged | Admin → Screening & measures | Open |
 | CLN-04 | Intake template content | P1 | Yes | Intake v1, tagged | Questionnaires | Open |

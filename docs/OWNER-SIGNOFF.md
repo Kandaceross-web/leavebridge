@@ -17,7 +17,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | # | Row | Question in plain language | Built default | Answer |
 | --- | --- | --- | --- | --- |
 | 1 | LEG-01 | Federal FMLA rules don't name LPCs as providers whose forms employers must accept. Do you accept that some employers may refuse your forms, and keep the site telling people to check with HR before paying? | Copy tells people to check first; screening flags employers that restrict provider types for review | **Signed off 2026-10-08:** "I can sign off there is a statement on fmla forms federally that covers us" (29 CFR 825.125(b)(4)). Check-with-HR copy kept. |
-| 2 | CLN-01 | If someone signals danger to themselves or others, the site stops, shows crisis lines, and alerts the clinical team. Is that the emergency process you want? | As described | |
+| 2 | CLN-01 | If someone signals danger to themselves or others, the site stops, shows crisis lines, and alerts the clinical team. Is that the emergency process you want? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). |
 | 3 | CLN-02 | Crisis resources shown: 988, 911, nearest ER, MS DMH helpline and TN statewide crisis line. Keep these? | As listed | |
 | 4 | CLN-03 | Are the screening questions and the rules for "we can help / needs review / can't help" right? | Conservative v1 ruleset | |
 | 5 | CLN-12 | Should forms let you write a diagnosis, given your LPC scope in MS and TN? | No diagnosis field; findings are free text | |
