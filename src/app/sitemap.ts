@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 const origin = () => env.SITE_ORIGIN.replace(/\/$/, "");
 
-const PAGES = ["", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/resources", "/contact", "/about", "/availability", "/crisis"];
+const PAGES = ["", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/resources", "/resources/fmla-basics-check", "/for-therapists", "/contact", "/about", "/availability", "/crisis"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [legal, resources, states] = await Promise.all([legalPages(), publishedResources(), statePages()]);

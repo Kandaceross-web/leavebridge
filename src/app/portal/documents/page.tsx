@@ -58,6 +58,18 @@ export default async function DocumentsPage() {
       ) : (
         <Empty title="No documents yet">If your clinician completes documentation, it will appear here after it is signed and delivered.</Empty>
       )}
+      <section className="card-flat stack stack-sm" aria-labelledby="employer-h">
+        <h2 id="employer-h">If your employer has questions or doesn&rsquo;t accept a form</h2>
+        <ul>
+          <li>Ask your employer exactly what is missing or why the form wasn&rsquo;t accepted.</li>
+          <li>
+            Send that request to us in <Link href="/portal/messages">your messages</Link>. If a form we completed is incomplete or unclear, your clinician corrects or clarifies it
+            at no extra charge.
+          </li>
+          <li>If your employer only accepts certain provider types, we can give you a copy of your assessment records to take to a provider your employer accepts.</li>
+        </ul>
+        <p className="small muted">Refunds follow the refund policy shown before you paid. They depend on how far your case progressed, not on your employer&rsquo;s decision.</p>
+      </section>
       <p className="fine">
         Your clinician&rsquo;s documents reflect their independent clinical judgment. Decisions about leave are made by your employer or leave administrator.
       </p>

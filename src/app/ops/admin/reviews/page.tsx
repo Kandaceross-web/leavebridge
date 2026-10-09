@@ -32,7 +32,7 @@ export default async function ReviewsPage() {
           {open.length ? <Badge tone="action">{open.length} open</Badge> : <Badge tone="done">None open</Badge>}
         </div>
         <p className="small muted">
-          Production readiness: items below still need the named professional review. In production, tagged content can&rsquo;t be published and
+          Production readiness: items below still need sign-off. The owner waived outside review, so the owner signs off each one and the review is logged here. In production, tagged content can&rsquo;t be published and
           tagged services can&rsquo;t be enabled.
         </p>
         {byTag.length ? (

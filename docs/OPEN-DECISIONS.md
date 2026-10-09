@@ -1,6 +1,18 @@
 # Open decisions
 
-Everything here needs a decision from the owner, an attorney, a clinician, a state-rule review or a security review.
+Everything here needs a decision before real patients use the system.
+
+**Who signs off (owner decision, 2026-10-08).** Zxryeni is the clinician and has waived outside legal and security
+reviewers: "i don't need an attorney i am the clinician and i don't need a security reviewer". So every Legal (LEG),
+Clinical (CLN), State rule (STR) and Security (SEC) row is now closed by the owner's own sign-off, answered one question at
+a time in plain language (see `docs/OWNER-SIGNOFF.md`). A sign-off records the owner's decision and accepted risk; it is not
+a legal opinion or a security audit, and nothing in this repository says otherwise. In place of an outside security
+reviewer, `npm run security:check` runs an automated review on every release check.
+
+Three technical rows still need **evidence that the work was done**, not only an acknowledgement: SEC-09 (signed AWS
+Business Associate Addendum and HIPAA-eligible services only), SEC-10 (a completed backup restore drill) and SEC-14
+(a penetration test of sign-in, MFA, sessions and access control). Production secrets are also still enforced by the
+environment check.
 The build makes a **safe, configurable default** for each so work can continue, and `npm run release:check` refuses a
 production release while any row marked **Blocks production: Yes** is not **Closed**.
 
@@ -9,7 +21,9 @@ rebuild are marked *(new)*. Nothing in this repository is legal advice or a comp
 control does not mean the control has been reviewed.
 
 How to close a row: record the decision (who, when, what), make the configuration change in the admin console or code,
-clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`.
+clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. A row closed by the owner reads
+`Closed (YYYY-MM-DD, Zxryeni, owner sign-off; outside review waived)`. A technical row reads
+`Closed (YYYY-MM-DD, who, evidence: where the proof is)`; the release check refuses a technical row closed without evidence.
 
 ## Owner decisions
 
@@ -38,12 +52,14 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`.
 | OWN-21 *(new)* | Self-service password reset by email | P1 | Yes | Not built; page directs to support | `src/app/(auth)/forgot-password` | Open |
 | OWN-22 *(new)* | Ad platforms and conversion tracking | P1 | Yes | First-party attribution only (no ad pixels anywhere; nothing sent to ad platforms). Paid campaigns should tag links with UTM parameters. Uploading conversions to Google/Microsoft/Meta is not built. | `src/domain/attribution.ts`, Admin → Acquisition, `docs/MEASUREMENT.md` | Open |
 | OWN-23 *(new)* | Which credential signs which form type | P0 | Yes | Site copy says forms are completed by a licensed mental-health clinician and tells people to check whether their employer, insurer or leave administrator accepts that provider type. Forum evidence shows some administrators refuse counselor or LMFT signatures (see research report). Tied to LEG-01. | Screening `provider_type_accepted`; FAQ | Open |
+| OWN-24 *(new)* | What happens when an employer won't accept a completed form | P1 | Yes | Corrections and clarifications of our own forms at no charge; copy of assessment records if the employer requires a different provider type; refunds follow the refund policy, not the employer's decision. Shown in FAQ, checkout and the documents page | `src/config/catalog.ts` FAQ; portal documents page | Open |
+| OWN-25 *(new)* | Lead channels: referral partners (therapists, EAPs, unions), no referral fees, optional screening follow-up email, guide email capture | P2 | No | Therapist page and basics check built; no referral payments; no email capture or abandonment follow-up | `docs/research/growth-plan.md` section 7 | Open |
 
 ## Legal
 
 | ID | Decision | Priority | Blocks production | Safe default in this build | Where it lives | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| LEG-01 | Whether the launch clinician's license type is accepted as a "health care provider" for FMLA certification; effect on screening and copy | P0 | Yes | Screening asks whether the employer restricts provider types → NEEDS REVIEW; copy tells people to check with HR | Screening ruleset; FAQ | Open |
+| LEG-01 | Whether the launch clinician's license type is accepted as a "health care provider" for FMLA certification; effect on screening and copy | P0 | Yes | Screening asks whether the employer restricts provider types → NEEDS REVIEW; copy tells people to check with HR **Owner sign-off 2026-10-08:** relies on 29 CFR 825.125(b)(4) (any provider whose certification the employer or its group health plan accepts). That coverage depends on each employer, so the site, screening and checkout keep telling people to check with HR first, and employer rejection is handled per OWN-24. | Screening ruleset; FAQ | Closed (2026-10-08, Zxryeni, owner sign-off; outside review waived) |
 | LEG-02 | Provider entity, corporate practice, who contracts, payment descriptor | P0 | Yes | Neutral descriptor "Professional assessment service" | `src/server/providers/payments.ts` | Open |
 | LEG-03 | HIPAA covered-entity status; state health-privacy laws; NPP | P0 | Yes | Built as if HIPAA applies (encryption, RLS, audit, minimum necessary); NPP placeholder page | Legal pages; `docs/COMPLIANCE.md` | Open |
 | LEG-04 | All consent documents | P1 | Yes | Placeholder text marked `[LEGAL REVIEW REQUIRED]`, versioned, hash-signed | Admin → Consents | Open |
@@ -107,12 +123,13 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`.
 | SEC-06 | Upload pipeline | P1 | Yes | 15 MB, magic-byte type check, PDF structure check, EICAR test; ClamAV adapter for production | `src/server/providers/scan.ts` | Open |
 | SEC-07 | Screening purge job | P1 | Yes | `npm run jobs -- purge-screenings` (schedule daily) | `scripts/jobs.ts` | Open |
 | SEC-08 | Video vendor security review | P1 | Yes | No vendor | — | Open |
-| SEC-09 | AWS account architecture / HIPAA-eligible services | P0 | Yes | Terraform skeleton only | `infra/` | Open |
-| SEC-10 | Backup, restore drill, DR | P1 | Yes | RDS PITR + snapshot plan documented | `docs/DEPLOYMENT.md` | Open |
+| SEC-09 | AWS account architecture / HIPAA-eligible services; signed AWS BAA *(evidence required)* | P0 | Yes | Terraform skeleton only | `infra/` | Open |
+| SEC-10 | Backup, restore drill, DR *(evidence required)* | P1 | Yes | RDS PITR + snapshot plan documented | `docs/DEPLOYMENT.md` | Open |
 | SEC-11 | Error monitoring PHI scrubbing | P1 | Yes | No third-party error monitoring; allow-list logger only | `src/server/logger.ts` | Open |
 | SEC-12 | Logging allow-list review | P1 | Yes | Allow-list enforced in code | `src/server/logger.ts` | Open |
 | SEC-13 | Audit log tamper resistance | P1 | Yes | Append-only triggers + hash chain + verify tool; Object Lock archive planned | `src/server/audit.ts` | Open |
-| SEC-14 | External penetration test | P1 | Yes | Not done | — | Open |
+| SEC-14 | Penetration test of sign-in, MFA, sessions and access control *(evidence required)* | P1 | Yes | Not done. Automated tools are acceptable; the result and fixes must be recorded. Built-in coverage today: E2E role-isolation tests and `npm run security:check` | — | Open |
 | SEC-15 | Formal security risk assessment | P1 | Yes | Not done | — | Open |
 | SEC-16 | Incident response plan | P1 | Yes | Not done | — | Open |
 | SEC-17 *(new)* | Dev-only dependency advisories (eslint-config-next → braces; drizzle-kit → esbuild) | P2 | No | Production dependencies have 0 known vulnerabilities; dev tools only | `package.json` | Open |
+| SEC-18 *(new)* | Row-level security for contact_messages, notifications, signatures and waitlist, which rely on service-layer checks today | P2 | No | Found by the automated review 2026-10-09; reported as a warning on every release check | `scripts/security-findings.ts` | Open |

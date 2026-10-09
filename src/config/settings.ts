@@ -46,6 +46,7 @@ export const SETTING_DEFS = {
       excludes: [
         "A guaranteed diagnosis, certification or documentation",
         "Approval of leave by your employer, insurer or leave administrator",
+        "Your employer's acceptance of the form or of your clinician's license type",
         "Ongoing therapy, medication management or emergency care",
         "Recertification visits ($119.99) and follow-up forms ($9.99 each), which are separate services",
       ],

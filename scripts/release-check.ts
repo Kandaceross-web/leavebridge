@@ -4,25 +4,36 @@
  *
  *   APP_ENV=production DATABASE_URL=... npm run release:check
  *
- * It checks four things:
+ * It checks five things:
  *  1. docs/OPEN-DECISIONS.md: every row marked "Blocks production: Yes" must have status "Closed".
+ *     The owner waived outside legal and security review on 2026-10-08, so LEG, CLN, STR and most SEC
+ *     rows close with the owner's recorded sign-off. Technical rows (TECHNICAL below) close only with
+ *     evidence: their status must read "Closed (date, who, evidence: ...)".
  *  2. Environment: production providers and secrets (the env loader refuses dev values).
  *  3. Database: no review tags on published or enabled configuration, no fixture accounts,
  *     every active state has an approved compliance review within 12 months.
  *  4. Settings: every setting whose default carries a review tag has an admin override with the
  *     tag cleared (meaning someone decided it).
+ *  5. Automated security review (scripts/security-findings.ts): dependency audit, database role
+ *     and row-level security, console logging, hard-coded secrets and tracking hosts.
  */
 import { readFileSync } from "node:fs";
 import { and, eq, gte, isNotNull, sql } from "drizzle-orm";
 import { db, pool } from "@/server/db/client";
 import { complianceReviews, consentVersions, contentEntries, jurisdictions, notificationTemplates, questionnaires, screeningRulesets, services, settings, users } from "@/server/db/schema";
 import { SETTING_DEFS, SETTING_KEYS } from "@/config/settings";
+import { securityFindings } from "./security-findings";
+
+/** Rows that an acknowledgement cannot close: they need proof that something was done. */
+export const TECHNICAL = ["SEC-09", "SEC-10", "SEC-14"];
 
 interface Finding {
   area: string;
   item: string;
   detail: string;
 }
+
+const accepted: string[] = [];
 
 function openDecisions(): Finding[] {
   const text = readFileSync("docs/OPEN-DECISIONS.md", "utf8");
@@ -32,7 +43,11 @@ function openDecisions(): Finding[] {
     // | ID | Decision | Priority | Blocks production | Safe default in this build | Where it lives | Status |
     if (cells.length < 8 || !/^(OWN|LEG|CLN|STR|SEC)-\d+/.test(cells[1] ?? "")) continue;
     const [, id, decision, , blocks, , , status] = cells;
-    if (/^yes/i.test(blocks ?? "") && !/^closed/i.test(status ?? "")) out.push({ area: "Open decision", item: id!, detail: decision!.slice(0, 110) });
+    const key = id!.replace(/\s.*$/, "");
+    if (!/^yes/i.test(blocks ?? "")) continue;
+    if (!/^closed/i.test(status ?? "")) out.push({ area: "Open decision", item: key, detail: decision!.slice(0, 110) });
+    else if (TECHNICAL.includes(key) && !/evidence:/i.test(status ?? "")) out.push({ area: "Open decision", item: key, detail: "technical item closed without evidence" });
+    else if (/owner sign-off/i.test(status ?? "")) accepted.push(key);
   }
   return out;
 }
@@ -85,7 +100,15 @@ async function dbFindings(): Promise<Finding[]> {
 }
 
 async function main() {
-  const findings = [...openDecisions(), ...(await envFindings()), ...(await dbFindings())];
+  const security = await securityFindings();
+  const findings = [
+    ...openDecisions(),
+    ...(await envFindings()),
+    ...(await dbFindings()),
+    ...security.filter((f) => f.severity === "blocker").map((f) => ({ area: "Security", item: f.check, detail: f.detail })),
+  ];
+  for (const w of security.filter((f) => f.severity === "warning")) console.log(`Security warning (${w.check}): ${w.detail}`);
+  if (accepted.length) console.log(`Closed by owner sign-off with outside review waived: ${accepted.join(", ")}. This records the owner's decision; it is not a legal or security review.`);
   if (!findings.length) {
     console.log("Release check passed: no open production blockers.");
     return;

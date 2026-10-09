@@ -149,6 +149,9 @@ export const ORG_KINDS = [
   "correctional",
   "school",
   "healthcare",
+  "therapy_practice",
+  "eap",
+  "union",
   "other",
 ] as const;
 export type OrgKind = (typeof ORG_KINDS)[number];

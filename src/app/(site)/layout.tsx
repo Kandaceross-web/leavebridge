@@ -95,6 +95,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
               <ul>
                 <li><Link href="/about">About and clinical team</Link></li>
                 <li><Link href="/employers">Employer services</Link></li>
+                <li><Link href="/for-therapists">For therapists</Link></li>
                 <li><Link href="/faq">FAQ</Link></li>
                 <li><Link href="/resources">Guides</Link></li>
                 <li><Link href="/contact">Contact</Link></li>

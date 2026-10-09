@@ -24,7 +24,8 @@ export async function employerInquiryAction(_: ActionState, fd: FormData): Promi
   return handle(async () => {
     await rateLimit("contact", await clientIpKey());
     const meta = await requestMeta();
-    const attribution = await readAttribution("employer-inquiry");
+    // The therapist partner page shares this form; the label is chosen from a fixed list, never echoed.
+    const attribution = await readAttribution(fd.get("source") === "therapist" ? "therapist-inquiry" : "employer-inquiry");
     const f = formFields(fd);
     const base = contactSchema.parse({ ...f, topic: "employer" });
     const org = (f.organization ?? "").trim().slice(0, 200);

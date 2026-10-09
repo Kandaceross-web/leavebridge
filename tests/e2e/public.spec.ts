@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { expectAccessible, expectNoHorizontalScroll, expectOneH1, freshIp } from "./helpers";
 
-const PAGES = ["/", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/resources", "/resources/who-can-complete-fmla-forms", "/states/mississippi", "/states/tennessee", "/contact", "/about", "/availability", "/crisis", "/start", "/sign-in", "/sign-up"];
+const PAGES = ["/", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/resources", "/resources/who-can-complete-fmla-forms", "/states/mississippi", "/states/tennessee", "/resources/fmla-basics-check", "/for-therapists", "/contact", "/about", "/availability", "/crisis", "/start", "/sign-in", "/sign-up"];
 
 for (const path of PAGES) {
   test(`public page ${path} is accessible and fits the viewport`, async ({ page }) => {
@@ -48,6 +48,21 @@ test("guides and state pages carry structured data, review tags and no doorway p
   // Non-production hosts are never indexable.
   expect(await (await request.get("/robots.txt")).text()).toMatch(/Disallow: \/\s*$/m);
   expect(await (await request.get("/sitemap.xml")).text()).toContain("/states/mississippi");
+});
+
+test("the FMLA basics check runs in the browser and sends nothing", async ({ page }) => {
+  await page.goto("/resources/fmla-basics-check");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  const sent: string[] = [];
+  // Link prefetches (GET page loads) are expected; anything carrying the answers is not.
+  page.on("request", (r) => {
+    if (r.method() !== "GET" || /[?&](size|months|hours)=/.test(r.url())) sent.push(`${r.method()} ${r.url()}`);
+  });
+  for (const group of await page.locator("fieldset").all()) await group.getByText("Yes", { exact: true }).click();
+  await expect(page.getByRole("heading", { name: /fmla may apply/i })).toBeVisible();
+  await page.locator("fieldset").first().getByText("No", { exact: true }).click();
+  await expect(page.getByRole("heading", { name: /may not apply/i })).toBeVisible();
+  expect(sent).toEqual([]);
 });
 
 test("security headers are present and app paths are not cacheable", async ({ request }) => {

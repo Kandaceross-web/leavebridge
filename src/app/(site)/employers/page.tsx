@@ -17,6 +17,8 @@ const AUDIENCES = [
   "Schools and universities",
   "Public agencies",
   "Healthcare organizations",
+  "Employee assistance programs (EAPs)",
+  "Unions",
 ];
 
 export default function EmployersPage() {

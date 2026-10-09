@@ -123,10 +123,10 @@ export default async function CheckoutPage({
       {!paid && extra.gate.ok ? (
         <ActionForm action={beginCheckout.bind(null, row.id)}>
           <Banner tone="info" icon="info">
-            Payment does not guarantee a diagnosis, documentation, or approval of leave. A licensed clinician makes an independent clinical determination, and leave decisions are made by your employer or leave administrator.
+            Payment does not guarantee a diagnosis, documentation, or approval of leave. A licensed clinician makes an independent clinical determination, and leave decisions are made by your employer or leave administrator. Your employer also decides whether it accepts a form from your clinician&rsquo;s license type, so please check with HR before you pay.
           </Banner>
           <Checkbox name="understand" value="yes" required>
-            I understand that I am paying for a professional assessment, not a particular outcome.
+            I understand that I am paying for a professional assessment, not a particular outcome, and that my employer decides whether to accept the form.
           </Checkbox>
           <SubmitButton pendingText="Opening secure checkout…">
             Continue to secure payment{service?.priceCents != null ? " · " : ""}

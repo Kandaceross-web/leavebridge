@@ -15,6 +15,15 @@ export default async function ResourcesPage() {
   return (
     <div className="container page stack stack-xl">
       <PageHead eyebrow="Guides" title="Mental health leave, explained plainly" lede="Answers to the questions people ask most before they request leave. General information, not legal advice." />
+      <div className="card card-mint stack stack-sm">
+        <h2>FMLA basics check</h2>
+        <p className="muted">Three questions about your job, not your health, to see whether the basic FMLA rules likely apply. Nothing you enter is saved.</p>
+        <div className="btn-row">
+          <ButtonLink href="/resources/fmla-basics-check" variant="secondary">
+            Take the check
+          </ButtonLink>
+        </div>
+      </div>
       {groups.length ? (
         groups.map((g) => (
           <section key={g.label} className="stack" aria-labelledby={`g-${g.label.toLowerCase().replace(/[^a-z]+/g, "-")}`}>
