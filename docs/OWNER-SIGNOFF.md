@@ -47,7 +47,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 29 | CLN-07 | Patients can message you through a secure thread that isn't monitored in real time. Keep? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). |
 | 30 | CLN-09 | Who can see all cases and reassign them (clinical director)? | Directors see all || **Signed off 2026-10-09:** "Just me" (decision card): the owner is the only clinical director at launch. |
 | 31 | CLN-10 | You write the outcome message to each patient yourself, no canned text. Keep? | As described || **Answered 2026-10-09:** "Add starter text" (decision card). Editable starting points per determination added (setting `outcomeStarters`); recording is refused while bracketed parts remain. CLN-10 stays open until the owner approves the starter wording (signoff/drafts/outcome-starters.md). |
-| 32 | CLN-11 | Assessment video visits are 50 minutes. Keep? | 50 minutes | |
+| 32 | CLN-11 | Assessment video visits are 50 minutes. Keep? | 50 minutes || **Signed off 2026-10-09:** "30 minutes" (decision card). Seed catalog set to 30; on an existing database, change it in Admin -> Services. |
 | 33 | CLN-13 | Patients confirm their location every time they join a video visit. Keep? | As described | |
 | 34 | CLN-14 | Approve the document templates (continuous, intermittent, reduced schedule, summary letter). | Drafts | |
 | 35 | STR-02 | Recheck your license is current at booking, at the visit and at signing. Keep? | As described | |

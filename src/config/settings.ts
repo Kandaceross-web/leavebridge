@@ -1,6 +1,17 @@
 import { z } from "zod";
 import type { ReviewTag } from "@/domain/constants";
 
+/** NPI check digit: Luhn over "80840" plus the first nine digits (CMS NPI standard). Catches most typos. */
+export function npiCheckDigitOk(npi: string): boolean {
+  let sum = 0;
+  [...("80840" + npi.slice(0, 9))].reverse().forEach((c, i) => {
+    let d = Number(c);
+    if (i % 2 === 0) d = d * 2 > 9 ? d * 2 - 9 : d * 2;
+    sum += d;
+  });
+  return (10 - (sum % 10)) % 10 === Number(npi[9]);
+}
+
 /**
  * Typed business configuration. Each key has a schema, a safe default and, when the value is
  * not yet professionally decided, a review tag. Admins override values at runtime through the
@@ -50,7 +61,8 @@ export const SETTING_DEFS = {
         "Ongoing therapy, medication management or emergency care",
         "Recertification visits ($119.99) and follow-up forms ($9.99 each), which are separate services",
       ],
-      paymentTiming: "Payment is collected after you choose your service and before your secure intake opens.",
+      paymentTiming:
+        "Payment is collected after you choose your service and before your secure intake opens.",
     },
     reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
     reviewNote: "OWN-05, OWN-06: exact inclusions and payment timing.",
@@ -62,16 +74,26 @@ export const SETTING_DEFS = {
     schema: z.object({
       /** Legal name of the billing provider. Owner sign-off Q9 (LEG-02): Defining You Therapeutic Services for now. */
       providerName: z.string().min(2),
-      providerNpi: z.string().regex(/^(\d{10})?$/, "A National Provider Identifier is 10 digits."),
-      providerTin: z.string().regex(/^(\d{2}-?\d{7})?$/, "A Taxpayer Identification Number is 9 digits (12-3456789)."),
-      serviceCode: z.string().regex(/^([0-9A-Z]{5})?$/, "A service (CPT/HCPCS) code is 5 characters."),
+      providerNpi: z
+        .string()
+        .regex(/^(\d{10})?$/, "A National Provider Identifier is 10 digits.")
+        .refine(
+          (v) => !v || npiCheckDigitOk(v),
+          "That NPI's last digit doesn't match. Check it at npiregistry.cms.hhs.gov.",
+        ),
+      providerTin: z
+        .string()
+        .regex(/^(\d{2}-?\d{7})?$/, "A Taxpayer Identification Number is 9 digits (12-3456789)."),
+      serviceCode: z
+        .string()
+        .regex(/^([0-9A-Z]{5})?$/, "A service (CPT/HCPCS) code is 5 characters."),
       diagnosisCodes: z.string().min(1),
       disclaimers: z.array(z.string().min(1)).min(1),
       disputeUrl: z.string().url(),
     }),
     default: {
       providerName: "Defining You Therapeutic Services",
-      providerNpi: "1962802912", // owner-provided 2026-10-09
+      providerNpi: "",
       providerTin: "",
       serviceCode: "",
       // CLN-12: forms carry no diagnosis field, so the estimate lists none.
@@ -85,7 +107,8 @@ export const SETTING_DEFS = {
       disputeUrl: "https://www.cms.gov/nosurprises",
     },
     reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
-    reviewNote: "LEG-08: provider NPI, TIN and the service (CPT) code for the written Good Faith Estimate; confirm the disclaimer wording.",
+    reviewNote:
+      "LEG-08: provider NPI, TIN and the service (CPT) code for the written Good Faith Estimate; confirm the disclaimer wording.",
   },
   refundPolicy: {
     label: "Cancellation and refund rules",
@@ -112,13 +135,41 @@ export const SETTING_DEFS = {
       summary:
         "You get a full refund if you cancel before your clinician starts reviewing your case. Once your clinician has made a determination, the fee is not refunded, whatever the outcome.",
       rules: [
-        { trigger: "before_intake_submitted", refundPercent: 100, note: "Cancel before submitting intake." },
-        { trigger: "after_intake_before_review", refundPercent: 100, note: "Cancel before your clinician starts reviewing your case." },
-        { trigger: "clinician_out_of_scope", refundPercent: 100, note: "Clinician determines the service is not appropriate." },
-        { trigger: "emergency_routed", refundPercent: 100, note: "Case paused for safety reasons." },
-        { trigger: "no_show", refundPercent: 0, note: "You miss your video visit without cancelling." },
-        { trigger: "late_cancel", refundPercent: 0, note: "You cancel less than 24 hours before your video visit." },
-        { trigger: "after_determination", refundPercent: 0, note: "The fee covers the assessment, whatever the outcome." },
+        {
+          trigger: "before_intake_submitted",
+          refundPercent: 100,
+          note: "Cancel before submitting intake.",
+        },
+        {
+          trigger: "after_intake_before_review",
+          refundPercent: 100,
+          note: "Cancel before your clinician starts reviewing your case.",
+        },
+        {
+          trigger: "clinician_out_of_scope",
+          refundPercent: 100,
+          note: "Clinician determines the service is not appropriate.",
+        },
+        {
+          trigger: "emergency_routed",
+          refundPercent: 100,
+          note: "Case paused for safety reasons.",
+        },
+        {
+          trigger: "no_show",
+          refundPercent: 0,
+          note: "You miss your video visit without cancelling.",
+        },
+        {
+          trigger: "late_cancel",
+          refundPercent: 0,
+          note: "You cancel less than 24 hours before your video visit.",
+        },
+        {
+          trigger: "after_determination",
+          refundPercent: 0,
+          note: "The fee covers the assessment, whatever the outcome.",
+        },
       ],
       lateCancelHours: 24,
     },
@@ -130,7 +181,8 @@ export const SETTING_DEFS = {
     label: "Turnaround messaging",
     schema: z.object({ publicMessage: z.string(), showPublicly: z.boolean() }),
     default: {
-      publicMessage: "Most people can start their intake the same day they create an account. Clinical timelines depend on your case.",
+      publicMessage:
+        "Most people can start their intake the same day they create an account. Clinical timelines depend on your case.",
       showPublicly: true,
     },
     reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
@@ -208,7 +260,8 @@ export const SETTING_DEFS = {
       waitlist: true,
     },
     reviewTag: null,
-    reviewNote: "AI drafting and form extraction stay off until LEG-06/SEC-04 close. External delivery off until LEG-07.",
+    reviewNote:
+      "AI drafting and form extraction stay off until LEG-06/SEC-04 close. External delivery off until LEG-07.",
   },
   outcomeStarters: {
     label: "Starting points for outcome messages",
@@ -244,11 +297,27 @@ export const SETTING_DEFS = {
       headline: "If you are in danger or thinking about harming yourself, get help now.",
       body: "LeaveBridge Health is not an emergency or crisis service and cannot respond in real time. Please contact one of these resources right away.",
       resources: [
-        { label: "Call or text 988", detail: "Suicide & Crisis Lifeline, available 24/7 in the U.S.", href: "tel:988" },
-        { label: "Call 911", detail: "For immediate danger or a medical emergency.", href: "tel:911" },
+        {
+          label: "Call or text 988",
+          detail: "Suicide & Crisis Lifeline, available 24/7 in the U.S.",
+          href: "tel:988",
+        },
+        {
+          label: "Call 911",
+          detail: "For immediate danger or a medical emergency.",
+          href: "tel:911",
+        },
         { label: "Go to the nearest emergency room", detail: "If you can do so safely.", href: "" },
-        { label: "Mississippi: 1-877-210-8513", detail: "Mississippi Department of Mental Health helpline.", href: "tel:18772108513" },
-        { label: "Tennessee: 855-274-7471", detail: "Tennessee Statewide Crisis Line, available 24/7.", href: "tel:18552747471" },
+        {
+          label: "Mississippi: 1-877-210-8513",
+          detail: "Mississippi Department of Mental Health helpline.",
+          href: "tel:18772108513",
+        },
+        {
+          label: "Tennessee: 855-274-7471",
+          detail: "Tennessee Statewide Crisis Line, available 24/7.",
+          href: "tel:18552747471",
+        },
       ],
     },
     reviewTag: "CLINICAL_REVIEW_REQUIRED" as ReviewTag,

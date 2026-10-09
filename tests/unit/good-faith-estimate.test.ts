@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SETTING_DEFS } from "@/config/settings";
+import { npiCheckDigitOk, SETTING_DEFS } from "@/config/settings";
 import { buildEstimate, canonicalEstimate, estimateSections, missingEstimateFields, needsNewEstimate, type EstimateInput } from "@/domain/payments/good-faith-estimate";
 
 const setting = SETTING_DEFS.goodFaithEstimate.default;
@@ -85,5 +85,12 @@ describe("re-issuing", () => {
   it("issues a new one when the service or the amount changes", () => {
     expect(needsNewEstimate({ ...current, amountCents: 25000 }, current)).toBe(true);
     expect(needsNewEstimate({ ...current, serviceId: "svc-2" }, current)).toBe(true);
+  });
+});
+
+describe("NPI check digit", () => {
+  it("accepts a valid NPI and rejects a one-digit typo", () => {
+    expect(npiCheckDigitOk("1234567893")).toBe(true);
+    expect(npiCheckDigitOk("1234567894")).toBe(false);
   });
 });

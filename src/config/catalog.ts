@@ -40,7 +40,7 @@ export const SERVICES: ServiceSeed[] = [
     requiresSession: true,
     requiresIdentityVerification: true,
     requiresEmployerForm: false,
-    sessionMinutes: 50,
+    sessionMinutes: 30, // CLN-11: owner chose 30-minute assessment visits on 2026-10-09
     displayOrder: 1,
     priceCents: LAUNCH_PRICE_CENTS,
     reviewTag: null,
