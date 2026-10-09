@@ -59,6 +59,10 @@ intake and templates; licensure verification for each active state; security ris
 Uploads (SEC-06, owner sign-off Q41): run a ClamAV daemon reachable from the app and set `SCAN_PROVIDER=clamav` and
 `CLAMAV_HOST=host:3310`. The default `basic` scanner only checks file type and the EICAR test string.
 
+Error reporting (SEC-11, owner decision Q43): server errors go to Sentry only when `SENTRY_DSN` is set and
+`SENTRY_BAA_SIGNED=1`. Set the second only after Sentry has signed a BAA with the practice. Reports carry the error
+class, route pattern, method and stack frames, never messages, paths, headers or users (`src/server/error-reporting.ts`).
+
 ## Rollback
 
 Deploy the previous image tag. Migrations are forward-only; write additive migrations so the previous image keeps

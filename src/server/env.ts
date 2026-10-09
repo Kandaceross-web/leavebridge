@@ -39,6 +39,10 @@ const schema = z.object({
   IDV_PROVIDER: z.enum(["manual"]).default("manual"),
   /** Optional privacy-preserving analytics script for marketing pages only. Never loaded in the app. */
   SITE_ANALYTICS_SRC: z.string().url().optional(),
+  /** Sentry project DSN for server error reports (SEC-11). Used only with SENTRY_BAA_SIGNED=1; see src/server/error-reporting.ts. */
+  SENTRY_DSN: z.string().url().optional(),
+  /** "1" records that Sentry has signed a BAA with the practice. Without it, nothing is sent to Sentry. */
+  SENTRY_BAA_SIGNED: z.enum(["0", "1"]).default("0"),
   /**
    * "1" renders the public-pages-only preview that scripts/export-public-site.ts publishes to static hosting before launch:
    * links into the app go to /opening-soon and forms are replaced with a notice. Never set on the running app.
@@ -77,6 +81,7 @@ function load(): Env {
       )
         problems.push("Stripe keys missing");
       if (data.STORAGE_PROVIDER === "s3" && !data.S3_BUCKET) problems.push("S3_BUCKET missing");
+      if (data.SENTRY_DSN && data.SENTRY_BAA_SIGNED !== "1") problems.push("SENTRY_DSN set without SENTRY_BAA_SIGNED=1");
       for (const key of ["SITE_ORIGIN", "APP_ORIGIN"] as const)
         if (!data[key].startsWith("https://") || /localhost|\.invalid/.test(data[key]))
           problems.push(`${key} must be the real https origin`);
