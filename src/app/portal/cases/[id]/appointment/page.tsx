@@ -1,15 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ActionForm, ChoiceGroup, SelectField, SubmitButton, TextField } from "@/components/forms";
+import { ActionForm, ChoiceGroup, SubmitButton, TextField } from "@/components/forms";
 import { Banner, DateTime, Empty, Icon, KeyValue } from "@/components/ui";
 import { caseAppointments, availableSlots } from "@/server/services/scheduling";
-import { allStateOptions, myPatientProfile } from "@/server/services/portal-queries";
+import { myPatientProfile } from "@/server/services/portal-queries";
+import { VISIT_OPENS_MINUTES_BEFORE } from "@/domain/scheduling/visit-window";
 import { PATIENT_STATUS } from "@/domain/cases/state-machine";
 import { ownedCase } from "../../../_lib/load";
 import { caseHref, zonedParts } from "../../../_lib/steps";
 import { StepHead } from "../../../_components/step-head";
-import { JoinOutcome } from "../../../_components/client";
-import { book, cancelAppt, joinAppt } from "./actions";
+import { book, cancelAppt } from "./actions";
 
 export const metadata: Metadata = { title: "Telehealth appointment" };
 
@@ -19,9 +19,8 @@ export default async function AppointmentPage({ params }: { params: Promise<{ id
     appts: await caseAppointments(ctx, r.id),
     slots: r.status === "appointment_needed" ? await availableSlots(ctx, r.id) : [],
     profile: await myPatientProfile(ctx),
-    states: await allStateOptions(ctx),
   }));
-  const { appts, slots, profile, states } = extra;
+  const { appts, slots, profile } = extra;
   const tz = profile.timeZone;
   const booked = appts.find((a) => a.a.status === "booked") ?? null;
   const past = appts.filter((a) => a.a.status !== "booked");
@@ -61,11 +60,15 @@ export default async function AppointmentPage({ params }: { params: Promise<{ id
             <h3 id="join-heading">
               <Icon name="video" /> Join your visit
             </h3>
-            <ActionForm action={joinAppt.bind(null, row.id, booked.a.id)}>
-              <JoinOutcome />
-              <SelectField name="state" label="Which state are you physically in right now?" required placeholder="Choose a state" options={states} />
-              <SubmitButton pendingText="Checking…">Join visit</SubmitButton>
-            </ActionForm>
+            <p className="small muted">
+              The visit room opens {VISIT_OPENS_MINUTES_BEFORE} minutes before your start time. You&rsquo;ll confirm the state you are in, then join from this portal. No app to install.
+            </p>
+            {/* A full page load, not client navigation: the visit page has its own Content Security Policy. */}
+            <p>
+              <a className="btn btn-primary" href={`${caseHref(row.id)}/visit`}>
+                Go to video visit
+              </a>
+            </p>
           </section>
 
           <details>

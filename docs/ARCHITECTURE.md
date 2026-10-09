@@ -13,7 +13,7 @@ Browser ──► CloudFront + WAF ──► Next.js (ECS Fargate, standalone bu
                                    ▼
                      PostgreSQL 16 (RDS)  ◄── RLS per transaction actor, append-only triggers
                      S3 + KMS (encrypted files)   SES/SNS (minimal-content notices)
-                     Stripe (checkout, webhooks)  Video vendor (TBD)   AI (disabled by default)
+                     Stripe (checkout, webhooks)  Amazon Chime SDK (video)   AI (disabled by default)
 ```
 
 ## Layers

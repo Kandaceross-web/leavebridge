@@ -185,6 +185,7 @@ legend { font-weight: 600; font-size: 15px; color: var(--lb-navy); padding: 0; m
 .kv { display: grid; grid-template-columns: minmax(110px, auto) 1fr; gap: 8px 16px; font-size: 14.5px; margin: 0; }
 .kv dt { color: var(--lb-ink-2); }
 .kv dd { margin: 0; color: var(--lb-ink); font-weight: 500; min-width: 0; overflow-wrap: anywhere; }
+.kv dd .badge { white-space: normal; }
 .list-plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .list-check { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
 .list-check li { display: flex; gap: 10px; align-items: flex-start; }

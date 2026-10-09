@@ -4,7 +4,9 @@
  *
  *   npm run db:seed
  */
+import { eq } from "drizzle-orm";
 import { withActor } from "@/server/db/actor";
+import { appointments } from "@/server/db/schema";
 import { pool } from "@/server/db/client";
 import { env } from "@/server/env";
 import { seedReference, seedStaff, FIXTURE_PASSWORD, FIXTURE_STAFF, FIXTURE_TOTP_SECRET } from "@/server/fixtures/reference";
@@ -50,12 +52,19 @@ async function main() {
   // Ready to pay: shows the written Good Faith Estimate on the checkout step (e2e).
   const kai = await make("Kai", "Rivera", {}, "checkout@leavebridge.test");
   await advancePatient(kai, "consents_payment");
+  // A booked video visit happening now (moved to the current time after booking): the visit pages and join check (e2e).
+  const lee = await make("Lee", "Morgan", {}, "visit@leavebridge.test");
+  await advancePatient(lee, "submit");
+  await advanceClinical(staff, lee, "book");
+  const startsAt = new Date(Date.now() - 5 * 60_000);
+  await withActor(system, (ctx) => ctx.tx.update(appointments).set({ startsAt, endsAt: new Date(startsAt.getTime() + 30 * 60_000) }).where(eq(appointments.caseId, lee.caseId)));
 
   console.log("Seeded fictional data.");
   console.log(`  Staff password: ${FIXTURE_PASSWORD}   TOTP secret: ${FIXTURE_TOTP_SECRET}`);
   for (const s of Object.values(FIXTURE_STAFF)) console.log(`  ${s.email.padEnd(32)} ${s.roles.join(", ")}`);
   console.log(`  patient@leavebridge.test         patient (case awaiting appointment)`);
   console.log(`  checkout@leavebridge.test        patient (case at the payment step)`);
+  console.log(`  visit@leavebridge.test           patient (video visit open now, for about an hour after seeding)`);
 }
 
 main()
