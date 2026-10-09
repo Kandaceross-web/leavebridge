@@ -122,7 +122,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | SEC-05 | Payment data minimization | P1 | Yes | Hosted checkout; no card data touches the app | Payment provider | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-06 | Upload pipeline | P1 | Yes | 15 MB, magic-byte type check, PDF structure check, EICAR test; ClamAV adapter for production | `src/server/providers/scan.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-07 | Screening purge job | P1 | Yes | `npm run jobs -- purge-screenings` (schedule daily) | `scripts/jobs.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| SEC-08 | Video vendor security review | P1 | Yes | No vendor | — | Open |
+| SEC-08 | Video vendor security review | P1 | Yes | Owner chose Amazon Chime SDK (Q42, 2026-10-09), covered by the AWS BAA; adapter being built | — | Open (vendor chosen; build and BAA evidence pending) |
 | SEC-09 | AWS account architecture / HIPAA-eligible services; signed AWS BAA *(evidence required)* | P0 | Yes | Terraform skeleton only. **2026-10-09 (owner):** AWS organization "Kandaceross-Team" created, advanced features on, BAA accepted on the management account. Evidence still needed: the AWS Artifact agreement record showing it is the organization-wide BAA (covering the workload accounts, not only the management account), and workloads limited to HIPAA-eligible services. | `infra/` | Open |
 | SEC-10 | Backup, restore drill, DR *(evidence required)* | P1 | Yes | RDS PITR + snapshot plan documented | `docs/DEPLOYMENT.md` | Open |
 | SEC-11 | Error monitoring PHI scrubbing | P1 | Yes | No third-party error monitoring; allow-list logger only | `src/server/logger.ts` | Open |
