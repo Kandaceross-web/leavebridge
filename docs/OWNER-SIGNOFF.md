@@ -56,7 +56,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 38 | STR-05 | Keep clinical and audit records for 7 years? | 7 years || **Signed off 2026-10-09:** "7 years" (decision card). Owner to confirm the MS and TN board minimums are not longer. No automatic deletion of clinical records exists yet; it must be built before records reach 7 years. |
 | 39 | STR-06 | Approve the mandatory reporting and duty-to-warn notice in consent. | Not written | |
 | 40 | SEC-03 | Emergency access to a case needs a reason and a second person's approval. With one clinician, should you be able to approve your own? | Second approver required || **Signed off 2026-10-09:** "Allow self-approval" (decision card). An approver can approve their own break-glass request with a written reason; the audit event is marked selfApproved and needsReview, and the access page labels it self-approved. Setting: security.allowSelfApprovedAccess (on). |
-| 41 | SEC-06 | Uploads limited to 15 MB PDF, JPG or PNG, virus-scanned. Keep? | As described | |
+| 41 | SEC-06 | Uploads limited to 15 MB PDF, JPG or PNG, virus-scanned. Keep? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). Uploads stay 15 MB, PDF/JPG/PNG only. ClamAV must be running on AWS before launch (not set up yet). |
 | 42 | SEC-08 | Which video service will you use? | None chosen | |
 | 43 | SEC-11 / SEC-12 | No third-party error monitoring; logs only keep fields on an allow-list. Keep? | As described | |
 | 44 | SEC-13 | Audit log can't be edited and is checked for tampering. Accept? | As described | |
