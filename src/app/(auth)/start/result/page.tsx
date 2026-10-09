@@ -10,6 +10,8 @@ import { REASON_CODE_LABEL } from "@/config/screening";
 import { ButtonLink, Icon } from "@/components/ui";
 import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/forms";
 import { waitlistAction } from "@/app/(site)/actions";
+import { continueLinkAction } from "../actions";
+import { continueLinkOffer } from "@/server/services/continue-link";
 
 export const metadata: Metadata = { title: "Your results" };
 
@@ -84,6 +86,8 @@ export default async function ScreeningResultPage() {
   }
   const reasons = (row.reasonCodes ?? []).map((c) => PATIENT_REASON[c]).filter(Boolean) as string[];
   const waitlist = outcome === "NOT_AVAILABLE" ? await waitlistOffer(row) : null;
+  // OWN-25 (Q48): one optional link back here for people who can continue but are not ready yet.
+  const linkExpires = continueLinkOffer(row);
   return (
     <div className="container-narrow page stack stack-lg">
       <div className="card stack">
@@ -126,6 +130,30 @@ export default async function ScreeningResultPage() {
                 Review pricing first
               </ButtonLink>
             </div>
+            {linkExpires ? (
+              <section className="card-flat stack stack-sm" aria-labelledby="continue-title">
+                <h2 id="continue-title">Not ready to create your account?</h2>
+                <p className="muted">
+                  We can email you one link that brings you back here without answering the
+                  questions again. It works once and expires {linkExpires}. Your answers are not in
+                  the email. We use your address only to send it and do not keep it, and we will not
+                  send reminders or marketing. This is optional.
+                </p>
+                <ActionForm action={continueLinkAction}>
+                  <TextField
+                    name="email"
+                    label="Email"
+                    type="email"
+                    autoComplete="email"
+                    maxLength={254}
+                    required
+                  />
+                  <SubmitButton variant="secondary" pendingText="Sending…">
+                    Email me a link to continue
+                  </SubmitButton>
+                </ActionForm>
+              </section>
+            ) : null}
           </>
         ) : (
           <div className="stack stack-sm">

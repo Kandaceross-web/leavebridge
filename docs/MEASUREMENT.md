@@ -33,10 +33,19 @@ available in <State>", a link to `/start?entry=waitlist`, and a note that it is 
 What remains is `waitlist_notices` (state, count, sender, date) and one `waitlist.notified` audit event with the state
 and count. Addresses never appear in the page, logs, URLs, analytics or audit metadata.
 
+People whose screening lets them continue (available, or available after clinician review) can ask on their result page
+for one "Email me a link to continue" email (OWN-25, Q48). The email has the brand name, a single-use link to
+`/start/continue/<token>` and its expiry, nothing else; the address is used for that one send and not stored. The link
+restores the original screening, so its first-party attribution is unchanged (the link does not count as a new entry).
+No reminders, marketing or abandonment follow-up are sent. Logs record only that a link was sent or used, with no
+address, screening id or token; nothing is audited or sent to analytics.
+
 ## Link conventions
 
 - Campaign links: `utm_source`, `utm_medium`, `utm_campaign` (lowercase, hyphens), for example
   `?utm_source=psychology-today&utm_medium=directory&utm_campaign=profile`.
 - Screening CTAs carry `?entry=` naming where the button sits (`home-hero`, `pricing`, `guide-<slug>`, `state-<slug>`,
   `header`, `footer`, `availability`), or `waitlist` for the link in the "we now serve your state" email.
+- The only secret in any URL is the continue-link token in `/start/continue/<token>`; that page sets
+  `Referrer-Policy: no-referrer` and opening it does not use the link (the button does).
 - Never put health information, names or emails in any URL.

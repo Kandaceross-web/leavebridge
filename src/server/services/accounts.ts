@@ -2,7 +2,7 @@ import "server-only";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import type { Ctx } from "../db/actor";
-import { cases, caseStatusHistory, patients, screenings, userRoles, users } from "../db/schema";
+import { cases, caseStatusHistory, patients, screeningContinueLinks, screenings, userRoles, users } from "../db/schema";
 import { audit } from "../audit";
 import { decrypt, decryptJson, encrypt } from "../crypto";
 import { DUMMY_HASH, hashPassword, passwordProblems, verifyPassword } from "../auth/password";
@@ -59,6 +59,8 @@ export async function promoteScreeningToCase(ctx: Ctx, screening: ScreeningRow, 
     .returning();
   await ctx.tx.insert(caseStatusHistory).values({ caseId: c!.id, fromStatus: null, toStatus: "started", actorUserId: ctx.actor.kind === "patient" ? ctx.actor.userId : null, reason: "created from screening" });
   await ctx.tx.update(screenings).set({ status: "promoted", patientId }).where(eq(screenings.id, screening.id));
+  // An unused "continue" link has no purpose once the account exists.
+  await ctx.tx.delete(screeningContinueLinks).where(eq(screeningContinueLinks.screeningId, screening.id));
   await audit(ctx, { action: "case.created", subjectType: "case", subjectId: c!.id, caseId: c!.id, metadata: { screeningOutcome: screening.outcome } });
   return c!.id;
 }

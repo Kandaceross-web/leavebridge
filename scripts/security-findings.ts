@@ -26,7 +26,7 @@ export const RLS_REQUIRED = [
   "ai_suggestions", "appointments", "assessment_notes", "case_notes", "case_status_history", "cases", "clinical_reviews", "consents", "deliveries",
   "determinations", "document_requests", "document_versions", "documents", "employer_forms", "files", "good_faith_estimates", "identity_verifications", "intakes",
   "location_attestations", "measure_responses", "message_threads", "messages", "patients", "payments", "refunds", "release_authorizations",
-  "safety_events", "screenings",
+  "safety_events", "screening_continue_links", "screenings",
 ];
 
 /**

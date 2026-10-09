@@ -15,6 +15,8 @@ export const LIMITS = {
   upload: { max: 30, windowSeconds: 60 * 60 },
   mfa: { max: 10, windowSeconds: 15 * 60 },
   message: { max: 30, windowSeconds: 60 * 60 },
+  /** "Email me a link to continue": per screening, so the box cannot be used to flood an address. */
+  continueLink: { max: 3, windowSeconds: 24 * 60 * 60 },
 } as const;
 
 export async function rateLimit(bucket: keyof typeof LIMITS, key: string): Promise<void> {

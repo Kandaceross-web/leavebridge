@@ -43,6 +43,25 @@ export const screenings = pgTable(
   (t) => [index("screenings_expiry_idx").on(t.status, t.expiresAt)],
 );
 
+/**
+ * "Email me a link to continue" (OWN-25, Q48): one single-use link back to a finished screening.
+ * Only the token's HMAC, the screening and the expiry are stored; never the email address.
+ * Rows are deleted when the link is used, replaced, or expires (purge-screenings job).
+ */
+export const screeningContinueLinks = pgTable(
+  "screening_continue_links",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tokenHash: text("token_hash").notNull().unique(),
+    screeningId: uuid("screening_id")
+      .notNull()
+      .references(() => screenings.id),
+    createdAt: createdAt(),
+    expiresAt: ts("expires_at").notNull(),
+  },
+  (t) => [index("screening_continue_links_screening_idx").on(t.screeningId), index("screening_continue_links_expiry_idx").on(t.expiresAt)],
+);
+
 export const cases = pgTable(
   "cases",
   {

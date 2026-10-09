@@ -2,7 +2,8 @@
  * Scheduled jobs. Run one job per invocation from the platform scheduler (EventBridge → ECS task,
  * or cron in development):
  *
- *   npm run jobs -- purge-screenings      hourly   clears answers from abandoned anonymous screenings
+ *   npm run jobs -- purge-screenings      hourly   clears answers from abandoned anonymous screenings and
+ *                                                  deletes expired "continue" links
  *   npm run jobs -- appointment-reminders hourly   in-portal + email/SMS reminder ~24h before a visit
  *   npm run jobs -- credential-expiry     daily    logs a count of licenses/privileges/malpractice expiring soon
  *   npm run jobs -- verify-audit-chain    daily    fails loudly if the audit hash chain is broken
@@ -14,13 +15,15 @@ import { pool } from "@/server/db/client";
 import { withActor, systemActor } from "@/server/db/actor";
 import { appointments, cases, notifications, patients } from "@/server/db/schema";
 import { purgeExpiredScreenings } from "@/server/services/screening";
+import { purgeExpiredContinueLinks } from "@/server/services/continue-link";
 import { notifyUser } from "@/server/services/notify";
 import { expiringCredentials } from "@/server/services/admin";
 import { verifyAuditChain } from "@/server/audit";
 import { log } from "@/server/logger";
 
 const jobs: Record<string, () => Promise<number>> = {
-  "purge-screenings": () => withActor(systemActor("job:purge-screenings"), purgeExpiredScreenings),
+  "purge-screenings": () =>
+    withActor(systemActor("job:purge-screenings"), async (ctx) => (await purgeExpiredScreenings(ctx)) + (await purgeExpiredContinueLinks(ctx))),
 
   "appointment-reminders": () =>
     withActor(systemActor("job:appointment-reminders"), async (ctx) => {
