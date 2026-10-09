@@ -30,7 +30,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 12 | LEG-05 | Approve the public copy and status labels (no outcome promises)? | Neutral labels | |
 | 13 | LEG-06 / SEC-04 / CLN-06 | Keep AI drafting turned off at launch? | Off || **Signed off 2026-10-09:** "Keep it off" (decision card). |
 | 14 | LEG-07 | Patients send their own documents to employers; LeaveBridge doesn't send them. Keep for launch? | External sending off || **Signed off 2026-10-09:** "Patients send them" (decision card). |
-| 15 | LEG-08 | Show the price before payment and not issue a separate Good Faith Estimate document. Accept? | Price shown before payment | |
+| 15 | LEG-08 | Show the price before payment and not issue a separate Good Faith Estimate document. Accept? | Price shown before payment || **Answered 2026-10-09:** "Add the estimate" (decision card). Build a written Good Faith Estimate in the portal before payment; LEG-08 stays open until it is built. |
 | 16 | LEG-09 / OWN-07 | Approve the refund rules (full refund before intake is submitted; partial after). | Placeholder policy | |
 | 17 | LEG-10 / SEC-07 | Delete screening answers from people who never sign up after 30 days. Keep? | 30 days | |
 | 18 | LEG-11 | Require a photo ID upload reviewed by staff. Keep? | Required | |
