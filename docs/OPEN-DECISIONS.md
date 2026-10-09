@@ -68,7 +68,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | LEG-07 | Release authorization content; communication with employers | P1 | Yes | Patient-created releases recorded; external sending disabled | `features.externalDelivery`; release consent placeholder | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-08 | Good Faith Estimate obligations | P1 | Yes | Price shown before payment; no GFE document generated | Pricing page; checkout | Open (2026-10-09, Zxryeni chose to issue a written Good Faith Estimate before payment; build pending) |
 | LEG-09 | Refund policy under consumer law; chargebacks | P1 | Yes | Placeholder policy, tagged | Business rules → refundPolicy | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| LEG-10 | Retention of screening data from people who never book | P1 | Yes | Answers purged after 30 days (`purgeExpiredScreenings` job) | Business rules → retention; `scripts/jobs.ts` | Open |
+| LEG-10 | Retention of screening data from people who never book | P1 | Yes | Answers purged after 30 days (`purgeExpiredScreenings` job) | Business rules → retention; `scripts/jobs.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-11 | Identity verification permissibility and handling | P1 | Yes | ID images encrypted, staff-only, audited | Identity service | Open |
 | LEG-12 | Payment processor data | P1 | Yes | Only an opaque payment id and neutral description sent | Payment provider | Open |
 | LEG-13 | Email/SMS consent and content | P1 | Yes | Email "something is waiting" only; SMS off and opt-in | Templates; `features.smsNotifications` | Open |
@@ -121,7 +121,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | SEC-04 | AI vendor configuration | P1 | Yes | Bedrock adapter (no training by AWS terms; verify); off by default | `AI_PROVIDER` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-05 | Payment data minimization | P1 | Yes | Hosted checkout; no card data touches the app | Payment provider | Open |
 | SEC-06 | Upload pipeline | P1 | Yes | 15 MB, magic-byte type check, PDF structure check, EICAR test; ClamAV adapter for production | `src/server/providers/scan.ts` | Open |
-| SEC-07 | Screening purge job | P1 | Yes | `npm run jobs -- purge-screenings` (schedule daily) | `scripts/jobs.ts` | Open |
+| SEC-07 | Screening purge job | P1 | Yes | `npm run jobs -- purge-screenings` (schedule daily) | `scripts/jobs.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-08 | Video vendor security review | P1 | Yes | No vendor | — | Open |
 | SEC-09 | AWS account architecture / HIPAA-eligible services; signed AWS BAA *(evidence required)* | P0 | Yes | Terraform skeleton only. **2026-10-09 (owner):** AWS organization "Kandaceross-Team" created, advanced features on, BAA accepted on the management account. Evidence still needed: the AWS Artifact agreement record showing it is the organization-wide BAA (covering the workload accounts, not only the management account), and workloads limited to HIPAA-eligible services. | `infra/` | Open |
 | SEC-10 | Backup, restore drill, DR *(evidence required)* | P1 | Yes | RDS PITR + snapshot plan documented | `docs/DEPLOYMENT.md` | Open |
