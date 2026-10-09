@@ -37,7 +37,7 @@ test("guides and state pages carry structured data, review tags and no doorway p
   expect(ld).not.toMatch(/aggregateRating|review/i);
 
   await page.goto("/states/tennessee");
-  await expect(page.getByText(/855-274-7471/)).toBeVisible();
+  await expect(page.locator("main").getByText(/855-274-7471/)).toBeVisible();
   // A state with no state-specific content has no page.
   expect((await request.get("/states/alabama")).status()).toBe(404);
 

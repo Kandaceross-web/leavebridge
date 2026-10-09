@@ -191,6 +191,8 @@ export const SETTING_DEFS = {
         { label: "Call or text 988", detail: "Suicide & Crisis Lifeline, available 24/7 in the U.S.", href: "tel:988" },
         { label: "Call 911", detail: "For immediate danger or a medical emergency.", href: "tel:911" },
         { label: "Go to the nearest emergency room", detail: "If you can do so safely.", href: "" },
+        { label: "Mississippi: 1-877-210-8513", detail: "Mississippi Department of Mental Health helpline.", href: "tel:18772108513" },
+        { label: "Tennessee: 855-274-7471", detail: "Tennessee Statewide Crisis Line, available 24/7.", href: "tel:18552747471" },
       ],
     },
     reviewTag: "CLINICAL_REVIEW_REQUIRED" as ReviewTag,
