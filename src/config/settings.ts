@@ -210,6 +210,29 @@ export const SETTING_DEFS = {
     reviewTag: null,
     reviewNote: "AI drafting and form extraction stay off until LEG-06/SEC-04 close. External delivery off until LEG-07.",
   },
+  outcomeStarters: {
+    label: "Starting points for outcome messages",
+    // CLN-10 (owner sign-off 2026-10-09): optional, editable starting text for the patient message the clinician writes
+    // with each determination. The clinician still writes and reviews every message; bracketed parts must be replaced.
+    schema: z.object({
+      DOCUMENTATION_CLINICALLY_SUPPORTED: z.string(),
+      ADDITIONAL_INFORMATION_REQUIRED: z.string(),
+      DOCUMENTATION_NOT_CLINICALLY_SUPPORTED: z.string(),
+      REFER_OUTSIDE_SCOPE: z.string(),
+    }),
+    default: {
+      DOCUMENTATION_CLINICALLY_SUPPORTED:
+        "I have finished reviewing your information and our visit. In my clinical judgment, leave documentation is supported. Your completed forms will be in your portal once I sign them. Your employer or leave administrator makes the final decision about your leave. [Add anything specific to you.]",
+      ADDITIONAL_INFORMATION_REQUIRED:
+        "I have reviewed your information, and I need a little more before I can make a determination. [Say what you need.] Please send it through your portal.",
+      DOCUMENTATION_NOT_CLINICALLY_SUPPORTED:
+        "Thank you for sharing what you are going through. After reviewing your information and our visit, I am not able to complete leave documentation based on what I assessed. This is not a judgment of how hard things are for you. [Add next steps or care options.] If you are in crisis, call or text 988.",
+      REFER_OUTSIDE_SCOPE:
+        "Thank you for trusting me with your situation. What you need is outside what I can assess through this service, so I am not able to complete these forms. [Add who can help.] A refund will be processed under our refund policy.",
+    },
+    reviewTag: "CLINICAL_REVIEW_REQUIRED" as ReviewTag,
+    reviewNote: "CLN-10: the owner approves the starting-point wording before launch.",
+  },
   crisis: {
     label: "Crisis and emergency content",
     schema: z.object({

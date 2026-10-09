@@ -4,6 +4,8 @@ import { run } from "@/server/auth/guards";
 import { assessmentNoteHistory, caseDeterminations } from "@/server/services/clinical";
 import { caseAppointments } from "@/server/services/scheduling";
 import { caseClinicalReviews } from "@/server/services/ops-queries";
+import { getSetting } from "@/server/settings";
+import { OutcomeStarters } from "./outcome-starters";
 import { DETERMINATION_DECISIONS } from "@/domain/constants";
 import { assessmentNoteAction, clinicalReviewAction, determinationAction } from "../actions";
 import { DECISION_LABEL, isAssigned, LimitedPanel, REVIEW_OUTCOME_LABEL, tryClinical, type TabProps } from "../_shared";
@@ -19,6 +21,7 @@ export async function ClinicalTab(props: TabProps) {
       notes: await assessmentNoteHistory(ctx, ws.row.id),
       determinations: await caseDeterminations(ctx, ws.row.id, "clinical"),
       appointments: await caseAppointments(ctx, ws.row.id),
+      starters: await getSetting(ctx.tx, "outcomeStarters"),
     })),
   );
   if (!data) return <LimitedPanel {...props} />;
@@ -163,7 +166,8 @@ export async function ClinicalTab(props: TabProps) {
               <ChoiceGroup name="decision" legend="Determination" required options={DETERMINATION_DECISIONS.map((d) => ({ value: d, label: DECISION_LABEL[d] }))} />
               <TextArea name="rationale" label="Clinical rationale" hint="Required, at least 20 characters. Not shown to the patient." required rows={5} maxLength={8000} />
               <TextArea name="findings" label="Relevant findings" hint="Required, at least 10 characters. Not shown to the patient." required rows={4} maxLength={8000} />
-              <TextArea name="patientMessage" label="Message to the patient" hint="Shown in the patient portal with the decision." required rows={3} maxLength={4000} />
+              <TextArea name="patientMessage" label="Message to the patient" hint="Shown in the patient portal with the decision." required rows={5} maxLength={4000} />
+              <OutcomeStarters starters={DETERMINATION_DECISIONS.map((d) => ({ label: DECISION_LABEL[d], text: data.starters[d] }))} />
               <TextArea name="requestMessage" label="Information requested from the patient" hint="Required only for “Additional information is required”." rows={3} maxLength={2000} />
               <SubmitButton pendingText="Recording…">Record determination</SubmitButton>
             </ActionForm>

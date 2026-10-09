@@ -72,6 +72,15 @@ describe("clinician and staff access", () => {
     await rejects(as(other, (ctx) => recordDetermination(ctx, p.caseId, { decision: "DOCUMENTATION_CLINICALLY_SUPPORTED", rationale: "x".repeat(30), findings: "y".repeat(20), patientMessage: "z" })), "forbidden");
   });
 
+  it("refuses an outcome message that still has a starting point's bracketed parts (CLN-10)", async () => {
+    const s = await staff();
+    const p = await newPatient("Bea", "Bracket");
+    await advancePatient(p, "submit");
+    await advanceClinical(s, p, "review_session");
+    const input = { decision: "ADDITIONAL_INFORMATION_REQUIRED", rationale: "x".repeat(30), findings: "y".repeat(20), patientMessage: "I need a little more. [Say what you need.]", requestMessage: "Fictional request" };
+    await rejects(as(staffActor(s, "clinician"), (ctx) => recordDetermination(ctx, p.caseId, input)), "invalid");
+  });
+
   it("operations staff cannot read protected clinical data without an approved grant", async () => {
     const s = await staff();
     const p = await newPatient("Dev", "Ops");

@@ -181,6 +181,7 @@ export async function recordDetermination(ctx: Ctx, caseId: string, input: { dec
   if (input.rationale.trim().length < 20) throw invalid("Rationale is required (at least a sentence).");
   if (input.findings.trim().length < 10) throw invalid("Relevant findings are required.");
   if (!input.patientMessage.trim()) throw invalid("Write the message the patient will see.");
+  if (/\[[^\]]*\]/.test(input.patientMessage)) throw invalid("Replace the bracketed parts of the starting point before recording.");
   if (!["clinical_review", "provider_review", "appointment_scheduled", "completed"].includes(row.status)) {
     throw conflict("A determination can't be recorded at this stage.");
   }
