@@ -97,15 +97,24 @@ export async function acquisitionFunnel(ctx: Ctx, opts: { days: number; by: Grou
 
 /**
  * Unserved demand: completed screenings from people in states we do not serve yet, by state.
- * The single strongest signal for which state to license next (OWN-02).
+ * The single strongest signal for which state to license next (OWN-02). Also shown on the
+ * Waitlist page, which clinical directors can open too.
  */
 export async function unservedDemand(ctx: Ctx, days: number) {
-  requireRole(ctx.actor, ["admin"]);
+  requireRole(ctx.actor, ["admin", "clinical_director"]);
   const since = new Date(Date.now() - days * 86_400_000);
   return ctx.tx
     .select({ state: screenings.stateCode, n: sql<number>`count(*)::int` })
     .from(screenings)
-    .where(and(gte(screenings.createdAt, since), eq(screenings.outcome, "NOT_AVAILABLE"), sql`${screenings.stateCode} is not null`))
+    .where(
+      and(
+        gte(screenings.createdAt, since),
+        eq(screenings.outcome, "NOT_AVAILABLE"),
+        sql`${screenings.stateCode} is not null`,
+        // Only screenings stopped by an unserved state (not, say, an under-18 answer in a served state).
+        sql`${screenings.reasonCodes} && array['STATE_NOT_ACTIVE', 'APPOINTMENT_STATE_NOT_ACTIVE']::text[]`,
+      ),
+    )
     .groupBy(screenings.stateCode)
     .orderBy(sql`count(*) desc`);
 }

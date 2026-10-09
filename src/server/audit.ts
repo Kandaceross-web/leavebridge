@@ -78,7 +78,8 @@ export type AuditAction =
   | "content.published"
   | "consent_version.published"
   | "service.updated"
-  | "price.created";
+  | "price.created"
+  | "waitlist.notified";
 
 export interface AuditInput {
   action: AuditAction;

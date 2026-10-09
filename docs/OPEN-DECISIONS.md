@@ -132,4 +132,4 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | SEC-15 | Formal security risk assessment | P1 | Yes | Not done | — | Open |
 | SEC-16 | Incident response plan | P1 | Yes | Not done | — | Open |
 | SEC-17 *(new)* | Dev-only dependency advisories (eslint-config-next → braces; drizzle-kit → esbuild) | P2 | No | Production dependencies have 0 known vulnerabilities; dev tools only | `package.json` | Open |
-| SEC-18 *(new)* | Row-level security for contact_messages, notifications, signatures and waitlist, which rely on service-layer checks today | P2 | No | Found by the automated review 2026-10-09; reported as a warning on every release check | `scripts/security-findings.ts` | Open |
+| SEC-18 *(new)* | Row-level security for contact_messages, notifications, signatures and waitlist, which rely on service-layer checks today | P2 | No | Found by the automated review 2026-10-09; reported as a warning on every release check. `waitlist` now has RLS (anyone may insert; only staff/system read or delete; migration 0005), so the warning remains for the other three | `scripts/security-findings.ts` | Open |

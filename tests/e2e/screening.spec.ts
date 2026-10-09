@@ -74,4 +74,19 @@ test("a person outside served states is told the service is not available", asyn
   await runScreening(page, { ...AVAILABLE, current_state: "AL", appointment_state: "AL" });
   await expect(page).toHaveURL(/\/start\/result/);
   await expect(page.getByRole("link", { name: /create your account/i })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "See where we serve" })).toBeVisible();
+
+  // One-email waitlist offer, state preselected from the screening; only email and state are posted.
+  const form = page.locator("form", { has: page.getByRole("button", { name: "Notify me" }) });
+  await expect(page.getByText(/delete it after it is sent/i)).toBeVisible();
+  await expect(form.getByLabel("State")).toHaveValue("AL");
+  const fields = await form.locator("input:not([type=hidden]), select, textarea").evaluateAll((els) => els.map((e) => (e as HTMLInputElement).name));
+  expect(fields.sort()).toEqual(["email", "stateCode"]);
+  await expectAccessible(page);
+  await expectNoHorizontalScroll(page);
+  await form.getByLabel("Email").fill(`e2e-${Date.now()}@example.test`);
+  await form.getByLabel("State").selectOption("GA");
+  await form.getByRole("button", { name: "Notify me" }).click();
+  await expect(page.getByText(/we will email you if we begin serving that state/i)).toBeVisible();
+  expect(page.url()).not.toContain("example.test");
 });

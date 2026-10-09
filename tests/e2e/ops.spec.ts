@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { expectAccessible, expectNoHorizontalScroll, expectOneH1, signIn } from "./helpers";
+import { expectAccessible, expectNoHorizontalScroll, expectOneH1, freshIp, signIn } from "./helpers";
 
 test("staff sign-in requires a second factor and lands on the console", async ({ page }) => {
   await signIn(page, "director@leavebridge.test", { staff: true });
@@ -36,6 +36,35 @@ test("support staff cannot reach admin configuration or audit", async ({ page })
   await expect(page).toHaveURL(/denied=1|\/ops$|\/ops\?/);
   await page.goto("/ops/audit");
   await expect(page).not.toHaveURL(/\/ops\/audit/);
+});
+
+test("the waitlist page shows counts by state, never addresses, and is accessible", async ({ page }) => {
+  // Someone joins the waitlist from the public availability page.
+  await freshIp(page);
+  await page.goto("/availability");
+  const email = `ops-e2e-${Date.now()}@example.test`;
+  await page.locator('input[name="email"]').fill(email);
+  await page.locator('select[name="stateCode"]').selectOption("AK");
+  await page.getByRole("button", { name: "Notify me" }).click();
+  await expect(page.getByText(/we will email you if we begin serving that state/i)).toBeVisible();
+
+  await signIn(page, "director@leavebridge.test", { staff: true });
+  const res = await page.goto("/ops/admin/waitlist");
+  expect(res?.status()).toBe(200);
+  await expectOneH1(page);
+  const row = page.getByRole("row", { name: /Alaska/ });
+  await expect(row).toBeVisible();
+  await expect(row.getByRole("cell").nth(1)).not.toHaveText("0");
+  const text = await page.locator("main").innerText();
+  expect(text).not.toContain("@");
+  await expectAccessible(page);
+  await expectNoHorizontalScroll(page);
+});
+
+test("support staff cannot open the waitlist page", async ({ page }) => {
+  await signIn(page, "support@leavebridge.test", { staff: true });
+  await page.goto("/ops/admin/waitlist");
+  await expect(page).not.toHaveURL(/\/ops\/admin\/waitlist/);
 });
 
 test("admin configuration pages are accessible", async ({ page }) => {

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { withActor } from "@/server/db/actor";
-import { currentScreening } from "@/server/services/screening";
+import { currentScreening, screeningState, type ScreeningRow } from "@/server/services/screening";
+import { waitlistStates } from "@/server/services/contact";
 import { getSetting } from "@/server/settings";
 import { db } from "@/server/db/client";
 import { OUTCOME_COPY } from "@/domain/screening/engine";
 import { REASON_CODE_LABEL } from "@/config/screening";
 import { ButtonLink, Icon } from "@/components/ui";
+import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/forms";
+import { waitlistAction } from "@/app/(site)/actions";
 
 export const metadata: Metadata = { title: "Your results" };
 
@@ -19,6 +22,30 @@ const PATIENT_REASON: Record<string, string> = {
   NOT_OWN_CONDITION:
     "This service assesses your own health. Leave to care for a family member needs documentation from that person's provider.",
 };
+
+/** Rule codes meaning the person's state is why we could not continue. */
+const STATE_REASONS = ["STATE_NOT_ACTIVE", "APPOINTMENT_STATE_NOT_ACTIVE"];
+
+/**
+ * Waitlist offer for people stopped because their state is not served. The state is preselected
+ * from their screening (appointment state, else current state), but the form only ever posts an
+ * email and a state: no screening answer is sent or stored with it.
+ */
+async function waitlistOffer(row: ScreeningRow) {
+  if (!row.reasonCodes.some((c) => STATE_REASONS.includes(c))) return null;
+  const features = await getSetting(db, "features");
+  if (!features.waitlist) return null;
+  // Jurisdictions are public configuration (no PHI, no row-level security).
+  const states = await waitlistStates(db);
+  if (!states.length) return null;
+  const listed = (code: unknown): code is string => typeof code === "string" && states.some((s) => s.code === code);
+  let preselect = listed(row.stateCode) ? row.stateCode : undefined;
+  if (!preselect) {
+    const current = await withActor({ kind: "anonymous" }, async (ctx) => (await screeningState(ctx, row)).answers["current_state"]);
+    if (listed(current)) preselect = current;
+  }
+  return { states, preselect };
+}
 
 export default async function ScreeningResultPage() {
   const row = await withActor({ kind: "anonymous" }, (ctx) => currentScreening(ctx));
@@ -56,6 +83,7 @@ export default async function ScreeningResultPage() {
     );
   }
   const reasons = (row.reasonCodes ?? []).map((c) => PATIENT_REASON[c]).filter(Boolean) as string[];
+  const waitlist = outcome === "NOT_AVAILABLE" ? await waitlistOffer(row) : null;
   return (
     <div className="container-narrow page stack stack-lg">
       <div className="card stack">
@@ -101,6 +129,35 @@ export default async function ScreeningResultPage() {
           </>
         ) : (
           <div className="stack stack-sm">
+            {waitlist ? (
+              <section className="card-flat stack stack-sm" aria-labelledby="waitlist-title">
+                <h2 id="waitlist-title">Hear when we open in your state</h2>
+                <p className="muted">
+                  Leave your email and we will send you one email when LeaveBridge Health starts
+                  serving your state. We use your email only for that and delete it after it is
+                  sent. Your screening answers are not saved with it.
+                </p>
+                <ActionForm action={waitlistAction}>
+                  <TextField
+                    name="email"
+                    label="Email"
+                    type="email"
+                    autoComplete="email"
+                    maxLength={254}
+                    required
+                  />
+                  <SelectField
+                    name="stateCode"
+                    label="State"
+                    options={waitlist.states.map((s) => ({ value: s.code, label: s.name }))}
+                    placeholder="Choose a state"
+                    defaultValue={waitlist.preselect}
+                    required
+                  />
+                  <SubmitButton pendingText="Saving…">Notify me</SubmitButton>
+                </ActionForm>
+              </section>
+            ) : null}
             <p className="muted">
               If you need support now, your primary care provider or a local mental-health provider
               can help. If you are in crisis, call or text <a href="tel:988">988</a>.

@@ -1,6 +1,6 @@
 import "server-only";
 import type { StoredAttribution } from "@/domain/attribution";
-import { and, asc, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import type { Ctx } from "../db/actor";
 import type { DbOrTx } from "../db/client";
@@ -10,9 +10,10 @@ import { getSetting } from "../settings";
 import { invalid } from "@/domain/errors";
 
 /*
- * Public contact form and state waitlist. Both tables hold no case data and have no row-level
- * security; the anonymous actor inserts through the lb_app grant. No audit event is written:
- * the AuditAction union has no action for public inquiries (see report / follow-up).
+ * Public contact form and state waitlist. Neither table holds case data. contact_messages has no
+ * row-level security; waitlist allows anyone to insert and only staff/system to read or delete
+ * (sending the state-opening email is in ./waitlist.ts). No audit event is written for a join:
+ * the AuditAction union has no action for public inquiries.
  */
 
 export const CONTACT_TOPICS = [
@@ -77,12 +78,7 @@ export async function joinWaitlist(ctx: Ctx, input: unknown): Promise<void> {
     .limit(1);
   if (!j) throw invalid("Choose a state from the list.");
   if (j.isActive) throw invalid("We already serve that state. You can check availability now.");
-  // Silently ignore duplicates so the form does not reveal whether an email is already listed.
-  const [existing] = await ctx.tx
-    .select({ id: waitlist.id })
-    .from(waitlist)
-    .where(and(eq(waitlist.email, data.email), eq(waitlist.stateCode, data.stateCode)))
-    .limit(1);
-  if (existing) return;
-  await ctx.tx.insert(waitlist).values({ email: data.email, stateCode: data.stateCode });
+  // Duplicates are skipped silently (unique email + state) so the form does not reveal whether an
+  // email is already listed. The anonymous actor can insert but not read the table (RLS, SEC-18).
+  await ctx.tx.insert(waitlist).values({ email: data.email, stateCode: data.stateCode }).onConflictDoNothing();
 }
