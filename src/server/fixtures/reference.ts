@@ -98,7 +98,7 @@ export async function seedReference(ctx: Ctx) {
   for (const inst of DEFAULT_INSTRUMENTS) {
     await ctx.tx.insert(questionnaires).values({ kind: "measure", key: inst.key, version: 1, definition: inst, status: "published", reviewTag: "CLINICAL_REVIEW_REQUIRED" });
   }
-  await ctx.tx.insert(screeningRulesets).values({ version: 1, definition: SCREENING_V1, status: "published", reviewTag: "CLINICAL_REVIEW_REQUIRED", publishedAt: new Date() });
+  await ctx.tx.insert(screeningRulesets).values({ version: 1, definition: SCREENING_V1, status: "published", reviewTag: null, publishedAt: new Date() });
 
   await ctx.tx.insert(organizations).values({ name: "Example Logistics Co. (fictional)", kind: "private_employer", referralCode: "example-logistics", landingHeadline: "Support for Example Logistics team members" });
 }
