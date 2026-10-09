@@ -56,6 +56,9 @@ sign-off on consents, terms, privacy notice and marketing copy; clinical sign-of
 intake and templates; licensure verification for each active state; security risk assessment and penetration test
 (SEC-14, SEC-15); incident response plan (SEC-16, LEG-20); backup restore drill (SEC-10).
 
+Uploads (SEC-06, owner sign-off Q41): run a ClamAV daemon reachable from the app and set `SCAN_PROVIDER=clamav` and
+`CLAMAV_HOST=host:3310`. The default `basic` scanner only checks file type and the EICAR test string.
+
 ## Rollback
 
 Deploy the previous image tag. Migrations are forward-only; write additive migrations so the previous image keeps
