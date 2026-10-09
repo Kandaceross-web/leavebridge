@@ -78,20 +78,21 @@ export const SETTING_DEFS = {
     }),
     default: {
       summary:
-        "Refund amounts depend on how far your case has progressed. The full policy is shown before you pay and is final only after legal review.",
+        "You get a full refund if you cancel before your clinician starts reviewing your case. Once your clinician has made a determination, the fee is not refunded, whatever the outcome.",
       rules: [
         { trigger: "before_intake_submitted", refundPercent: 100, note: "Cancel before submitting intake." },
-        { trigger: "after_intake_before_review", refundPercent: 100, note: "Placeholder pending owner decision." },
+        { trigger: "after_intake_before_review", refundPercent: 100, note: "Cancel before your clinician starts reviewing your case." },
         { trigger: "clinician_out_of_scope", refundPercent: 100, note: "Clinician determines the service is not appropriate." },
         { trigger: "emergency_routed", refundPercent: 100, note: "Case paused for safety reasons." },
-        { trigger: "no_show", refundPercent: 0, note: "Placeholder pending owner decision." },
-        { trigger: "late_cancel", refundPercent: 0, note: "Placeholder pending owner decision." },
+        { trigger: "no_show", refundPercent: 0, note: "You miss your video visit without cancelling." },
+        { trigger: "late_cancel", refundPercent: 0, note: "You cancel less than 24 hours before your video visit." },
         { trigger: "after_determination", refundPercent: 0, note: "The fee covers the assessment, whatever the outcome." },
       ],
       lateCancelHours: 24,
     },
-    reviewTag: "LEGAL_REVIEW_REQUIRED" as ReviewTag,
-    reviewNote: "OWN-07, LEG-09: refund amounts per exit path.",
+    // OWN-07, LEG-09: owner chose "full refund until review" on 2026-10-09.
+    reviewTag: null,
+    reviewNote: "OWN-07, LEG-09: refund amounts per exit path (owner sign-off 2026-10-09).",
   },
   turnaround: {
     label: "Turnaround messaging",
