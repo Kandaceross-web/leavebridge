@@ -9,10 +9,12 @@ variable "region" {
 variable "app_domain" {
   description = "Portal/ops hostname (OWN-16)."
   type        = string
+  default     = "app.leavebridgehealth.com"
 }
 variable "site_domain" {
   description = "Marketing hostname (OWN-16)."
   type        = string
+  default     = "www.leavebridgehealth.com"
 }
 variable "image_tag" {
   type = string

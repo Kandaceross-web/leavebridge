@@ -20,7 +20,7 @@ export const SETTING_DEFS = {
     default: {
       name: "LeaveBridge Health",
       tagline: "Clinical clarity when mental health affects work.",
-      supportEmail: "support@example.invalid",
+      supportEmail: "support@leavebridgehealth.com", // mailbox must exist before launch (OWN-08)
       supportPhone: "(000) 000-0000",
       supportHours: "Monday to Friday, 9 a.m. to 5 p.m. Central",
       clinicalHours: "Clinicians respond to secure messages within two business days",

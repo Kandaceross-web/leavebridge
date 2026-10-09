@@ -31,6 +31,22 @@ Run the `ops` image with `npm run jobs -- <name>`:
 | `credential-expiry` | Daily | Counts licenses, compact privileges and malpractice policies expiring in 30 days (details in the admin console). |
 | `verify-audit-chain` | Daily | Exits non-zero if the audit hash chain is broken; alarm on failure. |
 
+## Domain and DNS
+
+The domain is `leavebridgehealth.com`, registered at Cloudflare Registrar with DNS at Cloudflare (bought 2026-10-09).
+
+| Name | Points to | Notes |
+| --- | --- | --- |
+| `www` | CloudFront distribution (site) | CNAME, **DNS only** (grey cloud) |
+| `app` | CloudFront distribution (app) | CNAME, **DNS only** (grey cloud) |
+| apex `leavebridgehealth.com` | Redirect to `https://www.leavebridgehealth.com` | Cloudflare redirect rule is fine here; no form data passes through it |
+| ACM validation CNAMEs | As issued by ACM (us-east-1 for CloudFront) | DNS only |
+| SES: 3 DKIM CNAMEs, custom MAIL FROM MX + SPF TXT, `_dmarc` TXT | As issued by SES | Needed before `EMAIL_FROM` can send |
+
+**Keep `www` and `app` DNS only.** With the orange-cloud proxy on, Cloudflare would terminate TLS and see form posts
+(screening answers, intake, uploads, contact messages). That needs a Business Associate Agreement with Cloudflare, which
+Cloudflare offers only on Enterprise plans. CloudFront and AWS WAF are covered by the AWS BAA instead.
+
 ## First production launch checklist
 
 The release check enforces the mechanical parts. The rest needs people: BAAs signed with every PHI vendor; counsel

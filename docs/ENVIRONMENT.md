@@ -18,7 +18,8 @@ All variables are validated at startup by `src/server/env.ts`. Values are never 
 | --- | --- | --- |
 | `DATABASE_URL` | Yes | Runtime role `lb_app`. TLS required in cloud (`?sslmode=verify-full`). |
 | `MIGRATION_DATABASE_URL` | Migrate job only | Owner role `lb_owner`. Not given to the web task. |
-| `APP_ORIGIN`, `SITE_ORIGIN`, `HOST_MODE` | Yes | `split` once domains are decided (OWN-16). |
+| `APP_ORIGIN`, `SITE_ORIGIN`, `HOST_MODE` | Yes | Production: `https://app.leavebridgehealth.com`, `https://www.leavebridgehealth.com`, `split` (OWN-16). |
+| `ATTRIBUTION_COOKIE_DOMAIN` | No | Production: `.leavebridgehealth.com`, so the app host can read the first-party attribution cookie set on www. |
 | `ENCRYPTION_KEYS` | Yes | `id:base64(32 bytes)` list. Prepend a new key to rotate; keep old keys until re-encrypted. Plan: KMS-wrapped data keys. |
 | `HMAC_SECRET` | Yes | ≥16 chars; hashes session tokens, IPs, screening cookies. |
 | `PAYMENTS_PROVIDER`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Yes | Webhook endpoint: `POST /api/webhooks/payments`. |

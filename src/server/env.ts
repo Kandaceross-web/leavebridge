@@ -63,6 +63,8 @@ function load(): Env {
       if (data.AI_PROVIDER === "bedrock" && !data.BEDROCK_MODEL_ID) problems.push("BEDROCK_MODEL_ID missing");
       if (data.PAYMENTS_PROVIDER === "stripe" && (!data.STRIPE_SECRET_KEY || !data.STRIPE_WEBHOOK_SECRET)) problems.push("Stripe keys missing");
       if (data.STORAGE_PROVIDER === "s3" && !data.S3_BUCKET) problems.push("S3_BUCKET missing");
+      for (const key of ["SITE_ORIGIN", "APP_ORIGIN"] as const) if (!data[key].startsWith("https://") || /localhost|\.invalid/.test(data[key])) problems.push(`${key} must be the real https origin`);
+      if (/\.invalid>?$/.test(data.EMAIL_FROM)) problems.push("EMAIL_FROM uses the placeholder domain");
     }
     if (problems.length) throw new Error(`Refusing to start ${data.APP_ENV}: ${problems.join("; ")}`);
   }
