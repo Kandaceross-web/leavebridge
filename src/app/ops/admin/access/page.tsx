@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { Badge, DateTime, PageHead } from "@/components/ui";
 import { requireStaffSession, run } from "@/server/auth/guards";
@@ -28,6 +29,11 @@ export default async function AccessGrantsPage() {
           allowSelf
             ? "Break-glass access is time-limited and requires a written reason. You can approve your own request; it is marked self-approved for later review, and every use is recorded in the audit log."
             : "Break-glass access is time-limited, requires a reason and a second person's approval, and every use is recorded in the audit log."
+        }
+        actions={
+          <Link href="/ops/admin/security-review" className="btn btn-secondary btn-sm">
+            Monthly security review
+          </Link>
         }
       />
       {rows.length ? (

@@ -5,6 +5,7 @@ import { requireStaffSession, run } from "@/server/auth/guards";
 import { OPS_FLAG_LABEL, opsOverview, type OpsFlag } from "@/server/services/ops";
 import { safetyQueue, scheduleAppointments, shortPatientName } from "@/server/services/ops-queries";
 import { expiringCredentials } from "@/server/services/admin";
+import { SECURITY_REVIEW_ROLES, securityReviewStatus } from "@/server/services/security-review";
 import { OPS_STAGE_LABEL } from "@/domain/cases/state-machine";
 import { OPS_STAGES } from "@/domain/constants";
 import { hasRole } from "@/domain/policy";
@@ -22,15 +23,17 @@ export default async function OpsOverviewPage({ searchParams }: { searchParams: 
   const seesAllAppointments = hasRole(actor, ["clinical_director", "admin", "support"]);
   const canSchedule = hasRole(actor, ["clinician", "clinical_director", "admin", "support"]);
   const canSeeCredentials = hasRole(actor, ["admin", "clinical_director", "compliance"]);
+  const canReviewSecurity = hasRole(actor, SECURITY_REVIEW_ROLES);
 
   const data = await run(actor, async (ctx) => {
     const overview = await opsOverview(ctx);
     const appts = canSchedule ? await scheduleAppointments(ctx, { clinicianId: seesAllAppointments ? null : actor.clinicianId, days: 7 }) : [];
     const safety = await safetyQueue(ctx);
     const creds = canSeeCredentials ? await expiringCredentials(ctx, 60) : [];
-    return { overview, appts, safety, creds };
+    const securityReview = canReviewSecurity ? await securityReviewStatus(ctx) : null;
+    return { overview, appts, safety, creds, securityReview };
   });
-  const { overview, appts, safety, creds } = data;
+  const { overview, appts, safety, creds, securityReview } = data;
   const flags = Object.keys(OPS_FLAG_LABEL) as OpsFlag[];
   const mine = isClinician ? overview.rows.filter((r) => r.clinicianId === actor.clinicianId) : [];
   const today = dayKey(new Date());
@@ -46,6 +49,19 @@ export default async function OpsOverviewPage({ searchParams }: { searchParams: 
         </Banner>
       ) : null}
       <PageHead eyebrow="Operations" title="Overview" lede="Queues, stages and today’s work across the cases you can see." />
+      {securityReview?.due ? (
+        <Banner tone="warn" icon="shield">
+          <b>Monthly security review due.</b>{" "}
+          {securityReview.lastReviewAt ? (
+            <>
+              Last recorded <DateTime value={securityReview.lastReviewAt} dateOnly />.
+            </>
+          ) : (
+            "None recorded yet."
+          )}{" "}
+          <Link href="/ops/admin/security-review">Review the audit log and access grants</Link>
+        </Banner>
+      ) : null}
 
       <section aria-labelledby="queues-h" className="stack">
         <h2 id="queues-h">Queues</h2>

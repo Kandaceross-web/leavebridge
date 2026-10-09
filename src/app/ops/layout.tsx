@@ -35,6 +35,7 @@ function navFor(actor: StaffActor) {
   ];
   const compliance = [
     ...(isAdmin || hasRole(actor, ["compliance", "clinical_director"]) ? [{ href: "/ops/admin/access", label: "Access grants" }] : []),
+    ...(isAdmin || hasRole(actor, ["compliance", "clinical_director"]) ? [{ href: "/ops/admin/security-review", label: "Security review" }] : []),
     ...(isAdmin || hasRole(actor, ["compliance"]) ? [{ href: "/ops/audit", label: "Audit log" }] : []),
     ...(isAdmin || hasRole(actor, ["compliance"]) ? [{ href: "/ops/admin/reviews", label: "Compliance reviews" }] : []),
     ...(hasRole(actor, ["billing", "admin"]) ? [{ href: "/ops/billing", label: "Payments & refunds" }] : []),

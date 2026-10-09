@@ -44,6 +44,12 @@ decisions are the SEC rows in [OPEN-DECISIONS.md](OPEN-DECISIONS.md).
 ## Integrity
 
 * `audit_events` is append-only (trigger) and hash-chained; `npm run jobs -- verify-audit-chain` checks it daily.
+* Monthly security review (SEC-13): Ops → Admin → Monthly security review (`/ops/admin/security-review`, also linked
+  from Access grants; admin, compliance and clinical director, MFA required). It shows the last 30 days' counts from the
+  audit log (emergency access approved, how many self-approved, records opened under it, failed sign-ins, lockouts) and
+  runs the hash-chain check, then records "review done" as a `security_review.completed` audit event holding counts and
+  the note's length only. The optional short note (no PHI) is kept in Compliance reviews. The Ops overview shows a
+  reminder to those roles when no review was recorded in the last 30 days.
 * Append-only triggers on status history, determinations, signatures, document versions, notes and payment events.
 * Signatures bind to the SHA-256 of the exact document version; editing creates a new version and invalidates nothing
   silently.

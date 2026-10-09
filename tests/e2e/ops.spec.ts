@@ -77,3 +77,43 @@ test("admin configuration pages are accessible", async ({ page }) => {
     await expectNoHorizontalScroll(page);
   }
 });
+
+test("the monthly security review reminder links to the review panel, and recording a review clears it", async ({ page }) => {
+  await signIn(page, "director@leavebridge.test", { staff: true });
+  await page.goto("/ops");
+  const reminder = page.getByRole("link", { name: "Review the audit log and access grants" });
+  // The database is reset before the run, so the first project sees the reminder; a later project
+  // runs after a review was recorded and goes to the panel directly.
+  if (await reminder.isVisible()) {
+    await expect(page.getByText("Monthly security review due.")).toBeVisible();
+    await expectAccessible(page);
+    await expectNoHorizontalScroll(page);
+    await reminder.click();
+    await page.waitForURL(/\/ops\/admin\/security-review/);
+  } else {
+    await page.goto("/ops/admin/security-review");
+  }
+  await expectOneH1(page);
+  await expect(page.getByRole("heading", { name: "Last 30 days" })).toBeVisible();
+  await expect(page.getByText("Emergency access approved")).toBeVisible();
+  await expect(page.getByText("Intact", { exact: true })).toBeVisible();
+  await expectAccessible(page);
+  await expectNoHorizontalScroll(page);
+
+  await page.getByLabel("Note (optional)").fill("Fictional e2e review: nothing to follow up.");
+  await page.getByRole("button", { name: "Record review done" }).click();
+  await expect(page.getByText("Monthly security review recorded.")).toBeVisible();
+  await expect(page.getByText(/Last review recorded/)).toBeVisible();
+  await expectAccessible(page);
+
+  await page.goto("/ops");
+  await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Review the audit log and access grants" })).toHaveCount(0);
+});
+
+test("support staff see no security review reminder and cannot open the panel", async ({ page }) => {
+  await signIn(page, "support@leavebridge.test", { staff: true });
+  await expect(page.getByText("Monthly security review due.")).toHaveCount(0);
+  await page.goto("/ops/admin/security-review");
+  await expect(page).not.toHaveURL(/\/ops\/admin\/security-review/);
+});

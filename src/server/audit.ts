@@ -76,6 +76,7 @@ export type AuditAction =
   | "access_grant.created"
   | "access_grant.used"
   | "access.denied"
+  | "security_review.completed"
   | "content.published"
   | "consent_version.published"
   | "service.updated"
