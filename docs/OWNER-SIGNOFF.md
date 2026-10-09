@@ -25,7 +25,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 7 | SEC-01 | Sign-in: passwords plus an authenticator app for staff, re-confirm before signing documents, sign out after 15 minutes idle (staff) and 30 (patients). Keep? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). |
 | 8 | SEC-02 | Health data is encrypted and each person only sees their own records (checked by the database itself). Accept this design? | As described; automated check runs every release || **Signed off 2026-10-09:** "Accept it" (decision card). |
 | 9 | LEG-02 | What business name and entity will patients pay, and what should appear on card statements? | "Professional assessment service" || **Signed off 2026-10-09:** "defining you therapeutic services for now and ill change once I get the payment and everything set up." Patients pay Defining You Therapeutic Services for now; the card statement descriptor is set in Stripe when the account is created (OWN Stripe setup) and stays neutral. Revisit when the owner sets up the payment entity. |
-| 10 | LEG-03 | Will you operate as a HIPAA covered entity and publish a Notice of Privacy Practices you approve? | Built as if HIPAA applies; NPP placeholder | |
+| 10 | LEG-03 | Will you operate as a HIPAA covered entity and publish a Notice of Privacy Practices you approve? | Built as if HIPAA applies; NPP placeholder || **Signed off 2026-10-09:** "Yes, follow HIPAA" (decision card). Built as if HIPAA applies; the Notice of Privacy Practices text is drafted for the owner to approve with the other policy documents (Q22). |
 | 11 | LEG-04 | Approve the consent documents' wording (you'll get each one to read). | Placeholders | |
 | 12 | LEG-05 | Approve the public copy and status labels (no outcome promises)? | Neutral labels | |
 | 13 | LEG-06 / SEC-04 / CLN-06 | Keep AI drafting turned off at launch? | Off | |
@@ -37,7 +37,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 19 | LEG-12 / SEC-05 | Card details stay with the payment processor; it only sees a neutral description. Accept? | As described | |
 | 20 | LEG-13 | Emails only say "something is waiting in your portal"; texts off unless the patient opts in. Keep? | As described | |
 | 21 | LEG-14 | No ad pixels or third-party cookies; only optional privacy-friendly analytics on marketing pages. Keep? | No analytics configured | |
-| 22 | LEG-15 | Approve Terms of Use and Privacy Policy text (you'll get drafts). | Placeholders | |
+| 22 | LEG-15 | Approve Terms of Use, Privacy Policy and Notice of Privacy Practices text (you'll get drafts). | Placeholders | |
 | 23 | LEG-16 | Patients consent by typing their name; you sign by re-confirming your identity. Accept these e-signatures? | As described | |
 | 24 | LEG-17 | Approve the FAQ and the six guides that mention FMLA rules. | Drafts, tagged | |
 | 25 | LEG-19 | Have you checked that "LeaveBridge Health" is free to use as a name? | Working name | |
