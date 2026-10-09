@@ -19,6 +19,7 @@ const SECTIONS = [
   { href: "/ops/admin/staff", label: "Staff & roles", detail: "Staff accounts and their roles.", roles: ["admin"] },
   { href: "/ops/admin/organizations", label: "Employers & referrals", detail: "Referral links and de-identified counts.", roles: ["admin"] },
   { href: "/ops/admin/acquisition", label: "Acquisition", detail: "Which channels, campaigns and pages lead to screenings and paid assessments.", roles: ["admin"] },
+  { href: "/ops/admin/waitlist", label: "Waitlist", detail: "Where people are asking for care, and the one email telling them a state is now served.", roles: ["admin", "clinical_director"] },
   { href: "/ops/admin/access", label: "Access grants", detail: "Time-limited break-glass access, with reasons.", roles: ["admin", "compliance", "clinical_director"] },
   { href: "/ops/admin/reviews", label: "Compliance reviews", detail: "Recorded reviews and every open review tag.", roles: ["admin", "compliance"] },
 ] as const;

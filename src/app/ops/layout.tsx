@@ -31,6 +31,7 @@ function navFor(actor: StaffActor) {
     ...(isAdmin ? [{ href: "/ops/admin/staff", label: "Staff & roles" }] : []),
     ...(isAdmin ? [{ href: "/ops/admin/organizations", label: "Employers & referrals" }] : []),
     ...(isAdmin ? [{ href: "/ops/admin/acquisition", label: "Acquisition" }] : []),
+    ...(isAdmin || hasRole(actor, ["clinical_director"]) ? [{ href: "/ops/admin/waitlist", label: "Waitlist" }] : []),
   ];
   const compliance = [
     ...(isAdmin || hasRole(actor, ["compliance", "clinical_director"]) ? [{ href: "/ops/admin/access", label: "Access grants" }] : []),

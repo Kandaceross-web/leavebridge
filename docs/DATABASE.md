@@ -21,6 +21,7 @@ roles. Local development uses the fictional passwords in `.env.example`.
 | `0002_busy_times.sql` | `lb_clinician_busy()` security-definer function so patients can see busy slots without seeing other patients' bookings; anonymous insert policy for screening safety events. |
 | `0003_attribution.sql` | First-party attribution columns on screenings, cases and contact messages (hand-written). |
 | `0004_good_faith_estimates.sql` | `good_faith_estimates` (generated), plus its append-only trigger, `SELECT, INSERT` grant to `lb_app` and RLS policy. Its snapshot also records 0003's columns. |
+| `0005_waitlist_notices.sql` | `waitlist_notices` and a unique (email, state) index on `waitlist` (generated), plus: append-only trigger and `SELECT, INSERT` grant on `waitlist_notices`; `DELETE` on `waitlist`; RLS on both (`waitlist`: anyone inserts, staff/system read and delete; SEC-18). |
 
 Commands: `npm run db:migrate`, `npm run db:seed` (refuses in staging/production), `npm run db:reset` (development only:
 drops schemas, migrates, clears local storage, seeds). Tests use `leavebridge_test`, reset by the test global setup.
@@ -50,7 +51,7 @@ Casework: `screenings`, `safety_events`, `cases`, `case_status_history`, `consen
 `document_requests`, `employer_forms`, `clinical_reviews`, `appointments`, `assessment_notes`, `determinations`,
 `documents`, `document_versions`, `ai_suggestions`, `signatures`, `release_authorizations`, `deliveries`,
 `message_threads`, `messages`, `message_reads`, `case_notes`, `notifications`.
-Platform: `audit_events`, `rate_limit_buckets`, `contact_messages`, `waitlist`.
+Platform: `audit_events`, `rate_limit_buckets`, `contact_messages`, `waitlist`, `waitlist_notices`.
 
 Encrypted columns hold `{kid, iv, tag, ct}` envelopes from `src/server/crypto.ts`; they are never queried by content.
 

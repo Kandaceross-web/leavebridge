@@ -532,12 +532,30 @@ export const contactMessages = pgTable("contact_messages", {
   createdAt: createdAt(),
 });
 
-export const waitlist = pgTable("waitlist", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  email: text("email").notNull(),
-  stateCode: text("state_code").notNull(),
-  createdAt: createdAt(),
-});
+/** Email + state only; never screening answers. Rows are deleted once the state-opening email is sent. */
+export const waitlist = pgTable(
+  "waitlist",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: text("email").notNull(),
+    stateCode: text("state_code").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex("waitlist_email_state").on(t.email, t.stateCode)],
+);
+
+/** Aggregate record of each "we now serve your state" send: state and count only, no addresses. */
+export const waitlistNotices = pgTable(
+  "waitlist_notices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    stateCode: text("state_code").notNull(),
+    recipientCount: integer("recipient_count").notNull(),
+    sentBy: uuid("sent_by").references(() => users.id),
+    sentAt: ts("sent_at").notNull().defaultNow(),
+  },
+  (t) => [index("waitlist_notices_state_idx").on(t.stateCode, t.sentAt)],
+);
 
 export const rateLimitBuckets = pgTable("rate_limit_buckets", {
   key: text("key").primaryKey(),
