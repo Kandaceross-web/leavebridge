@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requirePatientSession, run } from "@/server/auth/guards";
-import { bookAppointment, cancelAppointment, joinAppointment } from "@/server/services/scheduling";
+import { bookAppointment, cancelAppointment } from "@/server/services/scheduling";
 import { handle, type ActionState } from "@/server/web/action";
 
 export async function book(caseId: string, _: ActionState, fd: FormData): Promise<ActionState> {
@@ -28,17 +28,5 @@ export async function cancelAppt(caseId: string, appointmentId: string, _: Actio
     revalidatePath(`/portal/cases/${caseId}/appointment`);
     revalidatePath("/portal");
     return { message: "Your appointment was cancelled. Please choose a new time." };
-  }, fd);
-}
-
-/** Location re-attestation at join time (STR-03). Returns whether joining is allowed. */
-export async function joinAppt(caseId: string, appointmentId: string, _: ActionState, fd: FormData): Promise<ActionState> {
-  return handle(async () => {
-    const { actor } = await requirePatientSession();
-    const state = String(fd.get("state") ?? "");
-    if (!/^[A-Z]{2}$/.test(state)) return { ok: false, error: "Choose the state you are in right now.", fieldErrors: { state: "Choose a state." } };
-    const out = await run(actor, (ctx) => joinAppointment(ctx, appointmentId, state));
-    revalidatePath(`/portal/cases/${caseId}/appointment`);
-    return { data: { allowed: out.allowed, joinUrl: out.joinUrl } };
   }, fd);
 }

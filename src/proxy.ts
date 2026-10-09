@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { ATTRIBUTION_COOKIE, ATTRIBUTION_MAX_AGE, decodeAttribution, encodeAttribution, nextAttribution, touchFromRequest } from "@/domain/attribution";
+import { buildCsp, isVisitPath } from "@/server/web/csp";
 
 /**
  * Runs before every page request:
@@ -30,21 +31,10 @@ export function proxy(request: NextRequest) {
 
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV === "development";
-  const analytics = !isAppPath(pathname) && process.env.SITE_ANALYTICS_SRC ? ` ${new URL(process.env.SITE_ANALYTICS_SRC).origin}` : "";
-  const csp = [
-    "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}${analytics}`,
-    `style-src 'self' 'nonce-${nonce}'`,
-    "style-src-attr 'unsafe-inline'",
-    "img-src 'self' blob: data:",
-    "font-src 'self'",
-    `connect-src 'self'${analytics}`,
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self' https://checkout.stripe.com",
-    "frame-ancestors 'none'",
-    ...(isDev ? [] : ["upgrade-insecure-requests"]),
-  ].join("; ");
+  const analyticsOrigin = !isAppPath(pathname) && process.env.SITE_ANALYTICS_SRC ? new URL(process.env.SITE_ANALYTICS_SRC).origin : undefined;
+  // Chime's signaling and media hosts are allowed on the two video visit pages only (see src/server/web/csp.ts).
+  const chime = process.env.VIDEO_PROVIDER === "chime" && isVisitPath(pathname);
+  const csp = buildCsp({ nonce, isDev, analyticsOrigin, chime });
 
   const requestId = crypto.randomUUID();
   const requestHeaders = new Headers(request.headers);

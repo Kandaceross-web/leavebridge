@@ -26,7 +26,7 @@ All variables are validated at startup by `src/server/env.ts`. Values are never 
 | `STORAGE_PROVIDER`, `S3_BUCKET`, `S3_REGION`, `S3_KMS_KEY_ID` | Yes | Files are also encrypted by the app before upload. |
 | `SCAN_PROVIDER`, `CLAMAV_HOST` | Recommended | `basic` checks type and known signatures only. |
 | `EMAIL_PROVIDER`, `SMS_PROVIDER`, `EMAIL_FROM` | Yes | Outbox stores messages in the DB for inspection in development. |
-| `VIDEO_PROVIDER` | Decision pending | Only `stub` exists (OWN-15). |
+| `VIDEO_PROVIDER`, `CHIME_REGION`, `CHIME_MEDIA_REGION` | Yes | `stub` (default; no call) or `chime` (Amazon Chime SDK, OWN-15). With `chime`, `CHIME_REGION` is required (e.g. `us-east-1`); `CHIME_MEDIA_REGION` defaults to it. AWS credentials come from the task role. Production refuses `stub`. See DEPLOYMENT.md for IAM. |
 | `AI_PROVIDER`, `BEDROCK_MODEL_ID` | No | Default `disabled`. |
 | `IDV_PROVIDER` | No | `manual` staff review. |
 | `SITE_ANALYTICS_SRC` | No | Marketing pages only; added to CSP for those pages only. Needs LEG-14. |

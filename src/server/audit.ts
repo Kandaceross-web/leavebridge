@@ -51,6 +51,7 @@ export type AuditAction =
   | "appointment.scheduled"
   | "appointment.cancelled"
   | "appointment.completed"
+  | "appointment.joined"
   | "assessment_note.saved"
   | "determination.recorded"
   | "document.created"

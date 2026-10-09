@@ -56,6 +56,12 @@ export default async function SchedulePage() {
                         {a.clinicianName} · patient in {a.jurisdictionCode}
                       </div>
                     </div>
+                    {isClinician && a.clinicianId === actor.clinicianId ? (
+                      // A full page load, not client navigation: the visit page has its own Content Security Policy.
+                      <a className="btn btn-secondary btn-sm" href={`/ops/visits/${a.id}`}>
+                        Video visit
+                      </a>
+                    ) : null}
                   </li>
                 ))}
               </ul>

@@ -59,6 +59,55 @@ intake and templates; licensure verification for each active state; security ris
 Uploads (SEC-06, owner sign-off Q41): run a ClamAV daemon reachable from the app and set `SCAN_PROVIDER=clamav` and
 `CLAMAV_HOST=host:3310`. The default `basic` scanner only checks file type and the EICAR test string.
 
+## Video visits (Amazon Chime SDK)
+
+Owner decision Q42 (OWN-15, SEC-08). Set `VIDEO_PROVIDER=chime` and `CHIME_REGION` (the Chime SDK Meetings API Region,
+for example `us-east-1`). `CHIME_MEDIA_REGION` (where meetings are hosted) defaults to `CHIME_REGION`. The web task uses
+its task role through the normal AWS credential chain; no access keys go in code or environment files. The environment
+check refuses to start production with `VIDEO_PROVIDER=stub`, or with `chime` and no `CHIME_REGION`.
+
+IAM policy for the web task role (nothing else from Chime is used):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VideoVisits",
+      "Effect": "Allow",
+      "Action": ["chime:CreateMeeting", "chime:GetMeeting", "chime:CreateAttendee"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NoRecordingOrTranscription",
+      "Effect": "Deny",
+      "Action": [
+        "chime:StartMeetingTranscription",
+        "chime:CreateMediaCapturePipeline",
+        "chime:CreateMediaConcatenationPipeline",
+        "chime:CreateMediaLiveConnectorPipeline",
+        "chime:CreateMediaInsightsPipeline",
+        "chime:CreateMediaStreamPipeline"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+How it works: booking stores no meeting (Chime ends a meeting about five minutes after creation if nobody joins). The
+first participant to pass the join check creates the meeting and its id is stored in `appointments.video_ref`; if
+Chime has since ended it, the next join creates a new one. Each participant gets their own attendee. The meeting's
+`ExternalMeetingId`, the `ClientRequestToken` and each attendee's `ExternalUserId` are keyed hashes of the appointment
+id (`HMAC_SECRET`), so nothing sent to AWS names a person or case. Join tokens go only to the signed-in participant and
+are never logged. The visit pages (`/portal/cases/<id>/visit`, `/ops/visits/<id>`) add `https://*.chime.aws`,
+`wss://*.chime.aws` and `blob:` workers to their CSP; no other page does.
+
+Before real patients: confirm the workload account is covered by the AWS BAA (SEC-09) and that Amazon Chime SDK is on
+the HIPAA eligible services list for it, then run a live test visit between two devices (patient on a phone,
+clinician on a desktop) through the app's network path (CloudFront/WAF must not block the visit pages; media goes
+directly from browsers to Chime). Record the result on OWN-15 and SEC-08.
+
 ## Rollback
 
 Deploy the previous image tag. Migrations are forward-only; write additive migrations so the previous image keeps

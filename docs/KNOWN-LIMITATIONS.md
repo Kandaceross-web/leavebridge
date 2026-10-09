@@ -4,8 +4,9 @@ Honest list of what this build does not do yet. None of these are hidden behind 
 
 ## Product
 
-* **No live video.** The video adapter is a stub that issues room references; the join flow and location
-  re-attestation work, but there is no call (OWN-15).
+* **Video is built but not yet tested on AWS.** `VIDEO_PROVIDER=chime` runs visits on the Amazon Chime SDK; it has only
+  been tested with the AWS client mocked. Development and test use the stub (no call). No live captions, screen
+  sharing, waiting room, or in-call chat; the visit is not recorded or transcribed by design (OWN-15).
 * **No self-service password reset.** `/forgot-password` tells people to email support from their account address.
 * **No email verification** at sign-up.
 * **TOTP enrolment shows the secret and an `otpauth://` link, not a QR code**; no recovery codes.

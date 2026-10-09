@@ -11,7 +11,7 @@ LEG-03 and the vendor rows in [OPEN-DECISIONS.md](OPEN-DECISIONS.md).
 | Malware scan | `scanUpload()` | `basic`: magic bytes, size, EICAR signature | `clamav` (clamd TCP) or swap for GuardDuty S3 scanning | File bytes (in VPC) | SEC-06 |
 | Email | `MessageProvider` | `outbox`: stored in `notifications` | `ses` | Minimal: first name, portal link | LEG-13 |
 | SMS | `MessageProvider` | `outbox` | `sns` | Minimal; only with recorded SMS consent and feature flag | LEG-13 |
-| Video | `VideoProvider` | `stub`: room reference, no real call | Not built: vendor pending | Session metadata | OWN-15, SEC-08 |
+| Video | `VideoProvider` | `stub`: room reference, no real call | `chime`: Amazon Chime SDK Meetings (built; not yet tested on live AWS) | Live audio/video between patient and clinician; opaque meeting and attendee ids only | OWN-15, SEC-08 |
 | AI drafting | `AiProvider` | `disabled` (default), `stub` (deterministic, dev only) | `bedrock` (Converse API, temperature 0) | Record excerpts needed for selected fields | LEG-06, SEC-04, CLN-06 |
 | Identity verification | manual review | Staff review of uploaded ID | Vendor adapter slot | ID image | OWN-04, LEG-11 |
 

@@ -211,6 +211,7 @@ export async function scheduleAppointments(ctx: Ctx, opts: { clinicianId: string
     startsAt: r.a.startsAt,
     endsAt: r.a.endsAt,
     jurisdictionCode: r.a.jurisdictionCode,
+    clinicianId: r.a.clinicianId,
     clinicianName: r.clinicianName,
     reference: r.reference,
     patient: shortPatientName(`${r.first} ${r.last}`),

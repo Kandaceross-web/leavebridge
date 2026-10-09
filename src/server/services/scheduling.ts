@@ -3,13 +3,15 @@ import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
 import type { Ctx } from "../db/actor";
 import { appointments, availabilityRules, clinicians, jurisdictions, services } from "../db/schema";
 import { audit } from "../audit";
+import { log } from "../logger";
 import { getSetting } from "../settings";
-import { video } from "../providers/video";
+import { video, type VideoRole, type VideoSession } from "../providers/video";
 import { checkCanServe, loadAuthorizations } from "./jurisdiction";
 import { attestLocation } from "./identity";
-import { getCaseRow, loadCase, notifyPatient, transition } from "./cases";
+import { loadCase, notifyPatient, transition } from "./cases";
 import { canServe } from "@/domain/jurisdiction/can-serve";
-import { requireAssignedClinician, requireRole } from "@/domain/policy";
+import { requireAssignedClinician, requirePatient, requireRole } from "@/domain/policy";
+import { visitWindow } from "@/domain/scheduling/visit-window";
 import { conflict, invalid, notFound } from "@/domain/errors";
 
 /** Minutes offset of a time zone at an instant (e.g. America/Chicago → -300 in CDT). */
@@ -103,8 +105,9 @@ export async function bookAppointment(ctx: Ctx, caseId: string, startsAtIso: str
       if (pgCode(err) === "23P01") throw conflict("That time was just taken. Please choose another.");
       throw err;
     });
+  // Stub: an opaque room reference now. Chime: null, because the meeting is created on first join (empty meetings expire).
   const room = await video().createRoom(appt!.id);
-  await ctx.tx.update(appointments).set({ videoRef: room.roomRef }).where(eq(appointments.id, appt!.id));
+  if (room.roomRef) await ctx.tx.update(appointments).set({ videoRef: room.roomRef }).where(eq(appointments.id, appt!.id));
   await audit(ctx, { action: "appointment.scheduled", subjectType: "appointment", subjectId: appt!.id, caseId: row.id });
   const updated = await transition(ctx, row, "appointment_scheduled", "appointment booked");
   await notifyPatient(ctx, updated, "appointment_scheduled");
@@ -125,17 +128,92 @@ export async function cancelAppointment(ctx: Ctx, appointmentId: string, reason:
   }
 }
 
-/**
- * Join check: the patient re-attests their physical location; joining is allowed only if the
- * clinician can serve that state right now (STR-03).
- */
-export async function joinAppointment(ctx: Ctx, appointmentId: string, stateCode: string) {
+export type JoinOutcome =
+  | { allowed: true; video: VideoSession | null }
+  | { allowed: false; reason: "early" | "closed" | "location" | "authorization" };
+
+type AppointmentRow = typeof appointments.$inferSelect;
+
+async function bookedAppointment(ctx: Ctx, appointmentId: string): Promise<AppointmentRow> {
+  if (!/^[0-9a-f-]{36}$/i.test(appointmentId)) throw notFound("Appointment");
   const [appt] = await ctx.tx.select().from(appointments).where(eq(appointments.id, appointmentId)).limit(1);
   if (!appt || appt.status !== "booked") throw notFound("Appointment");
-  const row = await getCaseRow(ctx, appt.caseId);
+  return appt;
+}
+
+/** Creates (or recreates) the video room and returns this participant's credentials. Credentials are never logged. */
+async function connectVideo(ctx: Ctx, appt: AppointmentRow, caseId: string, role: VideoRole): Promise<VideoSession | null> {
+  const provider = video();
+  let res: Awaited<ReturnType<typeof provider.join>>;
+  try {
+    res = await provider.join({ appointmentId: appt.id, roomRef: appt.videoRef, role });
+  } catch (err) {
+    // Error class and code only; AWS messages are never logged.
+    log.error("video join failed", err, { provider: provider.name, entity: "appointment", entityId: appt.id });
+    throw conflict("The video service couldn't start this visit. Please try again in a minute.");
+  }
+  if (res.roomRef && res.roomRef !== appt.videoRef) {
+    await ctx.tx.update(appointments).set({ videoRef: res.roomRef, updatedAt: new Date() }).where(eq(appointments.id, appt.id));
+  }
+  await audit(ctx, { action: "appointment.joined", subjectType: "appointment", subjectId: appt.id, caseId, metadata: { role, provider: provider.name } });
+  return res.session;
+}
+
+async function deniedJoin(ctx: Ctx, appt: AppointmentRow, caseId: string, role: VideoRole, reason: Extract<JoinOutcome, { allowed: false }>["reason"]): Promise<JoinOutcome> {
+  await audit(ctx, { action: "appointment.joined", subjectType: "appointment", subjectId: appt.id, caseId, outcome: "denied", metadata: { role, reason } });
+  return { allowed: false, reason };
+}
+
+/** The patient's booked appointment on their case, for the visit page. */
+export async function patientVisit(ctx: Ctx, caseId: string) {
+  requirePatient(ctx.actor);
+  const { row } = await loadCase(ctx, caseId, "owner");
+  const [appt] = await ctx.tx
+    .select()
+    .from(appointments)
+    .where(and(eq(appointments.caseId, row.id), eq(appointments.status, "booked")))
+    .orderBy(appointments.startsAt)
+    .limit(1);
+  return { row, appt: appt ?? null };
+}
+
+/**
+ * Patient join check (STR-03, CLN-13): only the patient who owns the case, only inside the visit window, and only
+ * after re-attesting a physical location the clinician can serve right now. Video credentials are then issued for
+ * that patient's attendee only.
+ */
+export async function joinAppointment(ctx: Ctx, appointmentId: string, stateCode: string): Promise<JoinOutcome> {
+  requirePatient(ctx.actor);
+  const appt = await bookedAppointment(ctx, appointmentId);
+  const { row } = await loadCase(ctx, appt.caseId, "owner");
+  const win = visitWindow(appt);
+  if (win.state !== "open") return deniedJoin(ctx, appt, row.id, "patient", win.state);
   await attestLocation(ctx, row.id, stateCode, "appointment_join", appt.id);
   const can = await checkCanServe(ctx.tx, appt.clinicianId, row.serviceId!, stateCode, new Date(), { checkLicenseExpiry: false });
-  return { allowed: can.ok, joinUrl: can.ok ? video().joinUrl(appt.videoRef ?? "", "patient") : null };
+  if (!can.ok) return deniedJoin(ctx, appt, row.id, "patient", "location");
+  return { allowed: true, video: await connectVideo(ctx, appt, row.id, "patient") };
+}
+
+/** One appointment for the clinician's visit page. Only the clinician the visit is booked with. */
+export async function clinicianVisit(ctx: Ctx, appointmentId: string) {
+  requireRole(ctx.actor, ["clinician", "clinical_director"]);
+  const appt = await bookedAppointment(ctx, appointmentId);
+  const { row } = await loadCase(ctx, appt.caseId, "clinical");
+  requireAssignedClinician(ctx.actor, appt.clinicianId);
+  return { row, appt };
+}
+
+/**
+ * Clinician join check: the clinician the visit is booked with, inside the visit window, still authorized to serve
+ * the state the patient booked from. (The patient's own join re-checks their current location.)
+ */
+export async function clinicianJoinAppointment(ctx: Ctx, appointmentId: string): Promise<JoinOutcome> {
+  const { row, appt } = await clinicianVisit(ctx, appointmentId);
+  const win = visitWindow(appt);
+  if (win.state !== "open") return deniedJoin(ctx, appt, row.id, "clinician", win.state);
+  const can = await checkCanServe(ctx.tx, appt.clinicianId, row.serviceId!, appt.jurisdictionCode, new Date(), { checkLicenseExpiry: false });
+  if (!can.ok) return deniedJoin(ctx, appt, row.id, "clinician", "authorization");
+  return { allowed: true, video: await connectVideo(ctx, appt, row.id, "clinician") };
 }
 
 export async function completeAppointment(ctx: Ctx, appointmentId: string, outcome: "completed" | "no_show") {

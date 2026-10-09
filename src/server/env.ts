@@ -32,7 +32,12 @@ const schema = z.object({
   EMAIL_PROVIDER: z.enum(["outbox", "ses"]).default("outbox"),
   SMS_PROVIDER: z.enum(["outbox", "sns"]).default("outbox"),
   EMAIL_FROM: z.string().default("LeaveBridge Health <no-reply@example.invalid>"),
-  VIDEO_PROVIDER: z.enum(["stub"]).default("stub"),
+  /** "stub" (no call; dev/test) or "chime" (Amazon Chime SDK under the AWS BAA, OWN-15/SEC-08). */
+  VIDEO_PROVIDER: z.enum(["stub", "chime"]).default("stub"),
+  /** AWS Region of the Chime SDK Meetings API for VIDEO_PROVIDER=chime (e.g. us-east-1). Credentials come from the AWS credential chain. */
+  CHIME_REGION: z.string().regex(/^[a-z]{2}(-[a-z]+)+-\d$/).optional(),
+  /** Media Region that hosts the meetings (e.g. us-east-1). Defaults to CHIME_REGION. */
+  CHIME_MEDIA_REGION: z.string().regex(/^[a-z]{2}(-[a-z]+)+-\d$/).optional(),
   AI_PROVIDER: z.enum(["disabled", "stub", "bedrock"]).default("disabled"),
   /** Model id for AI_PROVIDER=bedrock. Only use a model covered by your BAA with no training or retention (LEG-06, SEC-04). */
   BEDROCK_MODEL_ID: z.string().optional(),
@@ -64,11 +69,13 @@ function load(): Env {
       problems.push("ENCRYPTION_KEYS uses the development key");
     if (data.HMAC_SECRET.startsWith("dev-only"))
       problems.push("HMAC_SECRET uses the development secret");
+    if (data.VIDEO_PROVIDER === "chime" && !data.CHIME_REGION) problems.push("CHIME_REGION missing");
     if (data.APP_ENV === "production") {
       if (data.PAYMENTS_PROVIDER === "fake") problems.push("PAYMENTS_PROVIDER=fake");
       if (data.STORAGE_PROVIDER === "local") problems.push("STORAGE_PROVIDER=local");
       if (data.EMAIL_PROVIDER === "outbox") problems.push("EMAIL_PROVIDER=outbox");
       if (data.AI_PROVIDER === "stub") problems.push("AI_PROVIDER=stub");
+      if (data.VIDEO_PROVIDER === "stub") problems.push("VIDEO_PROVIDER=stub");
       if (data.AI_PROVIDER === "bedrock" && !data.BEDROCK_MODEL_ID)
         problems.push("BEDROCK_MODEL_ID missing");
       if (

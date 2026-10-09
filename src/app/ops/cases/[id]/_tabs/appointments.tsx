@@ -47,6 +47,12 @@ export async function AppointmentsTab({ ws, actor }: TabProps) {
                 </div>
                 {a.status === "booked" ? (
                   <div className="btn-row">
+                    {assigned && a.clinicianId === actor.clinicianId ? (
+                      // A full page load, not client navigation: the visit page has its own Content Security Policy.
+                      <a className="btn btn-primary btn-sm" href={`/ops/visits/${a.id}`}>
+                        Open video visit
+                      </a>
+                    ) : null}
                     {assigned ? (
                       <>
                         <ActionForm action={completeAppointmentAction.bind(null, ws.row.id, a.id, "completed")} className="">
