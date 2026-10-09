@@ -33,7 +33,7 @@ commit and push to `main`. Cloudflare Pages deploys the new copy on its own.
 | Production branch | `main` |
 | Framework preset | None |
 | Build command | (empty) |
-| Build output directory | `public-site` |
+| Build output directory | `public-site` (also set in `wrangler.toml`, which Cloudflare reads first) |
 | Custom domain | `www.leavebridgehealth.com` |
 
 ## At launch
