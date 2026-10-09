@@ -117,7 +117,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | --- | --- | --- | --- | --- | --- | --- |
 | SEC-01 | Authentication design and session lifetimes | P0 | Yes | In-app auth: scrypt, DB sessions, TOTP MFA required for staff, step-up 5 min, idle 15/30 min | Business rules → security; `src/server/auth` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-02 | Encryption and RLS review | P0 | Yes | AES-256-GCM field/file encryption with keyring; RLS on all PHI tables; runtime role is not owner | `drizzle/0001_security_controls.sql`, `src/server/crypto.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
-| SEC-03 | Break-glass model | P1 | Yes | Time-boxed grant requested with reason, approved by another director/admin, audited | Admin → Access grants | Open |
+| SEC-03 | Break-glass model | P1 | Yes | Time-boxed grant requested with reason, approved by another director/admin, audited | Admin → Access grants | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-04 | AI vendor configuration | P1 | Yes | Bedrock adapter (no training by AWS terms; verify); off by default | `AI_PROVIDER` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-05 | Payment data minimization | P1 | Yes | Hosted checkout; no card data touches the app | Payment provider | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-06 | Upload pipeline | P1 | Yes | 15 MB, magic-byte type check, PDF structure check, EICAR test; ClamAV adapter for production | `src/server/providers/scan.ts` | Open |

@@ -95,6 +95,18 @@ describe("clinician and staff access", () => {
     expect(intake.status).toBe("submitted");
   });
 
+  it("lets a solo approver approve their own break-glass request and flags it for review (SEC-03)", async () => {
+    const s = await staff();
+    const p = await newPatient("Solo", "Approver");
+    await advancePatient(p, "submit");
+    const director = staffActor(s, "director");
+    const grantId = await as(director, (ctx) => requestAccessGrant(ctx, { caseId: p.caseId, reason: "Fictional solo-practice coverage check", hours: 1 }));
+    await as(director, (ctx) => approveAccessGrant(ctx, grantId));
+    const events = await as(staffActor(s, "admin"), (ctx) => caseAudit(ctx, p.caseId));
+    const approved = events.find(({ e }) => e.subjectId === grantId && (e.metadata as { state?: string }).state === "approved");
+    expect(approved?.e.metadata).toMatchObject({ selfApproved: true, needsReview: true });
+  });
+
   it("requires MFA for clinical actions", async () => {
     const s = await staff();
     const p = await newPatient("Mfa", "Required");

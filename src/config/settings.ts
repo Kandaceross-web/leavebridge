@@ -211,6 +211,9 @@ export const SETTING_DEFS = {
       lockoutMinutes: z.number().int().min(5),
       breakGlassMaxHours: z.number().int().min(1).max(12),
       requireStaffMfa: z.boolean(),
+      // SEC-03 (owner sign-off 2026-10-09): a solo practice has no second approver, so an approver may approve their own
+      // break-glass request. It is audited as self-approved and shown on the access page for later review.
+      allowSelfApprovedAccess: z.boolean().default(true),
     }),
     default: {
       patientIdleMinutes: 30,
@@ -221,6 +224,7 @@ export const SETTING_DEFS = {
       lockoutMinutes: 15,
       breakGlassMaxHours: 4,
       requireStaffMfa: true,
+      allowSelfApprovedAccess: true,
     },
     reviewTag: "SECURITY_REVIEW_REQUIRED" as ReviewTag,
     reviewNote: "SEC-01: session lifetimes and MFA policy.",

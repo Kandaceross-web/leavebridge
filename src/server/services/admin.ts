@@ -561,12 +561,15 @@ export async function requestAccessGrant(ctx: Ctx, input: { caseId: string | nul
 export async function approveAccessGrant(ctx: Ctx, grantId: string) {
   requireRole(ctx.actor, ["admin", "clinical_director"]);
   requireStaffMfa(ctx.actor);
-  requireStepUp(ctx.actor, (await getSetting(ctx.tx, "security")).stepUpMinutes);
+  const sec = await getSetting(ctx.tx, "security");
+  requireStepUp(ctx.actor, sec.stepUpMinutes);
   const [g] = await ctx.tx.select().from(accessGrants).where(eq(accessGrants.id, grantId)).limit(1);
   if (!g || g.approvedBy || g.revokedAt) throw invalid("This request is not pending.");
-  if (g.granteeUserId === ctx.actor.userId) throw forbidden("You can't approve your own access request.");
+  const selfApproved = g.granteeUserId === ctx.actor.userId;
+  if (selfApproved && !sec.allowSelfApprovedAccess) throw forbidden("You can't approve your own access request.");
   await ctx.tx.update(accessGrants).set({ approvedBy: ctx.actor.userId, startsAt: new Date() }).where(eq(accessGrants.id, g.id));
-  await audit(ctx, { action: "access_grant.created", subjectType: "access_grant", subjectId: g.id, caseId: g.caseId, metadata: { state: "approved" } });
+  // Self-approval (SEC-03) is flagged in the audit trail so it can be reviewed later.
+  await audit(ctx, { action: "access_grant.created", subjectType: "access_grant", subjectId: g.id, caseId: g.caseId, metadata: { state: "approved", selfApproved, ...(selfApproved ? { needsReview: true } : {}) } });
 }
 
 export async function revokeAccessGrant(ctx: Ctx, grantId: string) {
