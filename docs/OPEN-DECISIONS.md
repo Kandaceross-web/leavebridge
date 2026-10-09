@@ -125,8 +125,8 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | SEC-08 | Video vendor security review | P1 | Yes | Owner chose Amazon Chime SDK (Q42, 2026-10-09), covered by the AWS BAA; adapter being built | — | Open (vendor chosen; build and BAA evidence pending) |
 | SEC-09 | AWS account architecture / HIPAA-eligible services; signed AWS BAA *(evidence required)* | P0 | Yes | Terraform skeleton only. **2026-10-09 (owner):** AWS organization "Kandaceross-Team" created, advanced features on, BAA accepted on the management account. Evidence still needed: the AWS Artifact agreement record showing it is the organization-wide BAA (covering the workload accounts, not only the management account), and workloads limited to HIPAA-eligible services. | `infra/` | Open |
 | SEC-10 | Backup, restore drill, DR *(evidence required)* | P1 | Yes | RDS PITR + snapshot plan documented | `docs/DEPLOYMENT.md` | Open |
-| SEC-11 | Error monitoring PHI scrubbing | P1 | Yes | No third-party error monitoring; allow-list logger only | `src/server/logger.ts` | Open |
-| SEC-12 | Logging allow-list review | P1 | Yes | Allow-list enforced in code | `src/server/logger.ts` | Open |
+| SEC-11 | Error monitoring PHI scrubbing | P1 | Yes | Owner chose Sentry (Q43, 2026-10-09): only after a signed Sentry BAA, with PHI scrubbed before sending; being built | `src/server/logger.ts` | Open |
+| SEC-12 | Logging allow-list review | P1 | Yes | Allow-list enforced in code | `src/server/logger.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-13 | Audit log tamper resistance | P1 | Yes | Append-only triggers + hash chain + verify tool; Object Lock archive planned | `src/server/audit.ts` | Open |
 | SEC-14 | Penetration test of sign-in, MFA, sessions and access control *(evidence required)* | P1 | Yes | Not done. Automated tools are acceptable; the result and fixes must be recorded. Built-in coverage today: E2E role-isolation tests and `npm run security:check` | — | Open |
 | SEC-15 | Formal security risk assessment | P1 | Yes | Not done | — | Open |
