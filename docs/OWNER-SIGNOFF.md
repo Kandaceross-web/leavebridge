@@ -36,7 +36,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 18 | LEG-11 | Require a photo ID upload reviewed by staff. Keep? | Required || **Signed off 2026-10-09:** "Keep ID check" (decision card). |
 | 19 | LEG-12 / SEC-05 | Card details stay with the payment processor; it only sees a neutral description. Accept? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). |
 | 20 | LEG-13 | Emails only say "something is waiting in your portal"; texts off unless the patient opts in. Keep? | As described || **Signed off 2026-10-09:** "Keep it" (decision card). |
-| 21 | LEG-14 | No ad pixels or third-party cookies; only optional privacy-friendly analytics on marketing pages. Keep? | No analytics configured | |
+| 21 | LEG-14 | No ad pixels or third-party cookies; only optional privacy-friendly analytics on marketing pages. Keep? | No analytics configured || **Signed off 2026-10-09:** "No pixels" (decision card); no analytics script configured. |
 | 22 | LEG-15 | Approve Terms of Use, Privacy Policy and Notice of Privacy Practices text (you'll get drafts). | Placeholders | |
 | 23 | LEG-16 | Patients consent by typing their name; you sign by re-confirming your identity. Accept these e-signatures? | As described | |
 | 24 | LEG-17 | Approve the FAQ and the six guides that mention FMLA rules. | Drafts, tagged | |
