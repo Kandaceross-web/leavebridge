@@ -57,7 +57,6 @@ export async function ensureEstimate(ctx: Ctx, row: CaseRow) {
     .where(and(eq(appointments.caseId, row.id), eq(appointments.status, "booked")))
     .orderBy(asc(appointments.startsAt))
     .limit(1);
-  const brand = await getSetting(ctx.tx, "brand");
   const content = buildEstimate({
     issuedAt: new Date(),
     reference: row.reference,
@@ -65,7 +64,7 @@ export async function ensureEstimate(ctx: Ctx, row: CaseRow) {
     service: { id: svc!.id, name: svc!.name, summary: svc!.summary },
     price: { id: price.id, amountCents: price.amountCents, currency: price.currency },
     scheduledFor: visit?.startsAt ?? null,
-    provider: { name: brand.name, location: state ? `By telehealth to you in ${state.name}` : "By telehealth" },
+    provider: { name: setting.providerName, location: state ? `By telehealth to you in ${state.name}` : "By telehealth" },
     setting,
   });
   const [created] = await ctx.tx

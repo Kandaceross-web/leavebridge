@@ -6,6 +6,7 @@ import { formatCents } from "./refunds";
  * record keeps that exact content with a hash so it can be reproduced unchanged for the record.
  */
 export interface EstimateSetting {
+  providerName: string;
   providerNpi: string;
   providerTin: string;
   serviceCode: string;

@@ -60,6 +60,8 @@ export const SETTING_DEFS = {
     // 45 CFR 149.610(c)(1). Provider identifiers and the service code are the owner's facts, so
     // they start empty; the release check refuses production until all three are filled in.
     schema: z.object({
+      /** Legal name of the billing provider. Owner sign-off Q9 (LEG-02): Defining You Therapeutic Services for now. */
+      providerName: z.string().min(2),
       providerNpi: z.string().regex(/^(\d{10})?$/, "A National Provider Identifier is 10 digits."),
       providerTin: z.string().regex(/^(\d{2}-?\d{7})?$/, "A Taxpayer Identification Number is 9 digits (12-3456789)."),
       serviceCode: z.string().regex(/^([0-9A-Z]{5})?$/, "A service (CPT/HCPCS) code is 5 characters."),
@@ -68,6 +70,7 @@ export const SETTING_DEFS = {
       disputeUrl: z.string().url(),
     }),
     default: {
+      providerName: "Defining You Therapeutic Services",
       providerNpi: "",
       providerTin: "",
       serviceCode: "",
