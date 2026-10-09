@@ -18,13 +18,13 @@ const input = (over: Partial<EstimateInput> = {}): EstimateInput => ({
 });
 
 describe("Good Faith Estimate setting", () => {
-  it("ships with empty owner fields, tagged for an owner decision (LEG-08)", () => {
-    expect(setting.providerNpi).toBe("");
+  it("ships with the owner's NPI and the other owner fields empty, tagged for an owner decision (LEG-08)", () => {
+    expect(setting.providerNpi).toBe("1962023812");
     expect(setting.providerTin).toBe("");
     expect(setting.serviceCode).toBe("");
     expect(SETTING_DEFS.goodFaithEstimate.reviewTag).toBe("OWNER_DECISION_REQUIRED");
     expect(SETTING_DEFS.goodFaithEstimate.reviewNote).toMatch(/LEG-08/);
-    expect(missingEstimateFields(setting)).toEqual(["providerNpi", "providerTin", "serviceCode"]);
+    expect(missingEstimateFields(setting)).toEqual(["providerTin", "serviceCode"]);
   });
 
   it("validates identifier formats but accepts the empty defaults", () => {
@@ -59,7 +59,7 @@ describe("building an estimate", () => {
   });
 
   it("shows money, dates and missing owner fields in plain language", () => {
-    const s = estimateSections(buildEstimate(input({ setting: { ...setting } })));
+    const s = estimateSections(buildEstimate(input({ setting: { ...setting, providerNpi: "" } })));
     expect(s.total).toBe("$279.99");
     expect(s.items[0]!.serviceCode).toBe("Not yet provided");
     expect(s.patient.find((l) => l.label === "Date of birth")!.value).toBe("April 12, 1988");

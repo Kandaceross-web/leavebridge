@@ -93,7 +93,7 @@ export const SETTING_DEFS = {
     }),
     default: {
       providerName: "Defining You Therapeutic Services",
-      providerNpi: "",
+      providerNpi: "1962023812", // Kandace Ross, LPC (NPI-1, active; NPPES checked 2026-10-09)
       providerTin: "",
       serviceCode: "",
       // CLN-12: forms carry no diagnosis field, so the estimate lists none.
