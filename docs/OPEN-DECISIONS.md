@@ -64,7 +64,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | LEG-03 | HIPAA covered-entity status; state health-privacy laws; NPP | P0 | Yes | Built as if HIPAA applies (encryption, RLS, audit, minimum necessary); NPP placeholder page | Legal pages; `docs/COMPLIANCE.md` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-04 | All consent documents | P1 | Yes | Placeholder text marked `[LEGAL REVIEW REQUIRED]`, versioned, hash-signed | Admin → Consents | Open |
 | LEG-05 | Consumer-facing copy and status labels | P1 | Yes | Neutral labels; no outcome words; determinations shown as clinician message | `src/domain/cases/state-machine.ts`, site pages | Open |
-| LEG-06 | AI drafting/OCR vendor agreements | P1 | Yes | `features.aiDrafting` and `formExtraction` off; Bedrock adapter only | Business rules → features | Open |
+| LEG-06 | AI drafting/OCR vendor agreements | P1 | Yes | `features.aiDrafting` and `formExtraction` off; Bedrock adapter only | Business rules → features | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-07 | Release authorization content; communication with employers | P1 | Yes | Patient-created releases recorded; external sending disabled | `features.externalDelivery`; release consent placeholder | Open |
 | LEG-08 | Good Faith Estimate obligations | P1 | Yes | Price shown before payment; no GFE document generated | Pricing page; checkout | Open |
 | LEG-09 | Refund policy under consumer law; chargebacks | P1 | Yes | Placeholder policy, tagged | Business rules → refundPolicy | Open |
@@ -89,7 +89,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | CLN-03 | Screening questions and outcome rules | P0 | Yes | Conservative v1 ruleset, tagged | Admin → Screening & measures | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-04 | Intake template content | P1 | Yes | Intake v1, tagged | Questionnaires | Open |
 | CLN-05 | Validated instruments, licensing, scoring | P2 | Yes | PHQ-9 and GAD-7 with published items/scoring; scores visible to clinicians only; can be disabled | Admin → Screening & measures | Open |
-| CLN-06 | AI suggestion boundaries | P1 | Yes | Off; when on, only fields marked `aiAllowed`, cited, clinician must accept | `src/config/document-templates.ts` | Open |
+| CLN-06 | AI suggestion boundaries | P1 | Yes | Off; when on, only fields marked `aiAllowed`, cited, clinician must accept | `src/config/document-templates.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | CLN-07 | Clinical messaging policy | P1 | Yes | Clinical thread visible to patient, assigned clinician and directors | Messaging | Open |
 | CLN-08 | Sustainable turnaround | P1 | No | No promise published | Business rules → turnaround | Open |
 | CLN-09 | Director role, supervision, reassignment | P1 | Yes | Directors see all clinical data and can reassign | Policy | Open |
@@ -118,7 +118,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | SEC-01 | Authentication design and session lifetimes | P0 | Yes | In-app auth: scrypt, DB sessions, TOTP MFA required for staff, step-up 5 min, idle 15/30 min | Business rules → security; `src/server/auth` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-02 | Encryption and RLS review | P0 | Yes | AES-256-GCM field/file encryption with keyring; RLS on all PHI tables; runtime role is not owner | `drizzle/0001_security_controls.sql`, `src/server/crypto.ts` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-03 | Break-glass model | P1 | Yes | Time-boxed grant requested with reason, approved by another director/admin, audited | Admin → Access grants | Open |
-| SEC-04 | AI vendor configuration | P1 | Yes | Bedrock adapter (no training by AWS terms; verify); off by default | `AI_PROVIDER` | Open |
+| SEC-04 | AI vendor configuration | P1 | Yes | Bedrock adapter (no training by AWS terms; verify); off by default | `AI_PROVIDER` | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | SEC-05 | Payment data minimization | P1 | Yes | Hosted checkout; no card data touches the app | Payment provider | Open |
 | SEC-06 | Upload pipeline | P1 | Yes | 15 MB, magic-byte type check, PDF structure check, EICAR test; ClamAV adapter for production | `src/server/providers/scan.ts` | Open |
 | SEC-07 | Screening purge job | P1 | Yes | `npm run jobs -- purge-screenings` (schedule daily) | `scripts/jobs.ts` | Open |

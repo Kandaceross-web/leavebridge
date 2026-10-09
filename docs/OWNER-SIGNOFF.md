@@ -28,7 +28,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 10 | LEG-03 | Will you operate as a HIPAA covered entity and publish a Notice of Privacy Practices you approve? | Built as if HIPAA applies; NPP placeholder || **Signed off 2026-10-09:** "Yes, follow HIPAA" (decision card). Built as if HIPAA applies; the Notice of Privacy Practices text is drafted for the owner to approve with the other policy documents (Q22). |
 | 11 | LEG-04 | Approve the consent documents' wording (you'll get each one to read). | Placeholders | |
 | 12 | LEG-05 | Approve the public copy and status labels (no outcome promises)? | Neutral labels | |
-| 13 | LEG-06 / SEC-04 / CLN-06 | Keep AI drafting turned off at launch? | Off | |
+| 13 | LEG-06 / SEC-04 / CLN-06 | Keep AI drafting turned off at launch? | Off || **Signed off 2026-10-09:** "Keep it off" (decision card). |
 | 14 | LEG-07 | Patients send their own documents to employers; LeaveBridge doesn't send them. Keep for launch? | External sending off | |
 | 15 | LEG-08 | Show the price before payment and not issue a separate Good Faith Estimate document. Accept? | Price shown before payment | |
 | 16 | LEG-09 / OWN-07 | Approve the refund rules (full refund before intake is submitted; partial after). | Placeholder policy | |
