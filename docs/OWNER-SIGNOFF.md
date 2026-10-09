@@ -40,7 +40,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 22 | LEG-15 | Approve Terms of Use, Privacy Policy and Notice of Privacy Practices text (you'll get drafts). | Placeholders | |
 | 23 | LEG-16 | Patients consent by typing their name; you sign by re-confirming your identity. Accept these e-signatures? | As described || **Signed off 2026-10-09:** "Accept them" (decision card). |
 | 24 | LEG-17 | Approve the FAQ and the six guides that mention FMLA rules. | Drafts, tagged | |
-| 25 | LEG-19 | Have you checked that "LeaveBridge Health" is free to use as a name? | Working name | |
+| 25 | LEG-19 | Have you checked that "LeaveBridge Health" is free to use as a name? | Working name || **Signed off 2026-10-09:** "Already checked" (decision card): owner checked the name is clear. |
 | 26 | LEG-20 / SEC-16 | Approve a short breach and incident plan (who you notify and when). | Not written | |
 | 27 | CLN-04 | Approve the intake questions. | Intake v1 | |
 | 28 | CLN-05 | Use the PHQ-9 and GAD-7, with scores shown only to you. | On | |

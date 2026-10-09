@@ -77,7 +77,7 @@ clear the matching review tag, and change Status to `Closed (YYYY-MM-DD, who)`. 
 | LEG-16 | E-signature validity; employer acceptance of e-signed forms | P1 | Yes | Typed-name consent with hash and auth evidence; clinician signature bound to content hash with step-up | Consents, signatures | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-17 | FAQ content touching FMLA/ADA/state law | P1 | Yes | FAQ entries tagged LEGAL_REVIEW_REQUIRED where they touch law | Admin → Content | Open |
 | LEG-18 | Records access and amendment process | P2 | No | Placeholder legal page; requests via support | Legal pages | Open |
-| LEG-19 | Trademark clearance | P1 | Yes | Name and mark used as working brand | Brand setting | Open |
+| LEG-19 | Trademark clearance | P1 | Yes | Name and mark used as working brand | Brand setting | Closed (2026-10-09, Zxryeni, owner sign-off; outside review waived) |
 | LEG-20 | Breach notification and incident response | P1 | Yes | Audit log and alerts design only | `docs/SECURITY.md` | Open |
 
 ## Clinical
