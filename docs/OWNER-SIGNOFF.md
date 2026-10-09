@@ -21,7 +21,7 @@ and SEC-14 (penetration test of sign-in and access control).
 | 3 | CLN-02 | Crisis resources shown: 988, 911, nearest ER, MS DMH helpline and TN statewide crisis line. Keep these? | As listed || **Signed off 2026-10-09:** "Keep them" (decision card). |
 | 4 | CLN-03 | Are the screening questions and the rules for "we can help / needs review / can't help" right? | Conservative v1 ruleset | **Signed off 2026-10-09:** "Keep them" (decision card). Seed ruleset tag cleared. |
 | 5 | CLN-12 | Should forms let you write a diagnosis, given your LPC scope in MS and TN? | No diagnosis field; findings are free text | **Signed off 2026-10-09:** "Keep it" (decision card). |
-| 6 | STR-01 | Will you look up and record your MS and TN license numbers (and any compact privileges) from the state boards before launch? | Entered by hand with who verified and when | |
+| 6 | STR-01 | Will you look up and record your MS and TN license numbers (and any compact privileges) from the state boards before launch? | Entered by hand with who verified and when | **Signed off 2026-10-09:** "Yes, before launch" (decision card). |
 | 7 | SEC-01 | Sign-in: passwords plus an authenticator app for staff, re-confirm before signing documents, sign out after 15 minutes idle (staff) and 30 (patients). Keep? | As described | |
 | 8 | SEC-02 | Health data is encrypted and each person only sees their own records (checked by the database itself). Accept this design? | As described; automated check runs every release | |
 | 9 | LEG-02 | What business name and entity will patients pay, and what should appear on card statements? | "Professional assessment service" | |
