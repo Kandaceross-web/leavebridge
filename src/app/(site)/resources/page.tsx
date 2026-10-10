@@ -69,7 +69,7 @@ export default async function ResourcesPage() {
         <h2>Ready to see if we can help?</h2>
         <p className="muted">Answer a few questions. No account or payment needed to check.</p>
         <div className="btn-row">
-          <ButtonLink href={appHref("/start?entry=resources")}>Check if we can help</ButtonLink>
+          <ButtonLink href={appHref("/start?entry=resources")}>Begin Your Assessment</ButtonLink>
         </div>
       </div>
     </div>

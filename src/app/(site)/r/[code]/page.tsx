@@ -59,7 +59,7 @@ export default async function ReferralLandingPage({ params }: Props) {
         </ul>
         <div className="btn-row">
           <ButtonLink href={appHref(`/start?ref=${encodeURIComponent(org.code)}`)}>
-            Check if we can help
+            Begin Your Assessment
           </ButtonLink>
           <ButtonLink href="/how-it-works" variant="quiet">
             How it works

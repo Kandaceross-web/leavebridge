@@ -43,7 +43,7 @@ export default function FmlaBasicsCheckPage() {
         </p>
         <div className="btn-row">
           <ButtonLink href={appHref("/start?entry=fmla-basics-check")}>
-            Check if we can help
+            Begin Your Assessment
           </ButtonLink>
         </div>
       </div>

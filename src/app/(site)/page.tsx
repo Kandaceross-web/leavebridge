@@ -1,119 +1,167 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Banner, ButtonLink, Icon, Money } from "@/components/ui";
-import { Illustration } from "@/components/illustration";
+import { Banner, ButtonLink, Money } from "@/components/ui";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, servicesLd } from "@/server/web/structured-data";
 import { activeStates, enabledServices, isProduction, siteSettings } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
+import {
+  HOME_EXPERIENCE,
+  HOME_FAQ,
+  HOME_HERO,
+  HOME_SERVICE_COPY,
+  HOME_STEPS,
+  HOME_TRUST,
+  HOME_UNDERSTAND,
+} from "@/config/home";
+import { PUBLIC_PROVIDER } from "@/config/provider";
 
-// Copy on this page follows the language people use when they search for this help
-// (docs/research/2026-10-demand-and-competitors.md): "FMLA paperwork", "no regular doctor",
-// "deadline", "will my employer find out". It describes the process and never promises an outcome.
-// Claims about who may certify FMLA leave and what employers see are LEGAL_REVIEW_REQUIRED.
-// Kept short on purpose (owner feedback, 2026-10): detail lives on /how-it-works, /pricing and /faq.
+// "Maison" homepage (owner choice, 2026-10-10). Copy lives in src/config/home.ts; prices come from the live catalog.
+// It describes the existing workflow and never promises an outcome. Claims about who may certify FMLA leave and
+// what employers see are LEGAL_REVIEW_REQUIRED.
 
 export const metadata: Metadata = {
-  title: { absolute: "LeaveBridge Health · Mental health leave and FMLA paperwork assessments" },
+  title: { absolute: "LeaveBridge Health · Mental health assessments and leave documentation support" },
   description:
-    "A licensed mental-health clinician assesses you by secure telehealth and decides independently whether leave documentation is supported. Flat self-pay price, no subscription.",
+    "Professional mental health assessments and leave documentation support, thoughtfully delivered online by a licensed professional counselor. Published self-pay fees, no subscription.",
   alternates: { canonical: "/" },
 };
 
-const STAGES = [
-  { art: "steps/1-check", title: "Check", body: "Two minutes. No account needed." },
-  { art: "steps/3-pay", title: "Sign up and pay", body: "Verify your ID and location, then pay once." },
-  { art: "steps/4-intake", title: "Intake", body: "Your story, two short questionnaires, your forms." },
-  { art: "steps/5-review", title: "Clinician assessment", body: "Review, and a video visit if needed.", clinical: true },
-  { art: "steps/7-deliver", title: "Secure delivery", body: "Signed documents in your portal. You share them." },
-] as const;
-
 export default async function HomePage() {
-  const [{ brand, pricing, crisis }, states, services] = await Promise.all([
+  const [{ brand, refundPolicy }, states, services] = await Promise.all([
     siteSettings(),
     activeStates(),
     enabledServices(),
   ]);
   const primary = services[0];
   const price = primary?.priceCents ?? null;
-  const priced = services.filter((s) => s.priceCents !== null);
   const stateNames = states.map((s) => s.name).join(" and ");
+  const priceText = price !== null ? `$${(price / 100).toFixed(2)}` : "the published fee";
+  const faq: [string, string][] = [...HOME_FAQ, ["What is your refund policy?", refundPolicy.summary]];
   return (
     <>
       <JsonLd data={[organizationLd(brand.name, states), ...servicesLd(services, states)]} />
-      <div className="hero-band">
-        <section className="container hero" aria-labelledby="hero-title">
-          <div>
-            <p className="eyebrow">FMLA and mental health leave paperwork</p>
-            <h1 id="hero-title" className="mt-1">
-              Mental health leave, <span className="hl">assessed properly</span>.
+      <section className="kv-hero" aria-labelledby="hero-title">
+        <div className="kv-art" aria-hidden="true">
+          <span className="light" />
+          <span className="arch" />
+        </div>
+        <div className="kv-text">
+          <div className="container">
+            <p className="eyebrow">{HOME_HERO.eyebrow}</p>
+            <h1 id="hero-title">
+              Your Wellbeing Deserves <em>Exceptional</em> Care.
             </h1>
-            <p className="sub">
-              A licensed clinician meets you by secure video and decides independently whether leave
-              paperwork is supported.
-            </p>
+            <p className="sub">{HOME_HERO.sub}</p>
             <div className="btn-row">
-              <ButtonLink href={appHref("/start?entry=home-hero")}>Check if we can help</ButtonLink>
-              <ButtonLink href="/how-it-works" variant="secondary">
-                How it works
-              </ButtonLink>
+              <Link href={appHref("/start?entry=home-hero")} className="btn btn-light">
+                {HOME_HERO.primary}
+              </Link>
+              <Link href="#services" className="btn btn-outline-light">
+                {HOME_HERO.secondary}
+              </Link>
             </div>
-            {price !== null ? (
-              <p className="mt-3">
-                <span className="price-pill">
-                  <b>
-                    <Money cents={price} />
-                  </b>
-                  flat fee · self-pay · no subscription
-                </span>
-              </p>
-            ) : null}
-            <p className="fine mt-2">
-              Payment does not guarantee a diagnosis, certification, documentation or approval of
-              leave. <Link href="/pricing">What&rsquo;s included</Link>
-            </p>
-            <ul className="chips mt-3" aria-label="Why people trust us">
-              <li className="chip">
-                <Icon name="badge" /> Licensed clinicians{stateNames ? ` in ${stateNames}` : ""}
-              </li>
-              <li className="chip">
-                <Icon name="lock" /> Private, encrypted portal
-              </li>
-              <li className="chip">
-                <Icon name="video" /> Secure video
-              </li>
-            </ul>
+            <p className="note-line">{HOME_HERO.note}</p>
           </div>
-          <div className="hero-art">
-            <Illustration
-              name="hero"
-              alt="Illustration of a person on a sofa having a video visit with a clinician on a tablet."
-              preload
-            />
-          </div>
-        </section>
+        </div>
+      </section>
+
+      <div className="container">
+        <div className="bookbar" role="group" aria-label="Assessment at a glance">
+          <dl>
+            <dt>Service</dt>
+            <dd>{primary?.name ?? "Mental Health Leave Assessment"}</dd>
+          </dl>
+          <dl>
+            <dt>Format</dt>
+            <dd>Online clinical assessment</dd>
+          </dl>
+          <dl>
+            <dt>Fee</dt>
+            <dd className="price-val">{price !== null ? <Money cents={price} /> : "—"}</dd>
+          </dl>
+          <ButtonLink href={appHref("/start?entry=home-bookbar")}>{HOME_HERO.primary}</ButtonLink>
+        </div>
+
+        <div className="trust-row">
+          {HOME_TRUST.map(([title, body]) => (
+            <div key={title}>
+              <h2>{title}</h2>
+              <p>{body}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <section className="section section-sun" aria-labelledby="familiar-title">
-        <div className="container">
-          <div className="section-head">
-            <p className="eyebrow">Sound familiar?</p>
-            <h2 id="familiar-title">The usual routes aren&rsquo;t working</h2>
+      <section className="section" aria-labelledby="understand-title">
+        <div className="container split">
+          <div className="stack stack-lg">
+            <p className="eyebrow">The assessment</p>
+            <h2 id="understand-title">
+              Thoughtful care, <em>clearly</em> explained.
+            </h2>
           </div>
-          <div className="grid g3">
-            <div className="quote">
-              <h3>HR gave me a form and a deadline.</h3>
-              <p>Tell us your deadline at screening. We&rsquo;ll be honest if it&rsquo;s tight.</p>
+          <div>
+            {HOME_UNDERSTAND.body.map((p, i) => (
+              <p key={p} className={i === 0 ? "intro-lead" : "mt-2"}>
+                {p}
+              </p>
+            ))}
+            <div className="fit">
+              <div>
+                <h3>Who it is for</h3>
+                <ul>
+                  <li>Adults 18 and older</li>
+                  <li>Anxiety, depression, burnout or other symptoms affecting work</li>
+                  <li>
+                    Located in {stateNames || "a state we serve"} during care.{" "}
+                    <Link href="/availability">Where we serve</Link>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3>What it is not</h3>
+                <ul>
+                  {HOME_UNDERSTAND.notFor.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="quote">
-              <h3>I don&rsquo;t have a regular doctor.</h3>
-              <p>No referral needed. A licensed clinician assesses you from the start.</p>
-            </div>
-            <div className="quote">
-              <h3>My therapist can&rsquo;t fill it out.</h3>
-              <p>Many don&rsquo;t. Assessments and forms are all we do.</p>
+            <div className="disclose stack stack-sm">
+              {!isProduction ? (
+                <Banner tone="warn" icon="alert">
+                  <b>Pending legal review.</b> These statements about employers and FMLA rules are not final until
+                  reviewed.
+                </Banner>
+              ) : null}
+              <p>{HOME_UNDERSTAND.qualification}</p>
+              <p>
+                FMLA rules limit which providers may certify leave, and some employers accept only certain license
+                types. Please ask HR or your leave administrator whether they accept a licensed professional counselor
+                before you pay. <Link href="/faq">Learn more</Link>
+              </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="section section-sun" aria-labelledby="experience-title">
+        <div className="container split">
+          <div className="stack stack-lg">
+            <p className="eyebrow">The experience</p>
+            <h2 id="experience-title">
+              Quality and <em>convenience</em>, together.
+            </h2>
+          </div>
+          <dl className="exp-list">
+            {HOME_EXPERIENCE.map(([title, body]) => (
+              <div key={title}>
+                <dt>{title}</dt>
+                <dd>{body}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
@@ -121,222 +169,163 @@ export default async function HomePage() {
         <div className="container">
           <div className="section-head">
             <p className="eyebrow">How it works</p>
-            <h2 id="how-title">Five stages, one secure portal</h2>
+            <h2 id="how-title">
+              Three stages, <em>one</em> private portal.
+            </h2>
           </div>
-          <ol className="flow flow-5">
-            {STAGES.map((s, i) => (
-              <li key={s.title} className={"clinical" in s ? "clin" : undefined}>
+          <ol className="steps-ed">
+            {HOME_STEPS.map((s, i) => (
+              <li key={s.title}>
                 <span className="num" aria-hidden="true">
-                  {i + 1}
+                  {String(i + 1).padStart(2, "0")}
                 </span>
-                <Illustration name={s.art} alt="" />
                 <h3>{s.title}</h3>
-                <p>{s.body}</p>
-                {"clinical" in s ? (
-                  <span className="clin-tag">
-                    <Icon name="badge" /> Clinician only
-                  </span>
-                ) : null}
+                <p>{s.lede}</p>
+                <ul>
+                  {s.details.map((d) => (
+                    <li key={d}>{d.replace("{price}", priceText)}</li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ol>
-          <div className="callout-row mt-4">
-            <p className="note">
-              <Icon name="info" />
-              <span>
-                Only a licensed clinician makes clinical decisions. No software does, and payment
-                never decides the outcome.
-              </span>
-            </p>
-            <ButtonLink href="/how-it-works" variant="secondary">
-              See every step
-            </ButtonLink>
-          </div>
+          <p className="mt-4">
+            <Link href="/how-it-works">See every step in detail</Link>
+          </p>
         </div>
       </section>
 
-      <section className="section section-mint" aria-labelledby="who-title">
-        <div className="container grid g2">
-          <div className="feature">
-            <span className="bubble bubble-mint">
-              <Icon name="users" size={26} />
-            </span>
-            <h2 id="who-title">Who this is for</h2>
-            <ul className="list-check">
-              <li>
-                <Icon name="check" />
-                <span>Adults 18 and older</span>
-              </li>
-              <li>
-                <Icon name="check" />
-                <span>
-                  Anxiety, depression, burnout or other symptoms making work hard
-                </span>
-              </li>
-              <li>
-                <Icon name="check" />
-                <span>
-                  Physically in {stateNames || "a state we serve"} during care.{" "}
-                  <Link href="/availability">Where we serve</Link>
-                </span>
-              </li>
-            </ul>
-          </div>
-          <div className="feature">
-            <span className="bubble bubble-lav">
-              <Icon name="x" size={26} />
-            </span>
-            <h2>This is not</h2>
-            <ul className="list-check">
-              {[
-                "Emergency or crisis care",
-                "Ongoing therapy or medication",
-                "A decision on FMLA eligibility or leave approval",
-                "A guarantee of any outcome",
-              ].map((t) => (
-                <li key={t}>
-                  <Icon name="x" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="small">
-              <b>In crisis?</b>{" "}
-              {crisis.resources
-                .filter((r) => r.href)
-                .map((r, i) => (
-                  <span key={r.label}>
-                    {i > 0 ? " · " : ""}
-                    <a href={r.href}>{r.label}</a>
-                  </span>
-                ))}{" "}
-              · <Link href="/crisis">More crisis resources</Link>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="trust-title">
-        <div className="container split">
-          <div className="stack stack-lg">
-            <h2 id="trust-title">Two things to know first</h2>
-            {!isProduction ? (
-              <Banner tone="warn" icon="alert">
-                <b>Pending legal review.</b> These statements about employers and FMLA rules are not
-                final until reviewed.
-              </Banner>
-            ) : null}
-            <div className="media">
-              <span className="bubble bubble-teal">
-                <Icon name="lock" size={24} />
-              </span>
-              <div className="stack stack-sm">
-                <h3>You choose who sees it</h3>
-                <p className="muted">
-                  Read everything in your portal before you share it. We never contact your
-                  employer unless you ask, and we don&rsquo;t bill insurance.
-                </p>
-              </div>
-            </div>
-            <div className="media">
-              <span className="bubble bubble-sun">
-                <Icon name="file" size={24} />
-              </span>
-              <div className="stack stack-sm">
-                <h3>Check with HR before you pay</h3>
-                <p className="muted">
-                  FMLA rules limit which providers may certify leave, and some employers accept only
-                  certain license types. Ask HR or your leave administrator if they accept a licensed
-                  mental-health clinician. <Link href="/faq">Learn more</Link>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="split-art">
-            <Illustration name="privacy" alt="" />
-          </div>
-        </div>
-      </section>
-
-      <section className="section section-lavender" aria-labelledby="cost-title">
+      <section id="services" className="section section-sun" aria-labelledby="services-title">
         <div className="container">
           <div className="section-head">
-            <p className="eyebrow">Clear prices</p>
-            <h2 id="cost-title">One flat price. No subscription.</h2>
+            <p className="eyebrow">Services and fees</p>
+            <h2 id="services-title">
+              Transparent, <em>published</em> pricing.
+            </h2>
+            <p className="lede">Self-pay. No subscription, and we do not bill insurance.</p>
           </div>
-          <div className="grid g2">
-            <div className="price-card">
-              <p className="eyebrow">{primary?.name ?? "Mental Health Leave Assessment"}</p>
-              <p className="price">
-                {price !== null ? <Money cents={price} /> : "—"}
-                <small>self-pay</small>
-              </p>
-              <h3>What the assessment covers</h3>
-              <ul className="list-check">
-                {pricing.includes.map((item) => (
-                  <li key={item}>
-                    <Icon name="check" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              {priced.some((s) => s !== primary) ? (
-                <ul className="price-list" aria-label="Other services">
-                  {priced.filter((s) => s !== primary).map((s) => (
-                    <li key={s.slug}>
-                      <span>{s.name}</span>
-                      <b>
-                        <Money cents={s.priceCents ?? 0} />
-                      </b>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-              <div>
-                <ButtonLink href={appHref("/start?entry=home-price")}>
-                  Check if we can help
-                </ButtonLink>
-              </div>
-            </div>
-            <div className="feature">
-              <h3>What it doesn&rsquo;t guarantee</h3>
-              <ul className="list-check">
-                {pricing.excludes.map((item) => (
-                  <li key={item}>
-                    <Icon name="x" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="small muted">
-                Self-pay only; we don&rsquo;t bill insurance. Refunds depend on how far your case
-                has gone. <Link href="/pricing">Pricing and refunds</Link>
-              </p>
-            </div>
+          <div className="menu-list">
+            {services.map((s) => {
+              const copy = HOME_SERVICE_COPY[s.slug];
+              const href =
+                copy?.href === "portal" ? appHref("/sign-in") : appHref("/start?entry=home-services");
+              return (
+                <article key={s.slug} className="menu-item" aria-labelledby={`svc-${s.slug}`}>
+                  <div className="menu-head">
+                    <h3 id={`svc-${s.slug}`}>{s.name}</h3>
+                    <span className="dots" aria-hidden="true" />
+                    {s.priceCents !== null ? (
+                      <span className="amt">
+                        <Money cents={s.priceCents} />
+                      </span>
+                    ) : null}
+                    {copy ? <span className="unit">{copy.unit}</span> : null}
+                  </div>
+                  <div className="act">
+                    <p className="for">{copy?.forWho ?? s.summary}</p>
+                    <ButtonLink href={href} variant={copy?.href === "portal" ? "secondary" : "primary"}>
+                      {copy?.cta ?? "Learn more"}
+                    </ButtonLink>
+                  </div>
+                  {copy ? (
+                    <dl>
+                      <div>
+                        <dt>Includes</dt>
+                        <dd>
+                          <ul>
+                            {copy.includes.map((x) => (
+                              <li key={x}>{x}</li>
+                            ))}
+                          </ul>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>You will need</dt>
+                        <dd>{copy.prereq.replace("{states}", stateNames || "a state we serve")}</dd>
+                      </div>
+                      <div>
+                        <dt>Please note</dt>
+                        <dd>{copy.scope}</dd>
+                      </div>
+                    </dl>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+          <p className="small muted mt-3">
+            Payment does not guarantee a diagnosis, certification, documentation or approval of leave.{" "}
+            <Link href="/pricing">Pricing and refunds</Link>
+          </p>
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="creds-title">
+        <div className="container split">
+          <div className="stack stack-lg">
+            <p className="eyebrow">Clinical credentials</p>
+            <h2 id="creds-title">
+              Licensed, <em>accountable</em> care.
+            </h2>
+            <p className="muted">
+              Assessments are provided by a licensed professional counselor, not a physician.{" "}
+              <Link href="/about">About our practice</Link>
+            </p>
+          </div>
+          <ul className="creds">
+            <li>
+              <span>Clinician</span>
+              <span>
+                {PUBLIC_PROVIDER.name}, {PUBLIC_PROVIDER.postNominals}
+              </span>
+            </li>
+            {PUBLIC_PROVIDER.licenses.map((l) => (
+              <li key={l.state}>
+                <span>{l.state}</span>
+                <span>
+                  {l.title} ({l.abbreviation}), license no. {l.number}
+                </span>
+              </li>
+            ))}
+            {PUBLIC_PROVIDER.certifications.map((c) => (
+              <li key={c}>
+                <span>Certification</span>
+                <span>{c}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="section section-sun" aria-labelledby="faq-title">
+        <div className="container faq-grid">
+          <div className="intro">
+            <p className="eyebrow">Questions</p>
+            <h2 id="faq-title">
+              Before you <em>begin</em>.
+            </h2>
+            <p>
+              <Link href="/faq">All frequently asked questions</Link>
+            </p>
+          </div>
+          <div className="faq">
+            {faq.map(([q, a]) => (
+              <details key={q}>
+                <summary>{q}</summary>
+                <p>{a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section" aria-labelledby="next-title">
-        <div className="container">
-          <div className="cta-band">
-            <div>
-              <h2 id="next-title">Your next step</h2>
-              <p className="lede">
-                See if we can help in about two minutes. No account or payment needed.
-              </p>
-              <div className="btn-row">
-                <ButtonLink href={appHref("/start?entry=home-footer")}>
-                  Check if we can help
-                </ButtonLink>
-                <ButtonLink href="/resources" variant="quiet">
-                  Read our guides
-                </ButtonLink>
-              </div>
-            </div>
-            <Illustration name="next-step" alt="" />
-          </div>
-        </div>
+      <section className="container final" aria-labelledby="next-title">
+        <p className="eyebrow">Your next step</p>
+        <h2 id="next-title">
+          Begin with a <em>brief</em> screening.
+        </h2>
+        <p>About two minutes. No account or payment needed.</p>
+        <ButtonLink href={appHref("/start?entry=home-footer")}>{HOME_HERO.primary}</ButtonLink>
       </section>
     </>
   );

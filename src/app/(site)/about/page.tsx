@@ -1,24 +1,23 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ButtonLink, Empty, Icon } from "@/components/ui";
+import { ButtonLink, Icon } from "@/components/ui";
 import { SiteHero } from "@/components/illustration";
-import { publicClinicians, siteSettings } from "@/server/web/public";
-import styles from "../site.module.css";
+import { siteSettings } from "@/server/web/public";
+import { PUBLIC_PROVIDER } from "@/config/provider";
 
 export const metadata: Metadata = {
-  title: "About and clinical team",
-  description: "About LeaveBridge Health and the licensed mental-health clinicians who provide independent assessments.",
+  title: "About and clinical credentials",
+  description: "About LeaveBridge Health and the licensed professional counselor who provides independent assessments.",
 };
 
 export default async function AboutPage() {
-  const [{ brand }, team] = await Promise.all([siteSettings(), publicClinicians()]);
+  const { brand } = await siteSettings();
   return (
     <div className="container page stack stack-xl">
       <SiteHero
         eyebrow="About"
         title={`About ${brand.name}`}
         lede="Telehealth assessments for adults whose mental health is affecting their work."
-        art="next-step"
       />
 
       <section className="grid g3" aria-label="How we work">
@@ -45,21 +44,41 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="stack" aria-labelledby="team-title">
-        <h2 id="team-title">Our clinical team</h2>
-        {team.length ? (
-          <ul className="grid g2 list-plain">
-            {team.map((c) => (
-              <li key={c.id} className="card stack stack-sm">
-                <h3 className={styles.clinicianName}>{c.displayName}</h3>
-                <p className="small muted">{c.credentials}</p>
-                {c.bio ? <p className="small">{c.bio}</p> : null}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <Empty title="Clinician profiles are coming soon">Our clinicians are licensed in each state we serve.</Empty>
-        )}
+      <section className="split" aria-labelledby="creds-title">
+        <div className="stack stack-sm">
+          <p className="eyebrow">Clinical credentials</p>
+          <h2 id="creds-title">Who provides your assessment</h2>
+          <p className="muted">
+            Assessments are provided by a licensed professional counselor, not a physician. You can verify a license with
+            the licensing board of the state that issued it.
+          </p>
+        </div>
+        <ul className="creds">
+          <li>
+            <span>Clinician</span>
+            <span>
+              {PUBLIC_PROVIDER.name}, {PUBLIC_PROVIDER.postNominals}
+            </span>
+          </li>
+          <li>
+            <span>Profession</span>
+            <span>{PUBLIC_PROVIDER.profession}</span>
+          </li>
+          {PUBLIC_PROVIDER.licenses.map((l) => (
+            <li key={l.state}>
+              <span>{l.state}</span>
+              <span>
+                {l.title} ({l.abbreviation}), license no. {l.number}
+              </span>
+            </li>
+          ))}
+          {PUBLIC_PROVIDER.certifications.map((c) => (
+            <li key={c}>
+              <span>Certification</span>
+              <span>{c}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="card-quiet stack" aria-labelledby="scope-title">

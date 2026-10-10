@@ -36,7 +36,6 @@ export default async function PricingPage() {
         eyebrow="Pricing"
         title="One clear, self-pay price"
         lede="You pay for a professional assessment. The fee is the same whatever the outcome."
-        art="pricing"
       />
 
       <div className="grid g2">
@@ -56,7 +55,7 @@ export default async function PricingPage() {
             ))}
           </ul>
           <div>
-            <ButtonLink href={appHref("/start?entry=pricing")}>Check if we can help</ButtonLink>
+            <ButtonLink href={appHref("/start?entry=pricing")}>Begin Your Assessment</ButtonLink>
           </div>
         </section>
 

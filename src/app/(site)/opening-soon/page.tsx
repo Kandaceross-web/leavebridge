@@ -20,7 +20,6 @@ export default function OpeningSoonPage() {
         eyebrow="Opening soon"
         title="We’re not booking assessments yet"
         lede="We’re getting ready to open in Mississippi and Tennessee. Screening, accounts and appointments open here at launch."
-        art="next-step"
       />
       <p>While you wait, our guides explain FMLA for mental health and who can complete the forms.</p>
       <div className="btn-row">

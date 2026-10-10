@@ -3,28 +3,14 @@ import type { ReactNode } from "react";
 
 /* Server-safe presentational components shared by the site, portal and ops console. */
 
-export function LogoMark({ size = 28, reverse = false }: { size?: number; reverse?: boolean }) {
-  const bg = reverse ? "#FFF9F2" : "#0F4C4A";
-  const arch = reverse ? "#B84227" : "#F6C453";
-  const deck = reverse ? "#0F4C4A" : "#FFF9F2";
+/** Bridge mark: one shallow arch over a deck line, in hairline strokes. Champagne arch, espresso (or ivory) deck. */
+export function LogoMark({ size = 34, reverse = false }: { size?: number; reverse?: boolean }) {
+  const deck = reverse ? "#FFFDFA" : "#302722";
   return (
-    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <rect x="0" y="0" width="48" height="48" rx="12" fill={bg} />
-      <path
-        d="M11 31.5 C 16 19.5, 32 19.5, 37 31.5"
-        fill="none"
-        stroke={arch}
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path d="M9 31.5 H 39" fill="none" stroke={deck} strokeWidth="3" strokeLinecap="round" />
-      <path
-        d="M16 31.5 V 37 M32 31.5 V 37"
-        fill="none"
-        stroke={deck}
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
+    <svg width={size} height={Math.round(size * 0.6)} viewBox="0 0 40 24" aria-hidden="true" focusable="false">
+      <path d="M3 19 C 11 5, 29 5, 37 19" fill="none" stroke="#B79A65" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M1 19 H39" fill="none" stroke={deck} strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M13 11.2 V19 M20 9 V19 M27 11.2 V19" fill="none" stroke="#B79A65" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
     </svg>
   );
 }
@@ -42,10 +28,13 @@ export function Lockup({
     <Link
       href={href}
       className={`lockup${reverse ? " lockup-reverse" : ""}`}
-      aria-label={`${label} home`}
+      aria-label={`${label} Health, home`}
     >
       <LogoMark reverse={reverse} />
-      <span>{label}</span>
+      <span className="wm" aria-hidden="true">
+        <span className="wm-name">{label}</span>
+        <span className="wm-sub">Health</span>
+      </span>
     </Link>
   );
 }

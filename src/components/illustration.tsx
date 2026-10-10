@@ -52,20 +52,16 @@ export function Illustration({
   );
 }
 
-/** Page header for marketing pages: short headline and one-line lede beside an illustration. */
+/** Page header for marketing pages: short headline and one-line lede. Text only in the "Maison" design. */
 export function SiteHero({
   eyebrow,
   title,
   lede,
-  art,
-  artAlt = "",
   children,
 }: {
   eyebrow?: string;
   title: ReactNode;
   lede?: ReactNode;
-  art: ArtName;
-  artAlt?: string;
   children?: ReactNode;
 }) {
   return (
@@ -75,9 +71,6 @@ export function SiteHero({
         <h1>{title}</h1>
         {lede ? <p className="lede">{lede}</p> : null}
         {children}
-      </div>
-      <div className="page-hero-art">
-        <Illustration name={art} alt={artAlt} preload />
       </div>
     </header>
   );

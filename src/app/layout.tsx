@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   robots: isIndexable ? undefined : { index: false, follow: false },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0F4C4A" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#F7F3EC" };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // Every page renders per request: the CSP nonce in src/proxy.ts and live settings (prices, active states) need it.

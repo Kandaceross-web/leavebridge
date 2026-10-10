@@ -32,7 +32,6 @@ export default async function AvailabilityPage() {
         eyebrow="Availability"
         title="Where we serve"
         lede="Clinicians can only care for people physically located in a state where they are licensed."
-        art="location"
       />
 
       <section className="stack" aria-labelledby="states-title">

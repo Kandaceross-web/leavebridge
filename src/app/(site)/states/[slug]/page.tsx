@@ -46,7 +46,7 @@ export default async function StatePage({ params }: Props) {
           </p>
           <div className="btn-row">
             <ButtonLink href={appHref(`/start?entry=state-${slug}`)}>
-              Check if we can help
+              Begin Your Assessment
             </ButtonLink>
           </div>
         </div>

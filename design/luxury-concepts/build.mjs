@@ -24,6 +24,7 @@ if (process.argv.includes("--shots")) {
       await page.goto("file://" + join(here, `${name}.html`), { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      // eslint-disable-next-line no-console -- design preview script
       if (overflow > 0) console.warn(`${name} ${label}: horizontal overflow ${overflow}px`);
       await page.screenshot({ path: join(out, `${name}-${label}-hero.png`) });
       await page.screenshot({ path: join(out, `${name}-${label}-full.png`), fullPage: true });

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ActionForm, SubmitButton, TextArea, TextField } from "@/components/forms";
 import { Icon } from "@/components/ui";
-import { Illustration, SiteHero } from "@/components/illustration";
+import { SiteHero } from "@/components/illustration";
 import { employerInquiryAction } from "../actions";
 import { OpensAtLaunch } from "@/components/opens-at-launch";
 
@@ -29,8 +29,6 @@ export default function EmployersPage() {
         eyebrow="Employer services"
         title="A clear referral pathway for your people"
         lede="Point employees to an independent clinical assessment with one dedicated link."
-        art="employers"
-        artAlt="Illustration of two people crossing a bridge from an office building to a home with a heart."
       />
 
       <section className="stack" aria-labelledby="who-title">
@@ -98,9 +96,6 @@ export default function EmployersPage() {
             We don&rsquo;t make leave decisions, determine FMLA eligibility, or act as a leave
             administrator. Clinicians make independent clinical determinations only.
           </p>
-        </div>
-        <div className="split-art">
-          <Illustration name="privacy" alt="" />
         </div>
       </section>
 

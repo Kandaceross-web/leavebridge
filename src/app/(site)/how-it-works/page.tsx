@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { ButtonLink, Icon, Money } from "@/components/ui";
-import { Illustration, SiteHero, type ArtName } from "@/components/illustration";
+import { SiteHero } from "@/components/illustration";
 import { launchPriceCents, siteSettings } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
 
@@ -17,21 +17,18 @@ export default async function HowItWorksPage() {
     siteSettings(),
     launchPriceCents(),
   ]);
-  const steps: { art: ArtName; title: ReactNode; body: ReactNode; more: ReactNode; clinical?: boolean }[] = [
+  const steps: { title: ReactNode; body: ReactNode; more: ReactNode; clinical?: boolean }[] = [
     {
-      art: "steps/1-check",
       title: "Answer a few questions",
       body: "About two minutes. No account or payment.",
       more: "We confirm you are 18 or older, located in a state we serve, and looking for the kind of help we provide.",
     },
     {
-      art: "steps/2-account",
       title: "Verify your ID and location",
       body: "Upload a photo ID and confirm where you are.",
       more: "Clinicians can only provide care in states where they are licensed, so where you are physically located matters.",
     },
     {
-      art: "steps/3-pay",
       title: <>Pay {price !== null ? <Money cents={price} /> : "the fee"} securely</>,
       body: "One flat fee for the assessment, not a result.",
       more: (
@@ -41,27 +38,23 @@ export default async function HowItWorksPage() {
       ),
     },
     {
-      art: "steps/4-intake",
       title: "Complete your intake",
       body: "Your history, two short questionnaires, your forms.",
       more: "Describe how symptoms affect work and upload any employer or leave-administrator forms. You can save and come back.",
     },
     {
-      art: "steps/5-review",
       title: "A clinician reviews your case",
       body: "They may ask questions or book a video visit.",
       more: "A clinician licensed in your state reads everything you submitted.",
       clinical: true,
     },
     {
-      art: "steps/6-decision",
       title: "An independent decision",
       body: "The clinician decides, and explains why.",
       more: "Using their own professional judgment, the clinician decides whether leave documentation is clinically supported. The outcome may be that it is not.",
       clinical: true,
     },
     {
-      art: "steps/7-deliver",
       title: "Secure delivery",
       body: "Signed documents in your portal. You share them.",
       more: "You decide who receives your documents. We do not send anything to your employer on our own.",
@@ -73,8 +66,6 @@ export default async function HowItWorksPage() {
         eyebrow="How it works"
         title="Seven steps, one secure portal"
         lede="From a two-minute check to documents in your hands."
-        art="hero"
-        artAlt="Illustration of a person on a sofa having a video visit with a clinician on a tablet."
       />
 
       <ol className="flow flow-cols-4" aria-label="Steps in the assessment">
@@ -83,7 +74,6 @@ export default async function HowItWorksPage() {
             <span className="num" aria-hidden="true">
               {i + 1}
             </span>
-            <Illustration name={s.art} alt="" />
             <h2 className="h3-size">
               {s.title}
               {s.clinical ? <span className="visually-hidden"> (clinician-only step)</span> : null}
@@ -162,13 +152,12 @@ export default async function HowItWorksPage() {
           <h2 id="next-title">Ready to see if we can help?</h2>
           <p className="lede">The screening questions take about two minutes.</p>
           <div className="btn-row">
-            <ButtonLink href={appHref("/start?entry=how-it-works")}>Check if we can help</ButtonLink>
+            <ButtonLink href={appHref("/start?entry=how-it-works")}>Begin Your Assessment</ButtonLink>
             <ButtonLink href="/faq" variant="quiet">
               Common questions
             </ButtonLink>
           </div>
         </div>
-        <Illustration name="next-step" alt="" />
       </section>
     </div>
   );

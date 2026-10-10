@@ -26,8 +26,6 @@ export default async function ServicesPage() {
         eyebrow="FMLA / Leave Services"
         title="Leave services"
         lede="Independent assessments when mental-health symptoms are affecting your work."
-        art="services"
-        artAlt="Illustration of a calendar showing a block of leave, separate days off and shorter days, beside a person with a warm drink."
       />
 
       <section className="stack" aria-labelledby="offered-title">
@@ -52,7 +50,7 @@ export default async function ServicesPage() {
                 ) : null}
                 <div className="btn-row">
                   <ButtonLink href={appHref("/start?entry=services")}>
-                    Check if we can help
+                    Begin Your Assessment
                   </ButtonLink>
                 </div>
               </article>

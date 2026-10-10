@@ -9,13 +9,10 @@ import { env } from "@/server/env";
 import { appHref } from "@/server/web/app-link";
 
 const NAV = [
-  { href: "/how-it-works", label: "How it works" },
-  { href: "/services", label: "Leave services" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/employers", label: "Employers" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/resources", label: "Guides" },
-  { href: "/contact", label: "Contact" },
+  { href: "/services", label: "Services" },
+  { href: "/how-it-works", label: "How It Works" },
+  { href: "/about", label: "About" },
+  { href: "/faq", label: "FAQs" },
 ];
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
@@ -42,11 +39,11 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             ))}
           </nav>
           <div className="end">
-            <Link href={appHref("/sign-in")} className="btn btn-quiet hide-mobile">
-              Sign in
+            <Link href={appHref("/sign-in")} className="signin hide-mobile">
+              Patient Sign In
             </Link>
-            <Link href={appHref("/start?entry=header")} className="btn btn-primary btn-sm">
-              Get started
+            <Link href={appHref("/start?entry=header")} className="btn btn-primary btn-sm btn-start">
+              Begin Your Assessment
             </Link>
             <details className="menu-toggle">
               <summary aria-label="Open menu">Menu</summary>
@@ -56,7 +53,12 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                     {n.label}
                   </NavLink>
                 ))}
-                <NavLink href={appHref("/sign-in")}>Sign in</NavLink>
+                <NavLink href="/pricing">Pricing</NavLink>
+                <NavLink href="/contact">Contact</NavLink>
+                <NavLink href={appHref("/sign-in")}>Patient Sign In</NavLink>
+                <Link href={appHref("/start?entry=mobile-menu")} className="btn btn-primary">
+                  Begin Your Assessment
+                </Link>
               </nav>
             </details>
           </div>
@@ -84,7 +86,10 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
           <div className="cols">
             <div className="stack stack-sm">
               <Lockup reverse />
-              <p>{brand.tagline}</p>
+              <p className="blurb">
+                Professional mental health assessments and leave documentation support, thoughtfully delivered
+                online.
+              </p>
             </div>
             <div>
               <h2>Patients</h2>
@@ -93,7 +98,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                   <Link href="/how-it-works">How it works</Link>
                 </li>
                 <li>
-                  <Link href="/services">Leave services</Link>
+                  <Link href="/services">Services</Link>
                 </li>
                 <li>
                   <Link href="/pricing">Pricing</Link>
@@ -107,7 +112,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                   </li>
                 ))}
                 <li>
-                  <Link href={appHref("/start?entry=footer")}>Check availability</Link>
+                  <Link href={appHref("/start?entry=footer")}>Begin your assessment</Link>
                 </li>
                 <li>
                   <Link href={appHref("/sign-in")}>Patient portal</Link>
@@ -118,7 +123,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
               <h2>Company</h2>
               <ul>
                 <li>
-                  <Link href="/about">About and clinical team</Link>
+                  <Link href="/about">About and credentials</Link>
                 </li>
                 <li>
                   <Link href="/employers">Employer services</Link>

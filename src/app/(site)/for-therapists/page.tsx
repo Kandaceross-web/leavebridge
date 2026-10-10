@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ActionForm, SubmitButton, TextArea, TextField } from "@/components/forms";
 import { Icon } from "@/components/ui";
-import { Illustration, SiteHero } from "@/components/illustration";
+import { SiteHero } from "@/components/illustration";
 import { employerInquiryAction } from "../actions";
 import { OpensAtLaunch } from "@/components/opens-at-launch";
 
@@ -19,27 +19,22 @@ export default function ForTherapistsPage() {
         eyebrow="For therapists and EAPs"
         title="When a client needs leave paperwork you don’t complete"
         lede="Refer them for an independent assessment, and keep therapy separate from the paperwork."
-        art="therapists"
-        artAlt="Illustration of a therapist and a client talking, with a form being passed on."
       />
       <section className="stack" aria-labelledby="how-title">
         <h2 id="how-title">How referral works</h2>
         <ol className="flow flow-3">
           <li>
             <span className="num" aria-hidden="true">1</span>
-            <Illustration name="steps/1-check" alt="" />
             <h3>Share the link</h3>
             <p>Our site or your practice&rsquo;s own link. Your client screens and books.</p>
           </li>
           <li className="clin">
             <span className="num" aria-hidden="true">2</span>
-            <Illustration name="steps/6-decision" alt="" />
             <h3>Independent assessment</h3>
             <p>A licensed clinician decides if documentation is clinically supported.</p>
           </li>
           <li>
             <span className="num" aria-hidden="true">3</span>
-            <Illustration name="steps/2-account" alt="" />
             <h3>Only with consent</h3>
             <p>
               We may ask you for treatment history only with your client&rsquo;s written

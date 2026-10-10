@@ -16,15 +16,17 @@ for (const path of PAGES) {
 
 test("home answers what, who, how, cost, next steps and what is not guaranteed", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /who this is for/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /how it works|seven steps|five stages/i }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/your wellbeing deserves exceptional care/i);
+  await expect(page.getByRole("heading", { name: /who it is for/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /three stages/i })).toBeVisible();
   await expect(page.getByText("$279.99").first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: /doesn.t guarantee/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /your next step/i })).toBeVisible();
+  await expect(page.getByText(/payment does not guarantee/i).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /clinical credentials|accountable care/i })).toBeVisible();
+  await expect(page.getByText(/license no\. 2581/i)).toBeVisible();
+  await expect(page.getByText(/your next step/i)).toBeVisible();
   const text = (await page.locator("main").innerText()).toLowerCase();
   for (const banned of ["guaranteed approval", "you qualify", "get approved"]) expect(text).not.toContain(banned);
-  await expect(page.getByRole("link", { name: /check if we can help/i }).first()).toHaveAttribute("href", /\/start\?entry=/);
+  await expect(page.getByRole("link", { name: /begin your assessment/i }).first()).toHaveAttribute("href", /\/start\?entry=/);
 });
 
 test("guides and state pages carry structured data, review tags and no doorway pages", async ({ page, request }) => {

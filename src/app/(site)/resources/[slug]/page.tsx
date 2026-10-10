@@ -66,7 +66,7 @@ export default async function ResourcePage({ params }: Props) {
           Payment never guarantees an outcome.
         </p>
         <div className="btn-row">
-          <ButtonLink href={appHref(`/start?entry=guide-${slug}`)}>Check if we can help</ButtonLink>
+          <ButtonLink href={appHref(`/start?entry=guide-${slug}`)}>Begin Your Assessment</ButtonLink>
         </div>
       </div>
       {related.length ? (
