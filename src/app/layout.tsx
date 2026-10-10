@@ -8,7 +8,13 @@ export const metadata: Metadata = {
   title: { default: "LeaveBridge Health", template: "%s · LeaveBridge Health" },
   description:
     "Independent mental-health leave assessments by licensed clinicians, by secure telehealth.",
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   metadataBase: new URL(env.SITE_ORIGIN),
   openGraph: { type: "website", siteName: "LeaveBridge Health", locale: "en_US" },
   // Only production (or a signed-off public preview) is indexable; staging and preview hosts never appear in search results.

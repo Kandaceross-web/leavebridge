@@ -156,7 +156,13 @@ async function main() {
     const pages = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).pathname);
     pages.push("/opening-soon");
 
-    const assets = new Set<string>(["/icon.svg"]);
+    const assets = new Set<string>([
+      "/icon.svg",
+      "/favicon.ico",
+      "/apple-touch-icon.png",
+      "/icon-192.png",
+      "/icon-512.png",
+    ]);
     const styleHashes = new Set<string>();
     for (const page of pages) {
       let html = staticHtml(await (await get(page)).text());

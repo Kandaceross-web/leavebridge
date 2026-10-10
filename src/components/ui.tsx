@@ -4,13 +4,20 @@ import type { ReactNode } from "react";
 /* Server-safe presentational components shared by the site, portal and ops console. */
 
 /** Bridge mark: one shallow arch over a deck line, in hairline strokes. Champagne arch, espresso (or ivory) deck. */
+/** The "Pause" mark (owner's choice, 2026-10-10): two piers joined by one champagne span. Source files: brand/logo/. */
 export function LogoMark({ size = 34, reverse = false }: { size?: number; reverse?: boolean }) {
-  const deck = reverse ? "#FFFDFA" : "#302722";
+  const pier = reverse ? "#F7F4EE" : "#263D34";
   return (
-    <svg width={size} height={Math.round(size * 0.6)} viewBox="0 0 40 24" aria-hidden="true" focusable="false">
-      <path d="M3 19 C 11 5, 29 5, 37 19" fill="none" stroke="#B79A65" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M1 19 H39" fill="none" stroke={deck} strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M13 11.2 V19 M20 9 V19 M27 11.2 V19" fill="none" stroke="#B79A65" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+      <path
+        d="M8 18.5C13 8 35 8 40 18.5"
+        fill="none"
+        stroke="#B49A68"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+      />
+      <rect x="13" y="17" width="6.5" height="24" rx="1.6" fill={pier} />
+      <rect x="28.5" y="17" width="6.5" height="24" rx="1.6" fill={pier} />
     </svg>
   );
 }
@@ -32,7 +39,15 @@ export function Lockup({
     >
       <LogoMark reverse={reverse} />
       <span className="wm" aria-hidden="true">
-        <span className="wm-name">{label}</span>
+        <span className="wm-name">
+          {label === "LeaveBridge" ? (
+            <>
+              Leave<em>Bridge</em>
+            </>
+          ) : (
+            label
+          )}
+        </span>
         <span className="wm-sub">Health</span>
       </span>
     </Link>
@@ -118,7 +133,12 @@ export function Icon({
       </>
     ),
     arrow: <path d="M3 8h10M9 4l4 4-4 4" {...p} />,
-    heart: <path d="M8 13.5C3.6 10.8 2 8.6 2 6.4 2 4.6 3.4 3.2 5.1 3.2c1.2 0 2.2.6 2.9 1.6.7-1 1.7-1.6 2.9-1.6 1.7 0 3.1 1.4 3.1 3.2 0 2.2-1.6 4.4-6 7.1z" {...p} />,
+    heart: (
+      <path
+        d="M8 13.5C3.6 10.8 2 8.6 2 6.4 2 4.6 3.4 3.2 5.1 3.2c1.2 0 2.2.6 2.9 1.6.7-1 1.7-1.6 2.9-1.6 1.7 0 3.1 1.4 3.1 3.2 0 2.2-1.6 4.4-6 7.1z"
+        {...p}
+      />
+    ),
     calendar: (
       <>
         <rect x="2" y="3.2" width="12" height="11" rx="1.8" {...p} />
@@ -126,12 +146,18 @@ export function Icon({
       </>
     ),
     phone: (
-      <path d="M5.6 2.2l1.5 3-1.3 1.2a8 8 0 003.8 3.8l1.2-1.3 3 1.5-.5 2.5c-.1.5-.6.9-1.1.8C7 13.3 2.7 9 2.3 3.8c-.1-.5.3-1 .8-1.1z" {...p} />
+      <path
+        d="M5.6 2.2l1.5 3-1.3 1.2a8 8 0 003.8 3.8l1.2-1.3 3 1.5-.5 2.5c-.1.5-.6.9-1.1.8C7 13.3 2.7 9 2.3 3.8c-.1-.5.3-1 .8-1.1z"
+        {...p}
+      />
     ),
     users: (
       <>
         <circle cx="6" cy="5.5" r="2.4" {...p} />
-        <path d="M1.8 13.5c.4-2.5 2.1-3.8 4.2-3.8s3.8 1.3 4.2 3.8M10.6 3.3a2.3 2.3 0 010 4.4M12 9.9c1.2.4 2 1.6 2.2 3.6" {...p} />
+        <path
+          d="M1.8 13.5c.4-2.5 2.1-3.8 4.2-3.8s3.8 1.3 4.2 3.8M10.6 3.3a2.3 2.3 0 010 4.4M12 9.9c1.2.4 2 1.6 2.2 3.6"
+          {...p}
+        />
       </>
     ),
   };

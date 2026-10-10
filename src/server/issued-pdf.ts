@@ -297,9 +297,30 @@ export async function renderLetterPdf(input: LetterPdfInput): Promise<PDFDocumen
     });
 
   newPage();
-  // Header: brand, descriptor, rule.
-  text(input.brand.toUpperCase(), { size: 17, f: bold, color: L_ACCENT, lead: 1.25 });
-  text("Clinical Documentation Services", { size: 10, color: L_SECONDARY, lead: 1.3 });
+  // Header: the approved "Pause" mark (brand/logo/, vector), brand, descriptor, rule.
+  const mark = 34;
+  const k = mark / 48;
+  const mx = L_SIDE - 8 * k;
+  const my = y + 4;
+  page.drawSvgPath("M8 18.5C13 8 35 8 40 18.5", {
+    x: mx,
+    y: my,
+    scale: k,
+    borderColor: rgb(0xb4 / 255, 0x9a / 255, 0x68 / 255),
+    borderWidth: 2.6,
+    borderLineCap: 1,
+  });
+  for (const px of [13, 28.5])
+    page.drawRectangle({
+      x: mx + px * k,
+      y: my - 41 * k,
+      width: 6.5 * k,
+      height: 24 * k,
+      color: rgb(0x26 / 255, 0x3d / 255, 0x34 / 255),
+    });
+  const tx = L_SIDE + mark - 4;
+  text(input.brand.toUpperCase(), { size: 17, f: bold, color: L_ACCENT, lead: 1.25, x: tx });
+  text("Clinical Documentation Services", { size: 10, color: L_SECONDARY, lead: 1.3, x: tx });
   y -= 6;
   rule(y);
   y -= 16;
