@@ -100,7 +100,7 @@ export const SETTING_DEFS = {
       providerName: "Defining You Therapeutic Services",
       providerNpi: "1962023812", // Kandace Ross, LPC (NPI-1, active; NPPES checked 2026-10-09)
       providerTin: "",
-      serviceCode: "",
+      serviceCode: "90791", // owner chose 2026-10-10 for the leave assessment (LEG-08)
       // CLN-12: forms carry no diagnosis field, so the estimate lists none.
       diagnosisCodes: "Not applicable: this assessment is not billed to insurance",
       disclaimers: [
@@ -110,7 +110,8 @@ export const SETTING_DEFS = {
         "This Good Faith Estimate is not a contract and does not require you to get the items or services from the provider named in it.",
       ],
       disputeUrl: "https://www.cms.gov/nosurprises",
-      serviceCodes: {} as Record<string, string>,
+      // Owner chose 2026-10-10 (LEG-31): the automated screening uses 96127, not the assessment code.
+      serviceCodes: { "same-day-mental-health-assessment": "96127" } as Record<string, string>,
     },
     reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
     reviewNote:

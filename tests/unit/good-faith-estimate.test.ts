@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { npiCheckDigitOk, SETTING_DEFS } from "@/config/settings";
-import { buildEstimate, canonicalEstimate, estimateSections, missingEstimateFields, needsNewEstimate, type EstimateInput } from "@/domain/payments/good-faith-estimate";
+import { buildEstimate, canonicalEstimate, estimateSections, missingEstimateFields, needsNewEstimate, serviceCodeFor, type EstimateInput } from "@/domain/payments/good-faith-estimate";
 
 const setting = SETTING_DEFS.goodFaithEstimate.default;
 
@@ -21,10 +21,10 @@ describe("Good Faith Estimate setting", () => {
   it("ships with the owner's NPI and the other owner fields empty, tagged for an owner decision (LEG-08)", () => {
     expect(setting.providerNpi).toBe("1962023812");
     expect(setting.providerTin).toBe("");
-    expect(setting.serviceCode).toBe("");
+    expect(setting.serviceCode).toBe("90791");
     expect(SETTING_DEFS.goodFaithEstimate.reviewTag).toBe("OWNER_DECISION_REQUIRED");
     expect(SETTING_DEFS.goodFaithEstimate.reviewNote).toMatch(/LEG-08/);
-    expect(missingEstimateFields(setting)).toEqual(["providerTin", "serviceCode"]);
+    expect(missingEstimateFields(setting)).toEqual(["providerTin"]);
   });
 
   it("validates identifier formats but accepts the empty defaults", () => {
@@ -59,7 +59,7 @@ describe("building an estimate", () => {
   });
 
   it("shows money, dates and missing owner fields in plain language", () => {
-    const s = estimateSections(buildEstimate(input({ setting: { ...setting, providerNpi: "" } })));
+    const s = estimateSections(buildEstimate(input({ setting: { ...setting, providerNpi: "", serviceCode: "" } })));
     expect(s.total).toBe("$279.99");
     expect(s.items[0]!.serviceCode).toBe("Not yet provided");
     expect(s.patient.find((l) => l.label === "Date of birth")!.value).toBe("April 12, 1988");
@@ -92,5 +92,12 @@ describe("NPI check digit", () => {
   it("accepts a valid NPI and rejects a one-digit typo", () => {
     expect(npiCheckDigitOk("1234567893")).toBe(true);
     expect(npiCheckDigitOk("1234567894")).toBe(false);
+  });
+});
+
+describe("service codes chosen by the owner", () => {
+  it("uses 90791 for the assessment and 96127 for the automated screening", () => {
+    expect(serviceCodeFor(setting, "mental-health-leave-assessment")).toBe("90791");
+    expect(serviceCodeFor(setting, "same-day-mental-health-assessment")).toBe("96127");
   });
 });
