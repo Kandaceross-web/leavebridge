@@ -8,7 +8,13 @@ import type { IssuedDocumentKind } from "../db/schema";
 import { audit } from "../audit";
 import { encrypt, sha256Hex } from "../crypto";
 import { env } from "../env";
-import { renderIssuedPdf, type IssuedPdfInput } from "../issued-pdf";
+import {
+  letterDateTime,
+  renderIssuedPdf,
+  renderLetterPdf,
+  type IssuedPdfInput,
+  type LetterPdfInput,
+} from "../issued-pdf";
 import { getSetting } from "../settings";
 import { signPdf, verifyPdfSignature } from "../signing";
 import { loadCase, notifyPatient, type CaseRow } from "./cases";
@@ -44,8 +50,16 @@ async function serverNow(ctx: Ctx): Promise<Date> {
   return d;
 }
 
-export async function issuedFor(ctx: Ctx, kind: IssuedDocumentKind, sourceId: string): Promise<IssuedDocumentRow | null> {
-  const [row] = await ctx.tx.select().from(issuedDocuments).where(and(eq(issuedDocuments.kind, kind), eq(issuedDocuments.sourceId, sourceId))).limit(1);
+export async function issuedFor(
+  ctx: Ctx,
+  kind: IssuedDocumentKind,
+  sourceId: string,
+): Promise<IssuedDocumentRow | null> {
+  const [row] = await ctx.tx
+    .select()
+    .from(issuedDocuments)
+    .where(and(eq(issuedDocuments.kind, kind), eq(issuedDocuments.sourceId, sourceId)))
+    .limit(1);
   return row ?? null;
 }
 
@@ -62,28 +76,53 @@ export interface IssueInput {
   fileName: string;
   /** Short lines shown on the public verification page; letters only. No health information. */
   publicDetail?: string[];
+  /**
+   * Clinical correspondence layout (letters). When set, the letter layout replaces subtitle, facts,
+   * sections and closing on the PDF; the issuing practice and signing time are added to the signature.
+   */
+  letter?: Omit<LetterPdfInput, "documentNumber" | "issuedAt" | "verifyUrl" | "brand" | "status">;
 }
 
 /** Renders, signs, stores and registers a document. Idempotent per (kind, source). */
 export async function issueDocument(ctx: Ctx, input: IssueInput): Promise<IssuedDocumentRow> {
   const existing = await issuedFor(ctx, input.kind, input.sourceId);
   if (existing) return existing;
-  const [brand, sameDay] = [await getSetting(ctx.tx, "brand"), await getSetting(ctx.tx, "sameDayScreening")];
+  const [brand, sameDay] = [
+    await getSetting(ctx.tx, "brand"),
+    await getSetting(ctx.tx, "sameDayScreening"),
+  ];
   const publicId = formatDocumentNumber(randomBytes(13));
   const issuedAt = await serverNow(ctx);
   const verifyUrl = verifyUrlFor(publicId);
-  const pdfDoc = await renderIssuedPdf({
-    title: input.title,
-    subtitle: input.subtitle,
-    documentNumber: publicId,
-    issuedAt,
-    verifyUrl,
-    brand: brand.name,
-    practice: sameDay.practiceName,
-    facts: input.facts,
-    sections: input.sections,
-    closing: input.closing,
-  });
+  const pdfDoc = input.letter
+    ? await renderLetterPdf({
+        ...input.letter,
+        status: "Verified Clinical Documentation",
+        documentNumber: publicId,
+        issuedAt,
+        verifyUrl,
+        brand: brand.name,
+        signature: {
+          name: input.letter.signature.name,
+          lines: [
+            ...input.letter.signature.lines,
+            `Issuing Practice: ${sameDay.practiceName}`,
+            `Electronically Signed: ${letterDateTime(issuedAt)}`,
+          ],
+        },
+      })
+    : await renderIssuedPdf({
+        title: input.title,
+        subtitle: input.subtitle,
+        documentNumber: publicId,
+        issuedAt,
+        verifyUrl,
+        brand: brand.name,
+        practice: sameDay.practiceName,
+        facts: input.facts,
+        sections: input.sections,
+        closing: input.closing,
+      });
   const { bytes, fingerprint } = await signPdf(pdfDoc, {
     reason: `${input.title} ${publicId}`,
     name: sameDay.practiceName,
@@ -91,7 +130,13 @@ export async function issueDocument(ctx: Ctx, input: IssueInput): Promise<Issued
     contactInfo: brand.supportEmail,
     signingTime: issuedAt,
   });
-  const file = await storeUpload(ctx, { caseId: input.caseRow.id, patientId: input.caseRow.patientId, category: "generated", name: input.fileName, data: bytes });
+  const file = await storeUpload(ctx, {
+    caseId: input.caseRow.id,
+    patientId: input.caseRow.patientId,
+    category: "generated",
+    name: input.fileName,
+    data: bytes,
+  });
   const [row] = await ctx.tx
     .insert(issuedDocuments)
     .values({
@@ -109,14 +154,24 @@ export async function issueDocument(ctx: Ctx, input: IssueInput): Promise<Issued
       publicDetail: input.publicDetail?.length ? input.publicDetail : null,
     })
     .returning();
-  await audit(ctx, { action: "issued_document.issued", subjectType: "issued_document", subjectId: row!.id, caseId: input.caseRow.id, metadata: { kind: input.kind } });
+  await audit(ctx, {
+    action: "issued_document.issued",
+    subjectType: "issued_document",
+    subjectId: row!.id,
+    caseId: input.caseRow.id,
+    metadata: { kind: input.kind },
+  });
   return row!;
 }
 
 /** Documents issued on a case: the patient (own case) or staff with operational access. */
 export async function caseIssuedDocuments(ctx: Ctx, caseId: string) {
   await loadCase(ctx, caseId, "owner");
-  return ctx.tx.select().from(issuedDocuments).where(eq(issuedDocuments.caseId, caseId)).orderBy(desc(issuedDocuments.issuedAt));
+  return ctx.tx
+    .select()
+    .from(issuedDocuments)
+    .where(eq(issuedDocuments.caseId, caseId))
+    .orderBy(desc(issuedDocuments.issuedAt));
 }
 
 /** The patient's issued documents across their cases (portal Documents page). */
@@ -140,17 +195,33 @@ export async function revokeIssuedDocument(ctx: Ctx, documentId: string, reason:
   const sec = await getSetting(ctx.tx, "security");
   requireStepUp(ctx.actor, sec.stepUpMinutes);
   if (!/^[0-9a-f-]{36}$/i.test(documentId)) throw notFound("Document");
-  const [doc] = await ctx.tx.select().from(issuedDocuments).where(eq(issuedDocuments.id, documentId)).limit(1);
+  const [doc] = await ctx.tx
+    .select()
+    .from(issuedDocuments)
+    .where(eq(issuedDocuments.id, documentId))
+    .limit(1);
   if (!doc) throw notFound("Document");
   const { row } = await loadCase(ctx, doc.caseId, "operational");
   if (doc.status === "revoked") throw conflict("This document is already revoked.");
   const text = reason.trim();
-  if (text.length < 5) throw invalid("Give a short reason for revoking (kept in the record, never shown publicly).");
+  if (text.length < 5)
+    throw invalid("Give a short reason for revoking (kept in the record, never shown publicly).");
   await ctx.tx
     .update(issuedDocuments)
-    .set({ status: "revoked", revokedAt: new Date(), revokedBy: ctx.actor.userId, revocationReason: encrypt(text.slice(0, 2000)) })
+    .set({
+      status: "revoked",
+      revokedAt: new Date(),
+      revokedBy: ctx.actor.userId,
+      revocationReason: encrypt(text.slice(0, 2000)),
+    })
     .where(eq(issuedDocuments.id, doc.id));
-  await audit(ctx, { action: "issued_document.revoked", subjectType: "issued_document", subjectId: doc.id, caseId: row.id, metadata: { kind: doc.kind } });
+  await audit(ctx, {
+    action: "issued_document.revoked",
+    subjectType: "issued_document",
+    subjectId: doc.id,
+    caseId: row.id,
+    metadata: { kind: doc.kind },
+  });
   await notifyPatient(ctx, row, "case_update");
 }
 
@@ -188,12 +259,17 @@ interface VerifyRow {
  * status, dates and (for letters) the issuer. Never a patient name, case, score or diagnosis.
  * Optionally compares an uploaded copy byte for byte and checks its embedded signature.
  */
-export async function verifyDocument(input: string, file: Buffer | null = null): Promise<PublicVerification> {
+export async function verifyDocument(
+  input: string,
+  file: Buffer | null = null,
+): Promise<PublicVerification> {
   const publicId = normalizeDocumentNumber(input);
   if (!publicId) return { found: false, documentNumber: null };
   const res = await db.transaction(async (tx) => {
     await tx.execute(sql`select set_config('app.actor_kind', 'anonymous', true)`);
-    return tx.execute<VerifyRow & Record<string, unknown>>(sql`select * from lb_verify_document(${publicId})`);
+    return tx.execute<VerifyRow & Record<string, unknown>>(
+      sql`select * from lb_verify_document(${publicId})`,
+    );
   });
   const r = res.rows[0];
   if (!r) return { found: false, documentNumber: publicId };
@@ -205,14 +281,26 @@ export async function verifyDocument(input: string, file: Buffer | null = null):
     status: r.status,
     issuedAt: new Date(r.issued_at),
     revokedAt: r.revoked_at ? new Date(r.revoked_at) : null,
-    issuer: { clinician: r.kind === "work_excuse_letter" && r.issuer_name ? `${r.issuer_name}${r.issuer_credentials ? `, ${r.issuer_credentials}` : ""}` : null, practice: r.issuer_practice },
+    issuer: {
+      clinician:
+        r.kind === "work_excuse_letter" && r.issuer_name
+          ? `${r.issuer_name}${r.issuer_credentials ? `, ${r.issuer_credentials}` : ""}`
+          : null,
+      practice: r.issuer_practice,
+    },
     detail: r.public_detail ?? [],
   };
   if (file) {
     const check = verifyPdfSignature(file);
     out.file = {
       matches: sha256Hex(file) === r.sha256,
-      signature: check.ok ? (check.fingerprint === r.signing_cert_fingerprint ? "valid" : "invalid") : check.reason === "no_signature" ? "absent" : "invalid",
+      signature: check.ok
+        ? check.fingerprint === r.signing_cert_fingerprint
+          ? "valid"
+          : "invalid"
+        : check.reason === "no_signature"
+          ? "absent"
+          : "invalid",
     };
   }
   return out;

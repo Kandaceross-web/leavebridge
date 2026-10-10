@@ -25,7 +25,7 @@ import { workExcuseDetail } from "@/server/services/work-excuse";
 import { DOCUMENT_TEMPLATES } from "@/config/document-templates";
 import { SAME_DAY_REVIEW } from "@/config/same-day";
 import { SETTING_DEFS } from "@/config/settings";
-import { longDate } from "@/domain/same-day/rules";
+import { letterWording, longDate, type LetterFields } from "@/domain/same-day/rules";
 import { isDomainError } from "@/domain/errors";
 import { approveLetterAction, claimLetterAction, declineLetterAction } from "../../actions";
 
@@ -94,6 +94,11 @@ export default async function LetterRequestPage({
   const fields = DOCUMENT_TEMPLATES.work_excuse_letter.fields;
   const draft = d.current ?? (d.proposed as unknown as Record<string, string>);
   const open = d.request.status === "requested";
+  const previewFields = { ...(d.proposed as LetterFields), ...(d.current ?? {}) } as LetterFields;
+  const preview =
+    previewFields.excused_from && previewFields.excused_through
+      ? letterWording(previewFields, d.screeningCompletedAt ?? d.request.createdAt)
+      : null;
   const showTags = env.APP_ENV !== "production";
 
   return (
@@ -186,6 +191,31 @@ export default async function LetterRequestPage({
                 AI). Nothing is signed until you approve. Edit anything, or decline below.
               </p>
             </div>
+            {preview ? (
+              <div className="card-quiet stack stack-sm" aria-label="How the letter reads">
+                <b>How the letter reads with these dates</b>
+                <p className="small">{preview.salutation}</p>
+                {preview.before.map((t) => (
+                  <p key={t} className="small">
+                    {t}
+                  </p>
+                ))}
+                {preview.absence.map(([label, value]) => (
+                  <p key={label} className="small">
+                    <b>{label}:</b> {value}
+                  </p>
+                ))}
+                {preview.after.map((t) => (
+                  <p key={t} className="small">
+                    {t}
+                  </p>
+                ))}
+                <p className="fine">
+                  If you change the dates or work/school below, the signed letter uses your changes.
+                  Your optional statement is printed after the recommendation.
+                </p>
+              </div>
+            ) : null}
             <ActionForm action={approveLetterAction.bind(null, id)}>
               {fields.map((f) =>
                 f.key === "excused_setting" ? (

@@ -4,10 +4,13 @@ import type { Ctx } from "../db/actor";
 import {
   automatedScreenings,
   clinicians,
+  compactPrivileges,
   deliveries,
   documents,
   documentVersions,
+  licenses,
   patients,
+  serviceAuthorizations,
   signatures,
   workExcuseRequests,
 } from "../db/schema";
@@ -20,7 +23,8 @@ import { getCaseRow, loadCase, notifyPatient } from "./cases";
 import { issueDocument, issuedFor } from "./issued-documents";
 import { checkCanServe } from "./jurisdiction";
 import { alertClinicalStaff } from "./staff-alerts";
-import { LETTER_DECIDER, LETTER_TITLES, isExcuseSetting } from "@/config/same-day";
+import { LETTER_TITLES, isExcuseSetting } from "@/config/same-day";
+import { JURISDICTIONS } from "@/config/catalog";
 import { DOCUMENT_TEMPLATES } from "@/config/document-templates";
 import {
   hasRole,
@@ -31,6 +35,8 @@ import {
 } from "@/domain/policy";
 import { conflict, forbidden, invalid, notFound } from "@/domain/errors";
 import {
+  excusedRange,
+  letterWording,
   longDate,
   nameInitials,
   proposedLetter,
@@ -88,11 +94,8 @@ export async function requestWorkExcuse(
   const { input, errors } = validateLetterRequest(raw, s.completedAt);
   if (!input) return { errors };
   const [p] = await ctx.tx.select().from(patients).where(eq(patients.id, row.patientId)).limit(1);
-  const sameDay = await getSetting(ctx.tx, "sameDayScreening");
   const draft = proposedLetter({
     patientName: p ? `${p.legalFirstName} ${p.legalLastName}` : "",
-    screeningDate: s.completedAt,
-    practice: sameDay.practiceName,
     request: input,
   });
   const [req] = await ctx.tx
@@ -228,6 +231,62 @@ export async function workExcuseDetail(ctx: Ctx, requestId: string) {
   };
 }
 
+const COMPACT_NAME: Record<string, string> = {
+  counseling: "Counseling Compact",
+  psypact: "PSYPACT",
+  social_work: "Social Work Licensure Compact",
+  nurse: "Nurse Licensure Compact",
+  other: "interstate compact",
+};
+const stateName = (code: string) => JURISDICTIONS.find(([c]) => c === code)?.[1] ?? code;
+
+/**
+ * The signing clinician's profession and the license (or compact privilege) that authorizes this
+ * letter: the one the authorization check just used, never the account owner's or a default.
+ */
+async function signerCredential(
+  ctx: Ctx,
+  authorizationId: string,
+): Promise<{ profession: string; license: string }> {
+  const [auth] = await ctx.tx
+    .select()
+    .from(serviceAuthorizations)
+    .where(eq(serviceAuthorizations.id, authorizationId))
+    .limit(1);
+  if (auth?.basis === "license" && auth.licenseId) {
+    const [lic] = await ctx.tx
+      .select()
+      .from(licenses)
+      .where(eq(licenses.id, auth.licenseId))
+      .limit(1);
+    if (lic)
+      return {
+        profession: lic.licenseType,
+        license: `${stateName(lic.jurisdictionCode)} no. ${lic.licenseNumber}`,
+      };
+  }
+  if (auth?.basis === "compact_privilege" && auth.compactPrivilegeId) {
+    const [cp] = await ctx.tx
+      .select()
+      .from(compactPrivileges)
+      .where(eq(compactPrivileges.id, auth.compactPrivilegeId))
+      .limit(1);
+    const [home] = cp?.homeLicenseId
+      ? await ctx.tx.select().from(licenses).where(eq(licenses.id, cp.homeLicenseId)).limit(1)
+      : [];
+    if (cp) {
+      const privilege = `${stateName(cp.remoteJurisdictionCode)} ${COMPACT_NAME[cp.compact] ?? "compact"} privilege${cp.privilegeIdentifier ? ` no. ${cp.privilegeIdentifier}` : ""}`;
+      return {
+        profession: home?.licenseType ?? "Licensed clinician",
+        license: home
+          ? `${privilege}, based on ${stateName(home.jurisdictionCode)} license no. ${home.licenseNumber}`
+          : privilege,
+      };
+    }
+  }
+  throw forbidden("Your license for this patient's state could not be found, so you cannot sign.");
+}
+
 /** Requests made before the school option existed carry no setting; they were work requests. */
 function withSetting(input: LetterRequestInput): LetterRequestInput {
   return { ...input, setting: isExcuseSetting(input.setting) ? input.setting : "work" };
@@ -353,13 +412,22 @@ export async function approveWorkExcuse(
     .from(clinicians)
     .where(eq(clinicians.id, ctx.actor.clinicianId!))
     .limit(1);
-  const signer = `${clin!.displayName}, ${clin!.credentials}`;
+  const [screening] = await ctx.tx
+    .select({ completedAt: automatedScreenings.completedAt })
+    .from(automatedScreenings)
+    .where(eq(automatedScreenings.id, r.automatedScreeningId))
+    .limit(1);
+  const wording = letterWording(
+    { ...(values as unknown as LetterFields), excused_setting: scope },
+    screening?.completedAt ?? r.createdAt,
+  );
+  const credential = await signerCredential(ctx, can.authorizationId);
   const issued = await issueDocument(ctx, {
     caseRow: row,
     kind: "work_excuse_letter",
     sourceId: r.id,
     title: LETTER_TITLES[scope],
-    subtitle: "Issued and electronically signed by the clinician named below after their review.",
+    subtitle: wording.documentType,
     facts: [
       { label: "Patient", value: values.patient_name! },
       {
@@ -370,17 +438,35 @@ export async function approveWorkExcuse(
         ? [{ label: `May return to ${scope} on`, value: longDate(values.return_date) }]
         : []),
     ],
-    sections: [{ heading: "Letter", lines: values.letter_body!.split(/\n{2,}/) }],
+    sections: [],
     publicDetail: [
       `Patient initials: ${nameInitials(values.patient_name!)}`,
       `Excused from ${scope}: ${longDate(values.excused_from!)} through ${longDate(values.excused_through!)}`,
     ],
-    closing: [
-      `Electronically signed by ${signer} on the issue date shown above, after multi-factor sign-in and password re-confirmation.`,
-      `Clinician attestation: ${setting.attestation}`,
-      `This letter reflects the signing clinician's independent judgment. ${LETTER_DECIDER[scope]}`,
-      "To the recipient: scan the QR code or open the verification address above. It shows whether this letter is valid, the patient's initials and the excused dates. If they differ from this copy, the copy was changed and should not be relied on.",
-    ],
+    closing: [],
+    // The attestation, MFA and step-up evidence stay in the signature row and audit log, not on the letter.
+    letter: {
+      heading: wording.heading,
+      documentType: wording.documentType,
+      patient: [
+        { label: "Patient Name", value: values.patient_name! },
+        {
+          label: "Excused Dates",
+          value: excusedRange(values.excused_from!, values.excused_through!),
+        },
+        ...(values.return_date
+          ? [{ label: "Return Date", value: longDate(values.return_date) }]
+          : []),
+      ],
+      salutation: wording.salutation,
+      before: wording.before,
+      absence: wording.absence,
+      after: wording.after,
+      signature: {
+        name: `${clin!.displayName}, ${clin!.credentials}`,
+        lines: [credential.profession, `License: ${credential.license}`],
+      },
+    },
     issuerClinicianId: ctx.actor.clinicianId!,
     fileName: `${scope}-excuse-letter-${row.reference}.pdf`,
   });
@@ -394,15 +480,13 @@ export async function approveWorkExcuse(
       updatedAt: new Date(),
     })
     .where(eq(documents.id, documentId));
-  await ctx.tx
-    .insert(deliveries)
-    .values({
-      documentId,
-      versionId: v!.id,
-      recipientType: "patient",
-      channel: "portal",
-      deliveredBy: ctx.actor.userId,
-    });
+  await ctx.tx.insert(deliveries).values({
+    documentId,
+    versionId: v!.id,
+    recipientType: "patient",
+    channel: "portal",
+    deliveredBy: ctx.actor.userId,
+  });
   await ctx.tx
     .update(workExcuseRequests)
     .set({

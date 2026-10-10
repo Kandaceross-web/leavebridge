@@ -7,6 +7,8 @@ import {
   holdReasons,
   nameInitials,
   normalizeDocumentNumber,
+  excusedRange,
+  letterWording,
   proposedLetter,
   validateFunctioning,
   validateLetterRequest,
@@ -258,43 +260,68 @@ describe("work excuse letter requests", () => {
     ).toBe("school");
   });
 
-  it("proposes a school letter that says school, not work", () => {
-    const letter = proposedLetter({
-      patientName: "Avery Testcase",
-      screeningDate: screened,
-      practice: "Example Practice",
-      request: {
-        setting: "school",
-        startDate: "2026-10-08",
-        endDate: "2026-10-12",
-        returnDate: "2026-10-13",
-        note: "",
-      },
-    });
-    expect(letter.excused_setting).toBe("school");
-    expect(letter.letter_body).toMatch(/excused from school/);
-    expect(letter.letter_body).toMatch(/may return to school on October 13, 2026/);
-    expect(letter.letter_body).not.toMatch(/\bwork\b/);
+  it("words a school letter for school and a work letter for work, from the approved dates", () => {
+    const base = {
+      patient_name: "Avery Testcase",
+      excused_from: "2026-10-08",
+      excused_through: "2026-10-12",
+      return_date: "2026-10-13",
+      letter_body: "",
+    };
+    const school = letterWording({ ...base, excused_setting: "school" }, screened);
+    expect(school.heading).toBe("SCHOOL EXCUSE LETTER");
+    expect(school.before.join(" ")).toMatch(
+      /excused from school attendance and related academic activities/,
+    );
+    expect(school.absence).toEqual([
+      ["Excused Absence", "October 8, 2026 through October 12, 2026"],
+      ["Return to School", "October 13, 2026"],
+    ]);
+    expect(JSON.stringify(school)).not.toMatch(/\bwork\b/);
+    const work = letterWording({ ...base, excused_setting: "work", return_date: "" }, screened);
+    expect(work.heading).toBe("WORK EXCUSE LETTER");
+    expect(work.before.join(" ")).toMatch(/excused from work-related duties/);
+    expect(work.absence).toEqual([["Excused Absence", "October 8, 2026 through October 12, 2026"]]);
+    expect(work.after.join(" ")).not.toBe(school.after.join(" "));
   });
 
-  it("proposes a letter without any diagnosis or score", () => {
+  it("calls the service a screening, never a clinical assessment, and carries no diagnosis or score", () => {
     const letter = proposedLetter({
       patientName: "Avery Testcase",
-      screeningDate: screened,
-      practice: "Example Practice",
       request: {
         setting: "work",
         startDate: "2026-10-08",
         endDate: "2026-10-12",
         returnDate: null,
-        note: "",
+        note: "Fictional note.",
       },
     });
-    expect(letter.excused_from).toBe("2026-10-08");
-    expect(letter.letter_body).toContain("October 8, 2026 through October 12, 2026");
-    expect(letter.letter_body).not.toMatch(
-      /PHQ|GAD|score|depress|anxi|diagnos(?!is or treatment)/i,
+    expect(letter).toMatchObject({
+      excused_from: "2026-10-08",
+      excused_through: "2026-10-12",
+      letter_body: "",
+    });
+    const text = JSON.stringify(letterWording(letter, screened));
+    expect(text).toContain("completed a mental health screening through LeaveBridge Health on");
+    expect(text).not.toMatch(/clinical assessment through|Fictional note/);
+    expect(text).not.toMatch(/PHQ|GAD|score|depress|anxi|diagnos(?!es, and treatment)/i);
+  });
+
+  it("adds the clinician's optional statement and shows one-day ranges as a single date", () => {
+    const w = letterWording(
+      {
+        patient_name: "A B",
+        excused_setting: "work",
+        excused_from: "2026-10-08",
+        excused_through: "2026-10-08",
+        return_date: "",
+        letter_body: "Clinician statement (fictional).",
+      },
+      screened,
     );
+    expect(w.after).toContain("Clinician statement (fictional).");
+    expect(excusedRange("2026-10-08", "2026-10-08")).toBe("October 8, 2026");
+    expect(excusedRange("2026-10-08", "2026-10-10")).toBe("October 8, 2026 – October 10, 2026");
   });
 });
 

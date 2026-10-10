@@ -24,7 +24,10 @@ import {
   issuedFor,
   revokeIssuedDocument,
   verifyDocument,
+  verifyUrlFor,
+  type IssuedDocumentRow,
 } from "@/server/services/issued-documents";
+import { sha256Hex } from "@/server/crypto";
 import {
   approveWorkExcuse,
   claimWorkExcuse,
@@ -48,7 +51,7 @@ import {
 } from "@/server/db/schema";
 import { verifyPdfSignature } from "@/server/signing";
 import { lintTemplate } from "@/domain/notifications/templates";
-import { DOCUMENT_NUMBER_RE } from "@/domain/same-day/rules";
+import { DOCUMENT_NUMBER_RE, longDate } from "@/domain/same-day/rules";
 import type { Actor } from "@/domain/actor";
 import { rejects, staff } from "./helpers";
 
@@ -86,8 +89,11 @@ const PHI_IN_EMAIL =
   /phq|gad|depress|anxi|suicid|self-harm|mental|screening|score|symptom|diagnos|safety|crisis|work excuse|letter|record|\b\d{1,2} of (27|21)\b/i;
 
 /** Signs up through the real service (email not yet confirmed) and returns the patient, case and the emailed link token. */
-async function signUpSameDay(first = "Avery") {
-  const { screening, outcome } = await runSameDayScreening();
+async function signUpSameDay(first = "Avery", last = "Testcase", state = "MS") {
+  const { screening, outcome } = await runSameDayScreening({
+    current_state: state,
+    appointment_state: state,
+  });
   expect(outcome).toBe("AVAILABLE");
   const email = `same-day-${tag()}@example.test`;
   const before = outbox.length;
@@ -96,7 +102,7 @@ async function signUpSameDay(first = "Avery") {
       ctx,
       {
         firstName: first,
-        lastName: "Testcase",
+        lastName: last,
         preferredName: "",
         email,
         password: FIXTURE_PASSWORD,
@@ -141,8 +147,8 @@ async function pay(actor: PatientActor, caseId: string) {
   await as(actor, (ctx) => confirmSimulatedPayment(ctx, ref));
 }
 
-async function verifiedAndPaid(first = "Avery") {
-  const p = await signUpSameDay(first);
+async function verifiedAndPaid(first = "Avery", last = "Testcase", state = "MS") {
+  const p = await signUpSameDay(first, last, state);
   expect(await as(system, (ctx) => confirmEmail(ctx, p.token))).toBe(true);
   await pay(p.actor, p.caseId);
   return p;
@@ -523,14 +529,12 @@ describe("work excuse letters", () => {
     // The database also refuses a second request for the same screening.
     await rejects(
       as(system, (ctx) =>
-        ctx.tx
-          .insert(workExcuseRequests)
-          .values({
-            caseId: p.caseId,
-            automatedScreeningId: req!.automatedScreeningId,
-            patientInput: "x",
-            proposedDraft: "x",
-          }),
+        ctx.tx.insert(workExcuseRequests).values({
+          caseId: p.caseId,
+          automatedScreeningId: req!.automatedScreeningId,
+          patientInput: "x",
+          proposedDraft: "x",
+        }),
       ),
     );
 
@@ -557,7 +561,7 @@ describe("work excuse letters", () => {
     const detail = await as(staffActor(s, "clinician"), (ctx) => workExcuseDetail(ctx, req!.id));
     if (detail.limited) throw new Error("expected full detail after claiming");
     expect(detail.isAssignedToMe).toBe(true);
-    expect(detail.proposed.letter_body).toContain("Finley Testcase");
+    expect(detail.proposed.patient_name).toBe("Finley Testcase");
     expect(detail.summary?.scores.length).toBe(2);
     const fields = { ...detail.proposed } as unknown as Record<string, string>;
     await rejects(
@@ -705,7 +709,6 @@ describe("work excuse letters", () => {
     if (detail.limited) throw new Error("expected full detail after claiming");
     expect(detail.input.setting).toBe("school");
     expect(detail.proposed.excused_setting).toBe("school");
-    expect(detail.proposed.letter_body).toMatch(/excused from school/);
     const fields = { ...detail.proposed } as unknown as Record<string, string>;
     await rejects(
       as(staffActor(s, "clinician"), (ctx) =>
@@ -725,6 +728,197 @@ describe("work excuse letters", () => {
       "Patient initials: I. T.",
       expect.stringMatching(/^Excused from school: .+ through .+$/),
     ]);
+  });
+});
+
+describe("excuse letter documents: the owner's eight checks", () => {
+  const day = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
+  /** The next Friday within the request window, so a range can span a weekend. */
+  const friday = () => {
+    for (let n = 0; n < 7; n++) if (new Date(`${day(n)}T12:00:00Z`).getUTCDay() === 5) return n;
+    return 0;
+  };
+  const samples = process.env.LETTER_SAMPLES_DIR;
+
+  /** A full journey: screening, payment, letter request, clinician approval. Returns the issued letter and its PDF. */
+  async function issueLetter(o: {
+    name: string;
+    first: string;
+    last?: string;
+    state?: string;
+    setting: "work" | "school";
+    start: string;
+    end: string;
+    ret?: string;
+    signer?: "clinician" | "director";
+  }) {
+    const s = await staff();
+    const p = await verifiedAndPaid(o.first, o.last ?? "Testcase", o.state ?? "MS");
+    await finish(p);
+    await as(p.actor, (ctx) =>
+      requestWorkExcuse(ctx, p.caseId, {
+        setting: o.setting,
+        startDate: o.start,
+        endDate: o.end,
+        returnDate: o.ret ?? "",
+      }),
+    );
+    const [req] = await as(system, (ctx) =>
+      ctx.tx.select().from(workExcuseRequests).where(eq(workExcuseRequests.caseId, p.caseId)),
+    );
+    const signer = staffActor(s, o.signer ?? "clinician");
+    await as(signer, (ctx) => claimWorkExcuse(ctx, req!.id));
+    const detail = await as(signer, (ctx) => workExcuseDetail(ctx, req!.id));
+    if (detail.limited) throw new Error("expected full detail");
+    await as(signer, (ctx) =>
+      approveWorkExcuse(
+        ctx,
+        req!.id,
+        { ...detail.proposed } as unknown as Record<string, string>,
+        true,
+      ),
+    );
+    const letter = (await as(system, (ctx) => issuedFor(ctx, "work_excuse_letter", req!.id)))!;
+    const pdf = (await as(p.actor, (ctx) => authorizeFileDownload(ctx, letter.fileId))).data;
+    if (samples) (await import("node:fs")).writeFileSync(`${samples}/${o.name}.pdf`, pdf);
+    return { s, p, letter, pdf };
+  }
+
+  async function check(
+    letter: IssuedDocumentRow,
+    pdf: Buffer,
+    setting: "work" | "school",
+    from: string,
+    through: string,
+  ) {
+    expect(verifyPdfSignature(pdf).ok).toBe(true);
+    expect(sha256Hex(pdf)).toBe(letter.sha256);
+    const v = await verifyDocument(letter.publicId, pdf);
+    expect(v).toMatchObject({
+      found: true,
+      status: "valid",
+      file: { matches: true, signature: "valid" },
+    });
+    expect(v.detail?.[1]).toBe(
+      `Excused from ${setting}: ${longDate(from)} through ${longDate(through)}`,
+    );
+    expect(JSON.stringify(v)).not.toMatch(/Testcase|PHQ|GAD|score/);
+    return v;
+  }
+
+  it("1: a one-day school excuse", async () => {
+    const { letter, pdf } = await issueLetter({
+      name: "1-school-one-day",
+      first: "Ada",
+      setting: "school",
+      start: day(0),
+      end: day(0),
+      ret: day(1),
+    });
+    await check(letter, pdf, "school", day(0), day(0));
+  });
+
+  it("2: a three-day school excuse", async () => {
+    const { letter, pdf } = await issueLetter({
+      name: "2-school-three-day",
+      first: "Beau",
+      setting: "school",
+      start: day(0),
+      end: day(2),
+      ret: day(3),
+    });
+    await check(letter, pdf, "school", day(0), day(2));
+  });
+
+  it("3: a one-day work excuse", async () => {
+    const { letter, pdf } = await issueLetter({
+      name: "3-work-one-day",
+      first: "Cleo",
+      setting: "work",
+      start: day(0),
+      end: day(0),
+      ret: day(1),
+    });
+    await check(letter, pdf, "work", day(0), day(0));
+  });
+
+  it("4: a work excuse spanning a weekend keeps the clinician's exact dates", async () => {
+    const f = friday();
+    const { letter, pdf } = await issueLetter({
+      name: "4-work-weekend",
+      first: "Dev",
+      setting: "work",
+      start: day(f),
+      end: day(f + 3),
+      ret: day(f + 4),
+    });
+    await check(letter, pdf, "work", day(f), day(f + 3));
+  });
+
+  it("5: a patient with a long first and last name", async () => {
+    const { letter, pdf } = await issueLetter({
+      name: "5-long-name",
+      first: "Maximiliana-Alexandrina",
+      last: "Featherstonehaugh-Montgomery-Worthington",
+      setting: "school",
+      start: day(0),
+      end: day(1),
+    });
+    const v = await check(letter, pdf, "school", day(0), day(1));
+    expect(v.detail?.[0]).toBe("Patient initials: M. F.");
+  });
+
+  it("6: a clinician with multiple credentials, signing by compact privilege", async () => {
+    const { s, letter, pdf } = await issueLetter({
+      name: "6-multiple-credentials",
+      first: "Eden",
+      state: "TN",
+      setting: "work",
+      start: day(0),
+      end: day(1),
+      signer: "director",
+    });
+    await check(letter, pdf, "work", day(0), day(1));
+    expect(letter.issuerClinicianId).toBe(s.clinicianIds.director);
+  });
+
+  it("7: a revoked document is never presented as valid", async () => {
+    const { s, letter, pdf } = await issueLetter({
+      name: "7-revoked",
+      first: "Fern",
+      setting: "work",
+      start: day(0),
+      end: day(0),
+    });
+    await as(staffActor(s, "clinician"), (ctx) =>
+      revokeIssuedDocument(ctx, letter.id, "Issued in error (fictional)."),
+    );
+    const v = await verifyDocument(letter.publicId, pdf);
+    expect(v).toMatchObject({ found: true, status: "revoked" });
+  });
+
+  it("8: a tampered or invalid verification number, and an edited copy, do not verify", async () => {
+    const { letter, pdf } = await issueLetter({
+      name: "8-tampered",
+      first: "Gale",
+      setting: "school",
+      start: day(0),
+      end: day(0),
+    });
+    const last = letter.publicId.slice(-1) === "0" ? "1" : "0";
+    expect((await verifyDocument(letter.publicId.slice(0, -1) + last)).found).toBe(false);
+    expect((await verifyDocument("not-a-number")).found).toBe(false);
+    const edited = Buffer.from(pdf);
+    const mid = Math.floor(edited.length / 2);
+    edited[mid] = edited[mid]! ^ 1;
+    const v = await verifyDocument(letter.publicId, edited);
+    expect(v.file?.matches).toBe(false);
+  });
+
+  it("prints a production verification address when APP_ORIGIN is the real https origin", () => {
+    expect(verifyUrlFor("LB-TEST")).toBe(
+      `${process.env.APP_ORIGIN ?? "http://localhost:3000"}/verify/LB-TEST`,
+    );
   });
 });
 

@@ -36,7 +36,7 @@ export const PUBLIC_PROVIDER = {
       state: "Tennessee",
       title: "Licensed Professional Counselor, Mental Health Service Provider, Approved Supervisor",
       abbreviation: "LPC-MHSP (Approved Supervisor)",
-      number: "7581",
+      number: "7583",
       kind: "license",
     },
     // Added 2026-10-10 from the owner's CompactConnect record: active 10/10/2026, expires 4/30/2027, home state Tennessee.

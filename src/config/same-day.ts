@@ -34,12 +34,6 @@ export const LETTER_TITLES: Record<ExcuseSetting, string> = {
   work: "Work Excuse Letter",
   school: "School Excuse Letter",
 };
-/** Who decides what the letter means for the person, printed on the letter. School wording is CLINICAL_REVIEW_REQUIRED. */
-export const LETTER_DECIDER: Record<ExcuseSetting, string> = {
-  work: "Eligibility for leave and any leave decision belong to the employer, insurer or leave administrator.",
-  school:
-    "Whether and how the absence is excused, and any academic decision, belong to the school.",
-};
 
 /** Only these screening steps are asked before sign-up: where the person is and the immediate-safety question. */
 export const SAME_DAY_SCREENING_STEPS = ["location", "safety"] as const;
@@ -281,19 +275,45 @@ export const HOLD_REASON_LABEL: Record<string, string> = {
   SAFETY_NOW: "Immediate-safety question answered 'yes' or 'not sure'",
 };
 
-/** The proposed letter the system prepares for the clinician to edit, approve or decline (CLN-21). */
-export const LETTER_TEXT = {
-  draftBody: (p: {
-    name: string;
-    screeningDate: string;
-    start: string;
-    end: string;
-    practice: string;
-    setting: ExcuseSetting;
-  }) =>
-    `${p.name} completed a mental health screening with ${p.practice} on ${p.screeningDate}. I have reviewed the information available to me. I recommend that ${p.name} be excused from ${p.setting === "school" ? "school, including classes and required school activities," : "work"} from ${p.start} through ${p.end}.`,
-  draftReturn: (p: { name: string; date: string; setting: ExcuseSetting }) =>
-    `${p.name} may return to ${p.setting} on ${p.date}.`,
-  privacyLine:
-    "This letter does not include diagnosis or treatment details. Please direct questions about it to the issuing practice.",
+/**
+ * Excuse letter wording (owner's document spec, 2026-10-10; CLN-21 clinical review). The body is fixed
+ * per letter type and filled from the dates the clinician approves; the clinician may add one optional
+ * statement. One change from the owner's text, flagged for approval: the $29.99 service is a screening
+ * reviewed by a clinician, not a clinical assessment, so the first sentence says "mental health screening".
+ */
+export const LETTER_TEXT: Record<
+  ExcuseSetting,
+  {
+    heading: string;
+    documentType: string;
+    recommendation: string;
+    returnLabel: string;
+    basis: string;
+    confidentiality: string;
+  }
+> = {
+  school: {
+    heading: "SCHOOL EXCUSE LETTER",
+    documentType: "School Excuse",
+    recommendation:
+      "Following an individualized review of the information provided, the undersigned licensed clinician recommends that the student be excused from school attendance and related academic activities for the following dates:",
+    returnLabel: "Return to School",
+    basis:
+      "This recommendation is based on the clinician's professional assessment of the information available at the time of review.",
+    confidentiality:
+      "To protect patient confidentiality, specific clinical findings, diagnoses, and treatment information are not disclosed in this document.",
+  },
+  work: {
+    heading: "WORK EXCUSE LETTER",
+    documentType: "Work Excuse",
+    recommendation:
+      "Following an individualized clinical review, the undersigned licensed clinician recommends that the individual be excused from work-related duties for the following dates:",
+    returnLabel: "Return to Work",
+    basis:
+      "This recommendation reflects the clinician's professional assessment of the information available at the time of review.",
+    confidentiality:
+      "To maintain patient confidentiality, specific clinical findings, diagnoses, and treatment information are not disclosed.",
+  },
 };
+export const letterOpening = (name: string, screeningDate: string) =>
+  `This letter confirms that ${name} completed a mental health screening through LeaveBridge Health on ${screeningDate}.`;

@@ -5,6 +5,7 @@ import {
   INSTRUMENT_MEASURES,
   isExcuseSetting,
   LETTER_TEXT,
+  letterOpening,
   RECORD_STATEMENT,
   SAFETY_QUESTION,
   SAME_DAY_INSTRUMENTS,
@@ -295,47 +296,63 @@ export interface LetterFields {
   letter_body: string;
 }
 
-/** The proposed letter: a starting point for the clinician, never signable until they save it as their own. */
+/** The proposed letter: the patient's requested dates, for the clinician to change, approve or decline. */
 export function proposedLetter(p: {
   patientName: string;
-  screeningDate: Date;
-  practice: string;
   request: LetterRequestInput;
 }): LetterFields {
   const setting: ExcuseSetting = p.request.setting === "school" ? "school" : "work";
-  const screeningDate = p.screeningDate.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "America/Chicago",
-  });
-  const body = [
-    LETTER_TEXT.draftBody({
-      name: p.patientName,
-      screeningDate,
-      start: longDate(p.request.startDate),
-      end: longDate(p.request.endDate),
-      practice: p.practice,
-      setting,
-    }),
-    p.request.returnDate
-      ? LETTER_TEXT.draftReturn({
-          name: p.patientName,
-          date: longDate(p.request.returnDate),
-          setting,
-        })
-      : "",
-    LETTER_TEXT.privacyLine,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
   return {
     patient_name: p.patientName,
     excused_setting: setting,
     excused_from: p.request.startDate,
     excused_through: p.request.endDate,
     return_date: p.request.returnDate ?? "",
-    letter_body: body,
+    letter_body: "",
+  };
+}
+
+/** "October 9, 2026" for one day, "October 9, 2026 – October 11, 2026" for a range. */
+export function excusedRange(from: string, through: string): string {
+  return from === through ? longDate(from) : `${longDate(from)} – ${longDate(through)}`;
+}
+
+export interface LetterWording {
+  heading: string;
+  documentType: string;
+  salutation: string;
+  before: string[];
+  absence: [string, string][];
+  after: string[];
+}
+
+/** The letter body exactly as printed, from the clinician-approved fields. */
+export function letterWording(fields: LetterFields, screeningDate: Date): LetterWording {
+  const setting: ExcuseSetting = fields.excused_setting === "school" ? "school" : "work";
+  const t = LETTER_TEXT[setting];
+  const screened = screeningDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "America/Chicago",
+  });
+  const absence: [string, string][] = [
+    [
+      "Excused Absence",
+      fields.excused_from === fields.excused_through
+        ? longDate(fields.excused_from)
+        : `${longDate(fields.excused_from)} through ${longDate(fields.excused_through)}`,
+    ],
+  ];
+  if (fields.return_date) absence.push([t.returnLabel, longDate(fields.return_date)]);
+  const note = fields.letter_body.trim();
+  return {
+    heading: t.heading,
+    documentType: t.documentType,
+    salutation: "To Whom It May Concern:",
+    before: [letterOpening(fields.patient_name, screened), t.recommendation],
+    absence,
+    after: [t.basis, ...(note ? note.split(/\n{2,}/) : []), t.confidentiality],
   };
 }
 
