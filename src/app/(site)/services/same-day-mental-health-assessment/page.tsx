@@ -91,7 +91,7 @@ export default async function SameDayServicePage() {
         <div className="stack stack-sm">
           <h2>If you are in crisis</h2>
           <Banner tone="info" icon="info">
-            This service is not for emergencies. If you are in danger, call 911 or call or text 988. See <Link href="/crisis">crisis resources</Link>.
+            This service is not for emergencies. If an answer about safety holds your screening, a clinician reviews it on the next business day, not in real time. If you are in danger, call 911 or call or text 988. See <Link href="/crisis">crisis resources</Link>.
           </Banner>
           <p className="small muted">Some answers, such as thoughts of self-harm, mean a clinician looks at your screening before the record is issued.</p>
         </div>

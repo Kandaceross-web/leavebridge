@@ -40,7 +40,11 @@ export const PURCHASE_ACKNOWLEDGEMENT = [
   "The record is not a diagnosis, a clinician examination, an FMLA or leave certification, or a work excuse. Payment does not guarantee any letter, certification, diagnosis or leave approval.",
   "A work excuse letter is a separate request that a licensed clinician reviews and may approve, change or decline.",
   "This service is not for emergencies. If I am in danger I will call 911 or call or text 988.",
+  "If my answers are held for clinician review, a clinician reviews them on the next business day. Nobody monitors answers in real time, at night or on weekends.",
 ];
+
+/** CLN-22 (owner decision 2026-10-10): safety holds are reviewed on the next business day; 988 and 911 cover the time in between. */
+export const SAFETY_REVIEW_TIMING = "next business day";
 
 export interface ChoiceQuestion {
   key: string;

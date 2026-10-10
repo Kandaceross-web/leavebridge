@@ -170,8 +170,8 @@ export default async function ScreeningHome({
           <div className="card stack stack-sm">
             <h2 id="held-h">A clinician will look at your answers</h2>
             <p>
-              Some of your answers mean a licensed clinician should review them before your screening record is issued. Our care team has been alerted and will follow up. They cannot respond
-              in real time, so please use the resources above if you need help now.
+              Some of your answers mean a licensed clinician should review them before your screening record is issued. A clinician will review them on the next business day. No one is
+              watching answers in real time, at night or on weekends, so please use the resources above if you need help now.
             </p>
             <p className="small muted">You do not need to do anything else here. We will email you when there is an update.</p>
           </div>
