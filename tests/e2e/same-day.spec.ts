@@ -144,6 +144,11 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
   expect(body.subarray(0, 5).toString("latin1")).toBe("%PDF-");
   expect(body.toString("latin1")).toContain("/adbe.pkcs7.detached");
 
+  // Optional follow-up: the patient can ask to be contacted about a full assessment.
+  await page.getByRole("button", { name: /yes, please contact me/i }).click();
+  await expect(page.getByText(/we will contact you to arrange your assessment/i).first()).toBeVisible();
+  await check(page);
+
   // Public verification, signed out: status only, no health information or identity.
   await page.context().clearCookies();
   await page.goto("/verify");

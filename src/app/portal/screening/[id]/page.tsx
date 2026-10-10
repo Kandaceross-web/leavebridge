@@ -8,7 +8,7 @@ import { db } from "@/server/db/client";
 import { patientStatusFor } from "@/domain/cases/state-machine";
 import { RECORD_STATEMENT, RECORD_TITLE, SAME_DAY_SERVICE_NAME } from "@/config/same-day";
 import { ownedScreening, screeningHref } from "../_lib/load";
-import { chooseInstrumentsAction, completeAction, resendVerificationAction } from "./actions";
+import { chooseInstrumentsAction, completeAction, requestFollowUpAction, resendVerificationAction } from "./actions";
 
 export const metadata: Metadata = { title: "Your screening" };
 
@@ -289,6 +289,32 @@ export default async function ScreeningHome({
               ) : null}
             </div>
           ) : null}
+        </section>
+      ) : null}
+
+      {/* ---- Optional follow-up: a full clinician-led assessment (offered to everyone, never score-triggered) ---- */}
+      {record?.status === "valid" && screening.status === "issued" ? (
+        <section className="card-flat stack stack-sm" aria-labelledby="follow-h">
+          <h2 id="follow-h">Would you like a full assessment?</h2>
+          {screening.followUpRequestedAt ? (
+            <p>
+              Thank you. You asked us to reach out on <DateTime value={screening.followUpRequestedAt} timeZone={tz} dateOnly />. We will contact you to
+              arrange your assessment. There is nothing more you need to do.
+            </p>
+          ) : (
+            <>
+              <p>
+                This screening is a starting point. If you would like a licensed clinician to look more closely at how you are doing, including leave
+                documentation when it is clinically appropriate, we can reach out to schedule a full assessment. Nothing is booked or charged until you
+                decide.
+              </p>
+              <ActionForm action={requestFollowUpAction.bind(null, row.id)}>
+                <SubmitButton variant="secondary" pendingText="Sending…">
+                  Yes, please contact me
+                </SubmitButton>
+              </ActionForm>
+            </>
+          )}
         </section>
       ) : null}
 

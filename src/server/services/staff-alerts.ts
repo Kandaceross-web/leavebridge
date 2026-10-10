@@ -13,11 +13,12 @@ import { getSetting } from "../settings";
  * the console page only: no patient, case reference, answer or reason, because it travels by
  * ordinary email. The details are behind sign-in (and MFA) in the console.
  */
-export type StaffAlert = "safety" | "letter_request";
+export type StaffAlert = "safety" | "letter_request" | "follow_up_request";
 
 const COPY: Record<StaffAlert, { subject: string; body: string; path: string }> = {
   safety: { subject: "Clinical follow-up needed", body: "An item in the operations console needs clinical follow-up.", path: "/ops/safety" },
   letter_request: { subject: "A request is waiting for clinician review", body: "A request in the operations console is waiting for clinician review.", path: "/ops/same-day" },
+  follow_up_request: { subject: "A patient asked to be contacted", body: "A patient asked to be contacted about scheduling an assessment. Details are in the operations console.", path: "/ops/same-day" },
 };
 
 export async function alertClinicalStaff(ctx: Ctx, kind: StaffAlert, caseId: string | null = null) {

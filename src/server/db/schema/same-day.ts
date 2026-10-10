@@ -56,6 +56,11 @@ export const automatedScreenings = pgTable(
     reviewNote: text("review_note"),
     /** A held screening's payment is flagged for the owner's refund decision; never refunded automatically. */
     refundReview: text("refund_review").$type<"none" | "flagged" | "resolved">().notNull().default("none"),
+    /** The patient asked to be contacted about scheduling a full assessment (opt-in, after the record is issued). */
+    followUpRequestedAt: ts("follow_up_requested_at"),
+    /** Staff recorded that they reached out about that request. */
+    followUpHandledAt: ts("follow_up_handled_at"),
+    followUpHandledBy: uuid("follow_up_handled_by").references(() => users.id),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Badge, DateTime, Empty, PageHead } from "@/components/ui";
+import { ActionForm, SubmitButton } from "@/components/forms";
+import { markFollowUpAction } from "./actions";
 import { requireStaffSession, run } from "@/server/auth/guards";
 import { ISSUED_KIND_LABEL } from "@/server/services/issued-documents";
 import { sameDayQueues, sameDayReport } from "@/server/services/same-day";
@@ -20,6 +22,7 @@ const COUNTS: { key: keyof Awaited<ReturnType<typeof sameDayReport>>; label: str
   { key: "letters_pending", label: "Letters waiting" },
   { key: "letters_approved", label: "Letters issued" },
   { key: "letters_declined", label: "Letters declined" },
+  { key: "follow_ups", label: "Asked about a full assessment" },
   { key: "revoked", label: "Documents revoked" },
 ];
 
@@ -97,6 +100,31 @@ export default async function SameDayOpsPage() {
           </ul>
         ) : (
           <Empty title="No letter requests waiting" />
+        )}
+      </section>
+
+      <section aria-labelledby="follow-h" className="stack stack-sm">
+        <h2 id="follow-h">Asked to be contacted about a full assessment</h2>
+        {q.followUps.length ? (
+          <ul className="list-rows">
+            {q.followUps.map((f) => (
+              <li key={f.caseId}>
+                <div className="grow stack stack-sm">
+                  <Link href={`/ops/same-day/${f.caseId}`}>
+                    <b className="mono">{f.reference}</b>
+                  </Link>
+                  <span className="small muted">Asked {f.requestedAt ? <DateTime value={f.requestedAt} /> : "—"}</span>
+                </div>
+                <ActionForm action={markFollowUpAction.bind(null, f.caseId)}>
+                  <SubmitButton variant="secondary" size="sm" pendingText="Saving…">
+                    Mark contacted
+                  </SubmitButton>
+                </ActionForm>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Empty title="No one waiting to be contacted" />
         )}
       </section>
 

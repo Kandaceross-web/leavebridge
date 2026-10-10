@@ -97,6 +97,8 @@ export type AuditAction =
   | "issued_document.revoked"
   | "issued_document.verified"
   | "letter.requested"
+  | "screening.follow_up_requested"
+  | "screening.follow_up_handled"
   | "letter.assigned"
   | "letter.version_saved"
   | "letter.approved"

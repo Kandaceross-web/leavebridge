@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireStaffSession, run } from "@/server/auth/guards";
 import { revokeIssuedDocument } from "@/server/services/issued-documents";
-import { decideHeldScreening, resolveRefundFlag } from "@/server/services/same-day";
+import { decideHeldScreening, markFollowUpHandled, resolveRefundFlag } from "@/server/services/same-day";
 import { approveWorkExcuse, claimWorkExcuse, declineWorkExcuse } from "@/server/services/work-excuse";
 import { formFields, handle, type ActionState } from "@/server/web/action";
 import { DOCUMENT_TEMPLATES } from "@/config/document-templates";
@@ -82,5 +82,14 @@ export async function declineLetterAction(requestId: string, _: ActionState, fd:
     refresh();
     revalidatePath(`/ops/same-day/letters/${requestId}`);
     return { message: "Declined. The patient was notified to check their portal." };
+  }, fd);
+}
+
+export async function markFollowUpAction(caseId: string, _: ActionState, fd: FormData): Promise<ActionState> {
+  return handle(async () => {
+    const { actor } = await requireStaffSession(["clinician", "clinical_director", "admin", "support"]);
+    await run(actor, (ctx) => markFollowUpHandled(ctx, caseId));
+    refresh(caseId);
+    return { message: "Marked as contacted." };
   }, fd);
 }

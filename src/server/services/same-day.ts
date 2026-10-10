@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import type { Ctx } from "../db/actor";
 import { automatedScreenings, caseNotes, cases, documents, issuedDocuments, measureResponses, patients, payments, safetyEvents, services, workExcuseRequests } from "../db/schema";
 import { audit } from "../audit";
@@ -347,12 +347,39 @@ export async function sameDayReport(ctx: Ctx) {
       (select count(*)::int from work_excuse_requests where status = 'requested') as letters_pending,
       (select count(*)::int from work_excuse_requests where status = 'approved') as letters_approved,
       (select count(*)::int from work_excuse_requests where status = 'declined') as letters_declined,
+      (select count(*)::int from automated_screenings where follow_up_requested_at is not null) as follow_ups,
       (select count(*)::int from issued_documents where status = 'revoked') as revoked,
       (select count(*)::int from issued_documents) as issued_documents`);
   return res.rows[0] as Record<
-    "started" | "purchased" | "completed" | "held_now" | "held_total" | "closed_without_issue" | "refund_flags" | "letters_requested" | "letters_pending" | "letters_approved" | "letters_declined" | "revoked" | "issued_documents",
+    "started" | "purchased" | "completed" | "held_now" | "held_total" | "closed_without_issue" | "refund_flags" | "letters_requested" | "letters_pending" | "letters_approved" | "letters_declined" | "follow_ups" | "revoked" | "issued_documents",
     number
   >;
+}
+
+/**
+ * Patient: ask to be contacted about scheduling a full clinician-led assessment. Opt-in only, offered to
+ * every patient once their record is issued; nothing is booked or charged, and the scores never trigger it.
+ */
+export async function requestAssessmentFollowUp(ctx: Ctx, caseId: string) {
+  if (ctx.actor.kind !== "patient") throw forbidden();
+  const { row, screening: s } = await ownedAutomated(ctx, caseId);
+  if (s.status !== "issued") throw invalid("You can ask about an assessment once your screening record is issued.");
+  if (s.followUpRequestedAt) return;
+  await ctx.tx.update(automatedScreenings).set({ followUpRequestedAt: new Date() }).where(eq(automatedScreenings.id, s.id));
+  await audit(ctx, { action: "screening.follow_up_requested", subjectType: "automated_screening", subjectId: s.id, caseId: row.id });
+  await alertClinicalStaff(ctx, "follow_up_request", row.id);
+}
+
+/** Staff: record that someone reached out about a follow-up request. */
+export async function markFollowUpHandled(ctx: Ctx, caseId: string) {
+  requireRole(ctx.actor, ["clinician", "clinical_director", "admin", "support"]);
+  requireStaffMfa(ctx.actor);
+  const { row } = await loadCase(ctx, caseId, "operational");
+  const s = await screeningRow(ctx, row.id);
+  if (!s.followUpRequestedAt) throw invalid("This patient has not asked to be contacted.");
+  if (s.followUpHandledAt) return;
+  await ctx.tx.update(automatedScreenings).set({ followUpHandledAt: new Date(), followUpHandledBy: ctx.actor.userId }).where(eq(automatedScreenings.id, s.id));
+  await audit(ctx, { action: "screening.follow_up_handled", subjectType: "automated_screening", subjectId: s.id, caseId: row.id });
 }
 
 /** Work queues for the console. References and dates only; details are on the case page for those with access. */
@@ -380,6 +407,12 @@ export async function sameDayQueues(ctx: Ctx) {
     .from(automatedScreenings)
     .innerJoin(cases, eq(cases.id, automatedScreenings.caseId))
     .where(eq(automatedScreenings.refundReview, "flagged"));
+  const followUps = await ctx.tx
+    .select({ caseId: cases.id, reference: cases.reference, requestedAt: automatedScreenings.followUpRequestedAt })
+    .from(automatedScreenings)
+    .innerJoin(cases, eq(cases.id, automatedScreenings.caseId))
+    .where(and(isNotNull(automatedScreenings.followUpRequestedAt), isNull(automatedScreenings.followUpHandledAt)))
+    .orderBy(automatedScreenings.followUpRequestedAt);
   const docs = await ctx.tx
     .select({ id: issuedDocuments.id, publicId: issuedDocuments.publicId, kind: issuedDocuments.kind, status: issuedDocuments.status, issuedAt: issuedDocuments.issuedAt, caseId: issuedDocuments.caseId, reference: cases.reference })
     .from(issuedDocuments)
@@ -393,6 +426,7 @@ export async function sameDayQueues(ctx: Ctx) {
     reviews,
     letters,
     refunds,
+    followUps,
     docs,
   };
 }

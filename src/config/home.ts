@@ -143,6 +143,7 @@ export const HOME_SAME_DAY = {
     "Standard anxiety and depression questionnaires (GAD-7 and PHQ-9), online at any time",
     "A digitally signed record of your results that anyone can verify",
     "The option to request a work excuse letter afterward",
+    "The option to ask us to contact you about a full assessment",
   ],
   prereq: "Located in {states} when you complete it.",
   scope:

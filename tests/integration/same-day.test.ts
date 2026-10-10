@@ -11,6 +11,8 @@ import {
   chooseInstruments,
   completeSameDayScreening,
   decideHeldScreening,
+  markFollowUpHandled,
+  requestAssessmentFollowUp,
   saveFunctioning,
   sameDayOverview,
   sameDayQueues,
@@ -363,5 +365,28 @@ describe("work excuse letters", () => {
     const view = await as(p.actor, (ctx) => sameDayOverview(ctx, p.caseId));
     expect(view.letter).toMatchObject({ status: "declined", recommendAssessment: true, declineMessage: "A full assessment is the better next step for this request." });
     expect(await as(system, (ctx) => issuedFor(ctx, "work_excuse_letter", req!.id))).toBeNull();
+  });
+});
+
+describe("asking about a full assessment", () => {
+  it("is opt-in after the record is issued, alerts staff without details, and can be marked contacted", async () => {
+    const s = await staff();
+    const p = await verifiedAndPaid("Hollis");
+    await rejects(as(p.actor, (ctx) => requestAssessmentFollowUp(ctx, p.caseId)), "invalid");
+    await finish(p);
+    const before = outbox.length;
+    await as(p.actor, (ctx) => requestAssessmentFollowUp(ctx, p.caseId));
+    await as(p.actor, (ctx) => requestAssessmentFollowUp(ctx, p.caseId));
+    const alerts = outbox.slice(before).filter((m) => m.templateKey === "staff_follow_up_request");
+    expect(alerts.length).toBeGreaterThan(0);
+    for (const m of alerts) expect(m.body).not.toContain("Hollis");
+    const view = await as(p.actor, (ctx) => sameDayOverview(ctx, p.caseId));
+    expect(view.screening.followUpRequestedAt).toBeInstanceOf(Date);
+    const q = await as(staffActor(s, "clinician"), (ctx) => sameDayQueues(ctx));
+    expect(q.followUps.some((f) => f.caseId === p.caseId)).toBe(true);
+    await rejects(as(p.actor, (ctx) => markFollowUpHandled(ctx, p.caseId)), "forbidden");
+    await as(staffActor(s, "clinician"), (ctx) => markFollowUpHandled(ctx, p.caseId));
+    const after = await as(staffActor(s, "clinician"), (ctx) => sameDayQueues(ctx));
+    expect(after.followUps.some((f) => f.caseId === p.caseId)).toBe(false);
   });
 });

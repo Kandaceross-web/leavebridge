@@ -10,6 +10,7 @@ import {
   acknowledgeAndCheckout,
   chooseInstruments,
   completeSameDayScreening,
+  requestAssessmentFollowUp,
   saveFunctioning,
   submitSameDayMeasure,
 } from "@/server/services/same-day";
@@ -121,4 +122,13 @@ export async function requestLetterAction(caseId: string, _: ActionState, fd: Fo
   }, fd);
   if (go && !res.error) redirect(`${base(caseId)}?letter=requested`);
   return res;
+}
+
+export async function requestFollowUpAction(caseId: string, _: ActionState, fd: FormData): Promise<ActionState> {
+  return handle(async () => {
+    const { actor } = await requirePatientSession();
+    await run(actor, (ctx) => requestAssessmentFollowUp(ctx, caseId));
+    revalidatePath(base(caseId));
+    return { message: "Thank you. We will contact you to arrange your assessment." };
+  }, fd);
 }
