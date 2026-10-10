@@ -12,7 +12,7 @@ export interface PublicLicense {
   /** A state license, or a Counseling Compact privilege to practice based on the home-state license. */
   kind: "license" | "compact_privilege";
   /** Homepage card (owner's credentials redesign, 2026-10-10): designation lines and the number line. */
-  card: { lines: string[]; number: string };
+  card: { lines: string[]; number: string | null };
   /** Full credentials panel and /credentials page: the exact designation, home state for a privilege, and number. */
   detail: { lines: string[]; homeState?: string; number: string };
 }
@@ -53,9 +53,8 @@ export const PUBLIC_PROVIDER = {
       abbreviation: "LPC",
       number: "LPC-GA-3372",
       kind: "compact_privilege",
-      // The owner's spec titled this card "Authorized Professional Counselor", which is not a Georgia title. Until the
-      // owner decides, the card names the profession the privilege authorizes and says it is a privilege.
-      card: { lines: ["Licensed Professional Counselor", "Privilege to Practice"], number: "Privilege #LPC-GA-3372" },
+      // Owner, 2026-10-10: the Georgia card reads only "LPC-GA" with the privilege number; the full panel gives the basis.
+      card: { lines: ["LPC-GA-3372"], number: null },
       detail: {
         lines: ["Licensed Professional Counselor practicing under a Counseling Compact privilege"],
         homeState: "Tennessee",

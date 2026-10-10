@@ -66,7 +66,7 @@ export function CredentialCards() {
               <span key={line}>{line}</span>
             ))}
           </p>
-          <p className="cred-number">{l.card.number}</p>
+          {l.card.number ? <p className="cred-number">{l.card.number}</p> : null}
         </li>
       ))}
     </ul>

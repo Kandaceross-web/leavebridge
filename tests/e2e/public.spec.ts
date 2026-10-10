@@ -155,7 +155,7 @@ test("credentials: three cards, a keyboard-operable full panel, and the Georgia 
   await expect(cards).toHaveCount(3);
   await expect(cards.nth(0)).toContainText("LPC-S | License #2581");
   await expect(cards.nth(1)).toContainText("LPC-MHSP | License #7583");
-  await expect(cards.nth(2)).toContainText("Privilege #LPC-GA-3372");
+  await expect(cards.nth(2)).toHaveText(/^\s*Georgia\s*LPC-GA-3372\s*$/i);
   await expect(page.locator(".cred-cards")).not.toContainText("Counseling Compact");
   const summary = page.getByText("View Full Professional Credentials");
   await summary.focus();
