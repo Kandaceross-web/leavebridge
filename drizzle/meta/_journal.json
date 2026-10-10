@@ -64,6 +64,13 @@
       "when": 1791649722577,
       "tag": "0008_same_day_follow_up",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791650281803,
+      "tag": "0009_verifiable_letter_details",
+      "breakpoints": true
     }
   ]
 }

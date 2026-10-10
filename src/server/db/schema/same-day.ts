@@ -99,6 +99,11 @@ export const issuedDocuments = pgTable(
     issuedByUserId: uuid("issued_by_user_id").references(() => users.id),
     issuerClinicianId: uuid("issuer_clinician_id").references(() => clinicians.id),
     issuerPractice: text("issuer_practice").notNull(),
+    /**
+     * Letters only: what the public verification page shows so a recipient can spot an edited copy
+     * (patient initials and the excused dates). Fixed at issue, never changed (database-guarded).
+     */
+    publicDetail: text("public_detail").array(),
     status: text("status").$type<"valid" | "revoked">().notNull().default("valid"),
     revokedAt: ts("revoked_at"),
     revokedBy: uuid("revoked_by").references(() => users.id),

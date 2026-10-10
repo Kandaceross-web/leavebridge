@@ -5,6 +5,7 @@ import {
   canonicalSummary,
   formatDocumentNumber,
   holdReasons,
+  nameInitials,
   normalizeDocumentNumber,
   proposedLetter,
   validateFunctioning,
@@ -168,3 +169,12 @@ describe("automated screening case states", () => {
 // Answers typed as the summary builder expects (guards against drift in the exported type).
 const _typecheck: FunctioningAnswers = { missed_days: 0 };
 void _typecheck;
+
+describe("initials for the public verification page", () => {
+  it("keeps first and last initials only", () => {
+    expect(nameInitials("Jordan Q. Examplecase")).toBe("J. E.");
+    expect(nameInitials("  avery  ")).toBe("A.");
+    expect(nameInitials("Ana-María O'Neil")).toBe("A. O.");
+    expect(nameInitials("")).toBe("");
+  });
+});

@@ -69,6 +69,19 @@ export default async function VerifyResultPage({ params }: { params: Promise<{ i
               ...(result.status === "revoked" && result.revokedAt ? ([["Revoked", when(result.revokedAt)]] as [string, string][]) : []),
             ]}
           />
+          {result.detail?.length ? (
+            <div className="stack stack-sm">
+              <h3>Compare with the copy you were given</h3>
+              <ul>
+                {result.detail.map((d) => (
+                  <li key={d}>{d}</li>
+                ))}
+              </ul>
+              <p className="small muted">
+                If the name or dates on your copy are different, the copy was changed after it was issued and should not be relied on.
+              </p>
+            </div>
+          ) : null}
           {result.status === "revoked" ? (
             <Banner tone="warn" icon="alert">
               The issuing practice revoked this document. It should no longer be relied on. Contact the person who gave it to you for a current document.

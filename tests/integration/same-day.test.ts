@@ -337,7 +337,10 @@ describe("work excuse letters", () => {
     const v = await verifyDocument(letter!.publicId);
     expect(v).toMatchObject({ found: true, status: "valid", kind: "work_excuse_letter" });
     expect(v.issuer?.clinician).toBeTruthy();
-    expect(JSON.stringify(v)).not.toMatch(/Finley|Testcase|excused|PHQ|GAD/);
+    // Only initials and the excused dates, so a recipient can spot an edited copy; no name or health details.
+    expect(JSON.stringify(v)).not.toMatch(/Finley|Testcase|PHQ|GAD/);
+    expect(v.detail).toEqual(["Patient initials: F. T.", expect.stringMatching(/^Excused from work: .+ through .+$/)]);
+    await rejects(as(system, (ctx) => ctx.tx.update(issuedDocuments).set({ publicDetail: ["Patient initials: X. Y."] }).where(eq(issuedDocuments.id, letter!.id))));
     for (const m of outbox.slice(mailBefore).filter((x) => x.to === p.email)) expect(`${m.subject}\n${m.body}`).not.toMatch(PHI_IN_EMAIL);
 
     // Decided requests cannot be approved or declined again.

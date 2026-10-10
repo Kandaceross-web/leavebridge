@@ -248,3 +248,11 @@ export function normalizeDocumentNumber(input: string): string | null {
   if (!/^[0-9A-HJKMNP-TV-Z]{20}$/.test(body)) return null;
   return `LB-${body.match(/.{4}/g)!.join("-")}`;
 }
+
+/** "Jordan Q. Examplecase" -> "J. E.": first and last initials only, for the public verification page. */
+export function nameInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter((w) => /\p{L}/u.test(w));
+  if (!parts.length) return "";
+  const pick = parts.length === 1 ? [parts[0]!] : [parts[0]!, parts[parts.length - 1]!];
+  return pick.map((w) => `${w.match(/\p{L}/u)![0]!.toUpperCase()}.`).join(" ");
+}

@@ -60,6 +60,8 @@ export interface IssueInput {
   closing: string[];
   issuerClinicianId: string | null;
   fileName: string;
+  /** Short lines shown on the public verification page; letters only. No health information. */
+  publicDetail?: string[];
 }
 
 /** Renders, signs, stores and registers a document. Idempotent per (kind, source). */
@@ -104,6 +106,7 @@ export async function issueDocument(ctx: Ctx, input: IssueInput): Promise<Issued
       issuedByUserId: actorUserId(ctx.actor),
       issuerClinicianId: input.issuerClinicianId,
       issuerPractice: sameDay.practiceName,
+      publicDetail: input.publicDetail?.length ? input.publicDetail : null,
     })
     .returning();
   await audit(ctx, { action: "issued_document.issued", subjectType: "issued_document", subjectId: row!.id, caseId: input.caseRow.id, metadata: { kind: input.kind } });
@@ -161,6 +164,8 @@ export interface PublicVerification {
   revokedAt?: Date | null;
   /** Letters only: the signing clinician and practice. */
   issuer?: { clinician: string | null; practice: string };
+  /** Letters only: patient initials and excused dates, for comparing against the copy in hand. */
+  detail?: string[];
   /** Only when a file was checked. */
   file?: { matches: boolean; signature: "valid" | "invalid" | "absent" };
 }
@@ -175,6 +180,7 @@ interface VerifyRow {
   issuer_practice: string;
   sha256: string;
   signing_cert_fingerprint: string;
+  public_detail: string[] | null;
 }
 
 /**
@@ -200,6 +206,7 @@ export async function verifyDocument(input: string, file: Buffer | null = null):
     issuedAt: new Date(r.issued_at),
     revokedAt: r.revoked_at ? new Date(r.revoked_at) : null,
     issuer: { clinician: r.kind === "work_excuse_letter" && r.issuer_name ? `${r.issuer_name}${r.issuer_credentials ? `, ${r.issuer_credentials}` : ""}` : null, practice: r.issuer_practice },
+    detail: r.public_detail ?? [],
   };
   if (file) {
     const check = verifyPdfSignature(file);

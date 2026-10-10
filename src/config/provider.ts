@@ -16,7 +16,7 @@ export const PUBLIC_PROVIDER = {
   postNominals: "LPC-S, NCC",
   licenses: [
     { state: "Mississippi", title: "Licensed Professional Counselor, Board Qualified Supervisor", abbreviation: "LPC-S", number: "2581" },
-    { state: "Tennessee", title: "Licensed Professional Counselor, Mental Health Service Provider", abbreviation: "LPC-MHSP", number: "7581" },
+    { state: "Tennessee", title: "Licensed Professional Counselor, Mental Health Service Provider, Approved Supervisor", abbreviation: "LPC-MHSP (Approved Supervisor)", number: "7581" },
   ] satisfies PublicLicense[],
   certifications: ["National Certified Counselor (NCC)"],
   /** Not a physician: say so wherever the provider is described. */

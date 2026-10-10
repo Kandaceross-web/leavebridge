@@ -15,7 +15,7 @@ import { LETTER_TITLE } from "@/config/same-day";
 import { DOCUMENT_TEMPLATES } from "@/config/document-templates";
 import { hasRole, requireAssignedClinician, requireRole, requireStaffMfa, requireStepUp } from "@/domain/policy";
 import { conflict, forbidden, invalid, notFound } from "@/domain/errors";
-import { longDate, proposedLetter, validateLetterRequest, type FunctioningAnswers, type LetterFields, type LetterRequestInput, type ScreeningSummary } from "@/domain/same-day/rules";
+import { longDate, nameInitials, proposedLetter, validateLetterRequest, type FunctioningAnswers, type LetterFields, type LetterRequestInput, type ScreeningSummary } from "@/domain/same-day/rules";
 
 /**
  * Work excuse letters. A separate request from a completed screening, at most one per screening
@@ -192,10 +192,15 @@ export async function approveWorkExcuse(ctx: Ctx, requestId: string, fields: Rec
       ...(values.return_date ? [{ label: "May return to work on", value: longDate(values.return_date) }] : []),
     ],
     sections: [{ heading: "Letter", lines: values.letter_body!.split(/\n{2,}/) }],
+    publicDetail: [
+      `Patient initials: ${nameInitials(values.patient_name!)}`,
+      `Excused from work: ${longDate(values.excused_from!)} through ${longDate(values.excused_through!)}`,
+    ],
     closing: [
       `Electronically signed by ${signer} on the issue date shown above, after multi-factor sign-in and password re-confirmation.`,
       `Clinician attestation: ${setting.attestation}`,
       "This letter reflects the signing clinician's independent judgment. Eligibility for leave and any leave decision belong to the employer, insurer or leave administrator.",
+      "To the recipient: scan the QR code or open the verification address above. It shows whether this letter is valid, the patient's initials and the excused dates. If they differ from this copy, the copy was changed and should not be relied on.",
     ],
     issuerClinicianId: ctx.actor.clinicianId!,
     fileName: `work-excuse-letter-${row.reference}.pdf`,
