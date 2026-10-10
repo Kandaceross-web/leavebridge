@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LeaveBridge Design Concepts</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#F7F3EC;--surface:#FFFDFA;--ink:#302722;--soft:#4F443D;--taupe:#75695F;--forest:#263C34;--sage:#DDE5DA;--gold:#B79A65;--line:#E2D8CA}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1F1A17;--surface:#2A2420;--ink:#F3ECE1;--soft:#D8CCBD;--taupe:#BFB2A3;--forest:#9FC2AF;--sage:#2E3A33;--line:#3D3530}}
+:root[data-theme="dark"]{--bg:#1F1A17;--surface:#2A2420;--ink:#F3ECE1;--soft:#D8CCBD;--taupe:#BFB2A3;--forest:#9FC2AF;--sage:#2E3A33;--line:#3D3530}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.6;font-size:1rem}
+.wrap{width:min(100% - 32px,1240px);margin-inline:auto}
+header{padding:56px 0 32px;border-bottom:1px solid var(--line)}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;margin:0}
+h1{font-size:clamp(2.25rem,5vw,3.5rem);line-height:1.05}
+.k{font-size:.8125rem;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);font-weight:600}
+.lede{color:var(--soft);max-width:70ch;margin-top:14px}
+.grid{display:grid;gap:28px;margin:40px 0}
+@media(min-width:960px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column}
+.card.rec{border-color:var(--forest);box-shadow:0 0 0 1px var(--forest)}
+.shots{display:grid;grid-template-columns:3fr 1fr;gap:6px;padding:6px;background:var(--line)}
+.shots img{width:100%;height:240px;object-fit:cover;object-position:top;display:block}
+.body{padding:24px;display:flex;flex-direction:column;gap:10px;flex:1}
+.body h2{font-size:1.75rem}
+.body dl{margin:6px 0 0;display:grid;gap:10px;font-size:.9375rem}
+.body dt{font-weight:600}
+.body dd{margin:0;color:var(--soft)}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:14px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:500;font-size:.9375rem;border-radius:2px}
+.btn.p{background:var(--forest);border-color:var(--forest);color:#F7F3EC}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.p{color:#1F1A17}}
+.badge{align-self:flex-start;background:var(--sage);color:var(--ink);font-size:.8125rem;font-weight:600;padding:3px 10px;border-radius:2px}
+section{padding:40px 0;border-top:1px solid var(--line)}
+section h2{font-size:2rem;margin-bottom:12px}
+section p,section li{color:var(--soft);max-width:80ch}
+section ul{padding-left:20px}
+:focus-visible{outline:2px solid var(--forest);outline-offset:3px}
+a{color:inherit}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <p class="k">LeaveBridge Health · Homepage redesign</p>
+  <h1>Three luxury design concepts</h1>
+  <p class="lede">Each concept is a working, responsive homepage built from the same verified content: real prices from the service catalog, the real service area (Mississippi and Tennessee), the real clinical workflow and the existing refund rules. Anything not yet verified is marked with a yellow label. Photographs are licensed Pexels images used for illustration; they do not show LeaveBridge patients or clinicians.</p>
+</div></header>
+<main class="wrap">
+  <div class="grid">
+    <article class="card rec">
+      <div class="shots"><img src="screenshots/a-desktop-hero.jpg" alt="Concept A desktop hero"><img src="screenshots/a-mobile-hero.jpg" alt="Concept A mobile hero"></div>
+      <div class="body">
+        <span class="badge">Recommended</span>
+        <h2>A · Editorial Private Care</h2>
+        <dl>
+          <dt>Typography</dt><dd>Cormorant Garamond headlines at large editorial sizes with one italic accent word; Inter for body text at 17px.</dd>
+          <dt>Image treatment</dt><dd>One prominent window-lit portrait in a 4:5 frame with a fine inset rule. Everything else is type, hairlines and whitespace.</dd>
+          <dt>Layout</dt><dd>Asymmetric split hero, ruled trust strip, numbered three-column process, and an editorial price list that reads like a private practice fee schedule.</dd>
+          <dt>Customer journey</dt><dd>Headline, primary action and the $279.99 fee are all in the first screen; services and the clinician follow, then a sticky-heading FAQ.</dd>
+        </dl>
+        <div class="links"><a class="btn p" href="a.html">Open preview</a><a class="btn" href="screenshots/a-desktop-full.jpg">Desktop page</a><a class="btn" href="screenshots/a-mobile-full.jpg">Mobile page</a></div>
+      </div>
+    </article>
+    <article class="card">
+      <div class="shots"><img src="screenshots/b-desktop-hero.jpg" alt="Concept B desktop hero"><img src="screenshots/b-mobile-hero.jpg" alt="Concept B mobile hero"></div>
+      <div class="body">
+        <h2>B · Contemporary Concierge</h2>
+        <dl>
+          <dt>Typography</dt><dd>Libre Baskerville headings with Source Sans 3 body; tighter, more practical type scale.</dd>
+          <dt>Image treatment</dt><dd>A bright home-desk photograph in a crisp frame, with the assessment summary panel overlapping only its lower edge.</dd>
+          <dt>Layout</dt><dd>Porcelain and sage, card-based stepper, three side-by-side price cards with the assessment featured, credential chips.</dd>
+          <dt>Customer journey</dt><dd>The summary panel answers what it is, what it costs and the three next steps before any scrolling.</dd>
+        </dl>
+        <div class="links"><a class="btn p" href="b.html">Open preview</a><a class="btn" href="screenshots/b-desktop-full.jpg">Desktop page</a><a class="btn" href="screenshots/b-mobile-full.jpg">Mobile page</a></div>
+      </div>
+    </article>
+    <article class="card">
+      <div class="shots"><img src="screenshots/c-desktop-hero.jpg" alt="Concept C desktop hero"><img src="screenshots/c-mobile-hero.jpg" alt="Concept C mobile hero"></div>
+      <div class="body">
+        <h2>C · Boutique Healthcare</h2>
+        <dl>
+          <dt>Typography</dt><dd>Newsreader (already a project dependency) with italic phrases, and Hanken Grotesk body, also already installed.</dd>
+          <dt>Image treatment</dt><dd>Immersive full-height photography, a warm sepia window portrait with a still-life inset, and a split closing image.</dd>
+          <dt>Layout</dt><dd>Ivory and sand with champagne hairlines, a drop-cap story section, a vertical journey timeline and a featured fee card.</dd>
+          <dt>Customer journey</dt><dd>Leads with feeling, then storytelling; price sits under the hero actions and again in a dedicated pricing band.</dd>
+        </dl>
+        <div class="links"><a class="btn p" href="c.html">Open preview</a><a class="btn" href="screenshots/c-desktop-full.jpg">Desktop page</a><a class="btn" href="screenshots/c-mobile-full.jpg">Mobile page</a></div>
+      </div>
+    </article>
+  </div>
+
+  <section>
+    <h2>Why Concept A</h2>
+    <p>It reads most like an established private practice, which is the brief's core aim, while still answering what the service is, who it is for, the price and the next step in the first screen. Its system of hairlines, restrained radii and one strong photograph carries cleanly into intake forms, the patient dashboard and documents, where B's cards would also work but feel more like software, and C depends on a lot of photography the practice does not own yet. B's assessment summary panel and step cards are worth reusing inside the patient portal whichever concept you pick.</p>
+  </section>
+
+  <section>
+    <h2>What was checked</h2>
+    <ul>
+      <li>All three pages at 1440px and 390px wide: no horizontal overflow.</li>
+      <li>Automated axe scan for WCAG 2.2 A and AA rules: no violations on any page at either width. This is an automated check, not a compliance claim.</li>
+      <li>Mobile menu opens and closes with the button and the Escape key; skip link, visible focus states and reduced-motion support are in place.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
