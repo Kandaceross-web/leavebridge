@@ -62,10 +62,12 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
           </div>
         </div>
       </header>
-      <main id="main">{children}</main>
+      <main id="main" className="site-main">
+        {children}
+      </main>
       <div className="crisis-strip">
         <div className="container">
-          <b>Not an emergency service.</b>{" "}
+          <b>Not an emergency service.</b> In crisis:{" "}
           {crisis.resources
             .filter((r) => r.href)
             .map((r, i) => (
@@ -148,9 +150,8 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
           </div>
           <div className="legal">
             <p>
-              LeaveBridge Health provides independent clinical assessments. Clinicians make their
-              own professional determinations. We do not decide FMLA eligibility or approve leave;
-              those decisions belong to your employer or leave administrator.
+              Independent clinical assessments. Clinicians make their own determinations. We do not
+              decide FMLA eligibility or approve leave; your employer or leave administrator does.
             </p>
             <p>
               Support: <a href={`mailto:${brand.supportEmail}`}>{brand.supportEmail}</a> ·{" "}

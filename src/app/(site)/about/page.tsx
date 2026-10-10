@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ButtonLink, Empty, Icon, PageHead } from "@/components/ui";
+import { ButtonLink, Empty, Icon } from "@/components/ui";
+import { SiteHero } from "@/components/illustration";
 import { publicClinicians, siteSettings } from "@/server/web/public";
 import styles from "../site.module.css";
 
@@ -13,34 +14,33 @@ export default async function AboutPage() {
   const [{ brand }, team] = await Promise.all([siteSettings(), publicClinicians()]);
   return (
     <div className="container page stack stack-xl">
-      <PageHead
+      <SiteHero
         eyebrow="About"
         title={`About ${brand.name}`}
-        lede="A telehealth service for adults whose mental-health symptoms may be affecting their ability to work, built around an independent clinical assessment."
+        lede="Telehealth assessments for adults whose mental health is affecting their work."
+        art="next-step"
       />
 
       <section className="grid g3" aria-label="How we work">
-        <div className="card-flat stack stack-sm">
-          <Icon name="badge" size={22} />
-          <h2>Independent judgment</h2>
-          <p className="muted small">
-            Every determination is made by a licensed clinician using their own professional judgment. No software makes clinical decisions, and the fee is the
-            same whatever the outcome.
+        <div className="feature">
+          <span className="bubble bubble-teal"><Icon name="badge" size={24} /></span>
+          <h2 className="h3-size">Independent judgment</h2>
+          <p>
+            A licensed clinician makes every determination. No software does, and the fee is the same whatever the outcome.
           </p>
         </div>
-        <div className="card-flat stack stack-sm">
-          <Icon name="shield" size={22} />
-          <h2>Licensed where you are</h2>
-          <p className="muted small">
-            Clinicians are licensed in the states they serve, and you are matched with a clinician licensed where you are physically located during care.
+        <div className="feature">
+          <span className="bubble bubble-sun"><Icon name="shield" size={24} /></span>
+          <h2 className="h3-size">Licensed where you are</h2>
+          <p>
+            You are matched with a clinician licensed where you are physically located during care.
           </p>
         </div>
-        <div className="card-flat stack stack-sm">
-          <Icon name="lock" size={22} />
-          <h2>Your records, your choice</h2>
-          <p className="muted small">
-            Your information stays in a private portal. You decide who receives any documents, and nothing is shared with an employer without your written
-            authorization.
+        <div className="feature">
+          <span className="bubble"><Icon name="lock" size={24} /></span>
+          <h2 className="h3-size">Your records, your choice</h2>
+          <p>
+            A private portal. Nothing goes to an employer without your written authorization.
           </p>
         </div>
       </section>

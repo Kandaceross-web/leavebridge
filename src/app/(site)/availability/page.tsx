@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/forms";
-import { ButtonLink, Empty, PageHead } from "@/components/ui";
+import { ButtonLink, Empty } from "@/components/ui";
+import { SiteHero } from "@/components/illustration";
 import { db } from "@/server/db/client";
 import { waitlistStates } from "@/server/services/contact";
 import { activeStates, siteSettings, statePages, stateSlug } from "@/server/web/public";
@@ -27,10 +28,11 @@ export default async function AvailabilityPage() {
   const others = features.waitlist ? await waitlistStates(db) : [];
   return (
     <div className="container page stack stack-xl">
-      <PageHead
+      <SiteHero
         eyebrow="Availability"
         title="Where we serve"
-        lede="Clinicians can only provide care to people who are physically located in a state where they are licensed."
+        lede="Clinicians can only care for people physically located in a state where they are licensed."
+        art="location"
       />
 
       <section className="stack" aria-labelledby="states-title">
@@ -56,12 +58,9 @@ export default async function AvailabilityPage() {
         <section className="card-flat stack stack-sm" aria-labelledby="location-title">
           <h2 id="location-title">Your location during care matters</h2>
           <p className="muted">
-            What counts is where you are physically located when you receive care, not where you
-            live, work or are registered. You will confirm your location when you create an account
-            and again before any video assessment.
-          </p>
-          <p className="muted">
-            If you will be travelling, complete your assessment while you are in a state we serve.
+            What counts is where you are during care, not where you live or work. You confirm it at
+            sign-up and before any video visit. Travelling? Complete your assessment while in a
+            state we serve.
           </p>
         </section>
         <section className="card stack stack-sm" aria-labelledby="check-title">

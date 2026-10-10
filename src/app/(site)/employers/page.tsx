@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { ActionForm, SubmitButton, TextArea, TextField } from "@/components/forms";
-import { Banner, Icon, PageHead } from "@/components/ui";
+import { Icon } from "@/components/ui";
+import { Illustration, SiteHero } from "@/components/illustration";
 import { employerInquiryAction } from "../actions";
-import styles from "../site.module.css";
 import { OpensAtLaunch } from "@/components/opens-at-launch";
 
 export const metadata: Metadata = {
@@ -25,54 +25,61 @@ const AUDIENCES = [
 export default function EmployersPage() {
   return (
     <div className="container page stack stack-xl">
-      <PageHead
+      <SiteHero
         eyebrow="Employer services"
         title="A clear referral pathway for your people"
-        lede="When an employee asks where to get a mental-health leave assessment, you can point them to an independent clinical service with a dedicated link."
+        lede="Point employees to an independent clinical assessment with one dedicated link."
+        art="employers"
+        artAlt="Illustration of two people crossing a bridge from an office building to a home with a heart."
       />
 
       <section className="stack" aria-labelledby="who-title">
         <h2 id="who-title">Who we work with</h2>
-        <ul className="grid g3 list-plain">
+        <ul className="chips">
           {AUDIENCES.map((a) => (
-            <li key={a} className={`card-flat row ${styles.tight}`}>
+            <li key={a} className="chip">
               <Icon name="check" />
-              <span>{a}</span>
+              {a}
             </li>
           ))}
         </ul>
       </section>
 
-      <div className="grid g2">
-        <section className="card stack" aria-labelledby="offer-title">
-          <h2 id="offer-title">What we offer</h2>
-          <ul className="list-check">
-            <li>
-              <Icon name="check" />
-              <span>
-                <b>A referral pathway.</b> A simple way to direct employees to an assessment by a
-                licensed mental-health clinician.
-              </span>
-            </li>
-            <li>
-              <Icon name="check" />
-              <span>
-                <b>A dedicated landing link.</b> A page for your organization that explains the
-                service in neutral terms and starts the same screening everyone uses.
-              </span>
-            </li>
-            <li>
-              <Icon name="check" />
-              <span>
-                <b>Plain-language information</b> your HR team can share about how the process
-                works.
-              </span>
-            </li>
-          </ul>
-        </section>
+      <section className="stack" aria-labelledby="offer-title">
+        <h2 id="offer-title">What we offer</h2>
+        <div className="grid g3">
+          <div className="feature">
+            <span className="bubble">
+              <Icon name="arrow" size={24} />
+            </span>
+            <h3>A referral pathway</h3>
+            <p>A simple way to send employees to a licensed mental-health clinician.</p>
+          </div>
+          <div className="feature">
+            <span className="bubble bubble-sun">
+              <Icon name="file" size={24} />
+            </span>
+            <h3>A dedicated landing link</h3>
+            <p>A neutral page for your organization that starts the same screening everyone uses.</p>
+          </div>
+          <div className="feature">
+            <span className="bubble bubble-mint">
+              <Icon name="info" size={24} />
+            </span>
+            <h3>Plain-language info</h3>
+            <p>Material your HR team can share about how the process works.</p>
+          </div>
+        </div>
+      </section>
 
-        <section className="card stack" aria-labelledby="boundaries-title">
-          <h2 id="boundaries-title">What stays with the patient</h2>
+      <section className="split" aria-labelledby="boundaries-title">
+        <div className="feature">
+          <span className="bubble bubble-teal">
+            <Icon name="lock" size={24} />
+          </span>
+          <h2 id="boundaries-title" className="h3-size">
+            What stays with the patient
+          </h2>
           <ul className="list-check">
             <li>
               <Icon name="lock" />
@@ -80,31 +87,28 @@ export default function EmployersPage() {
             </li>
             <li>
               <Icon name="lock" />
-              <span>
-                Employers never receive clinical information without the patient&rsquo;s written
-                authorization.
-              </span>
+              <span>No clinical information reaches you without their written authorization.</span>
             </li>
             <li>
               <Icon name="lock" />
-              <span>
-                We do not tell your organization whether an individual employee used the link.
-              </span>
+              <span>We don&rsquo;t tell you whether an employee used the link.</span>
             </li>
           </ul>
-          <Banner tone="info" icon="info">
-            We do not make leave decisions, determine FMLA eligibility, or act as a leave
+          <p className="small muted">
+            We don&rsquo;t make leave decisions, determine FMLA eligibility, or act as a leave
             administrator. Clinicians make independent clinical determinations only.
-          </Banner>
-        </section>
-      </div>
+          </p>
+        </div>
+        <div className="split-art">
+          <Illustration name="privacy" alt="" />
+        </div>
+      </section>
 
       <section className="grid g2" aria-labelledby="inquiry-title">
         <div className="stack">
           <h2 id="inquiry-title">Ask about a referral link</h2>
           <p className="muted">
-            Tell us about your organization and we will reply by email. Please do not include
-            information about any individual employee.
+            We reply by email. Please don&rsquo;t include anything about an individual employee.
           </p>
         </div>
         <div className="card">

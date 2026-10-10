@@ -153,7 +153,8 @@ async function main() {
     const styleHashes = new Set<string>();
     for (const page of pages) {
       let html = staticHtml(await (await get(page)).text());
-      for (const m of html.matchAll(/(?:href|src)="(\/_next\/static\/[^"]+)"/g)) assets.add(m[1]!);
+      // Framework assets, and the self-hosted illustrations in public/illustrations/.
+      for (const m of html.matchAll(/(?:href|src)="(\/(?:_next\/static|illustrations)\/[^"]+)"/g)) assets.add(m[1]!);
       for (const m of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)) {
         styleHashes.add(`sha256-${createHash("sha256").update(m[1]!).digest("base64")}`);
       }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ActionForm, SubmitButton, TextArea, TextField } from "@/components/forms";
-import { Icon, PageHead } from "@/components/ui";
+import { Icon } from "@/components/ui";
+import { Illustration, SiteHero } from "@/components/illustration";
 import { employerInquiryAction } from "../actions";
 import { OpensAtLaunch } from "@/components/opens-at-launch";
 
@@ -14,58 +15,59 @@ export const metadata: Metadata = {
 export default function ForTherapistsPage() {
   return (
     <div className="container page stack stack-xl">
-      <PageHead
+      <SiteHero
         eyebrow="For therapists and EAPs"
-        title="When a client needs leave paperwork you don't complete"
-        lede="Many therapy practices and employee assistance programs don't complete employer leave forms. You can refer clients here for an independent assessment, and keep your therapeutic relationship separate from the paperwork."
+        title="When a client needs leave paperwork you don’t complete"
+        lede="Refer them for an independent assessment, and keep therapy separate from the paperwork."
+        art="therapists"
+        artAlt="Illustration of a therapist and a client talking, with a form being passed on."
       />
-      <div className="grid g2">
-        <section className="card stack" aria-labelledby="how-title">
-          <h2 id="how-title">How referral works</h2>
-          <ul className="list-check">
-            <li>
-              <Icon name="check" />
-              <span>
-                Share our site or your practice&rsquo;s own referral link. Your client screens and
-                books on their own.
-              </span>
-            </li>
-            <li>
-              <Icon name="check" />
-              <span>
-                A licensed clinician assesses them independently and decides whether documentation
-                is clinically supported.
-              </span>
-            </li>
-            <li>
-              <Icon name="check" />
-              <span>
-                With your client&rsquo;s written authorization, the clinician may ask you for
-                treatment history. We never contact you without it.
-              </span>
-            </li>
-          </ul>
-        </section>
-        <section className="card-flat card-lavender stack" aria-labelledby="terms-title">
-          <h2 id="terms-title">What we don&rsquo;t do</h2>
-          <ul className="list-check">
-            <li>
-              <Icon name="x" />
-              <span>Provide ongoing therapy or take over your client&rsquo;s care</span>
-            </li>
-            <li>
-              <Icon name="x" />
-              <span>Promise any outcome to your client</span>
-            </li>
-          </ul>
-        </section>
-      </div>
+      <section className="stack" aria-labelledby="how-title">
+        <h2 id="how-title">How referral works</h2>
+        <ol className="flow flow-3">
+          <li>
+            <span className="num" aria-hidden="true">1</span>
+            <Illustration name="steps/1-check" alt="" />
+            <h3>Share the link</h3>
+            <p>Our site or your practice&rsquo;s own link. Your client screens and books.</p>
+          </li>
+          <li className="clin">
+            <span className="num" aria-hidden="true">2</span>
+            <Illustration name="steps/6-decision" alt="" />
+            <h3>Independent assessment</h3>
+            <p>A licensed clinician decides if documentation is clinically supported.</p>
+          </li>
+          <li>
+            <span className="num" aria-hidden="true">3</span>
+            <Illustration name="steps/2-account" alt="" />
+            <h3>Only with consent</h3>
+            <p>
+              We may ask you for treatment history only with your client&rsquo;s written
+              authorization. Never without it.
+            </p>
+          </li>
+        </ol>
+      </section>
+      <section className="feature" aria-labelledby="terms-title">
+        <h2 id="terms-title" className="h3-size">
+          What we don&rsquo;t do
+        </h2>
+        <ul className="list-check">
+          <li>
+            <Icon name="x" />
+            <span>Provide ongoing therapy or take over your client&rsquo;s care</span>
+          </li>
+          <li>
+            <Icon name="x" />
+            <span>Promise any outcome to your client</span>
+          </li>
+        </ul>
+      </section>
       <section className="grid g2" aria-labelledby="inquiry-title">
         <div className="stack">
           <h2 id="inquiry-title">Ask for a referral link</h2>
           <p className="muted">
-            Tell us about your practice and we will reply by email. Please don&rsquo;t include
-            anything about a specific client.
+            We reply by email. Please don&rsquo;t include anything about a specific client.
           </p>
         </div>
         <div className="card">

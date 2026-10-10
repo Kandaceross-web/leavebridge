@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Badge, Banner, ButtonLink, Icon, Money, PageHead } from "@/components/ui";
+import { Badge, ButtonLink, Icon, Money } from "@/components/ui";
+import { SiteHero } from "@/components/illustration";
 import { allServices, enabledServices } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
 
@@ -11,18 +12,9 @@ export const metadata: Metadata = {
 };
 
 const LEAVE_TYPES = [
-  {
-    name: "Continuous leave",
-    body: "Time away from work for a single, unbroken period, such as several consecutive weeks.",
-  },
-  {
-    name: "Intermittent leave",
-    body: "Time off in separate blocks as symptoms or treatment require, such as occasional days or partial days.",
-  },
-  {
-    name: "Reduced schedule",
-    body: "Working fewer hours per day or fewer days per week for a period of time.",
-  },
+  { name: "Continuous leave", body: "One unbroken period away, such as several weeks.", bubble: "" },
+  { name: "Intermittent leave", body: "Separate days or part-days as symptoms require.", bubble: " bubble-lav" },
+  { name: "Reduced schedule", body: "Fewer hours a day or days a week, for a time.", bubble: " bubble-mint" },
 ];
 
 export default async function ServicesPage() {
@@ -30,31 +22,37 @@ export default async function ServicesPage() {
   const later = all.filter((s) => !s.enabled);
   return (
     <div className="container page stack stack-xl">
-      <PageHead
+      <SiteHero
         eyebrow="FMLA / Leave Services"
         title="Leave services"
-        lede="Independent clinical assessments for adults whose mental-health symptoms may be affecting their ability to work."
+        lede="Independent assessments when mental-health symptoms are affecting your work."
+        art="services"
+        artAlt="Illustration of a calendar showing a block of leave, separate days off and shorter days, beside a person with a warm drink."
       />
 
       <section className="stack" aria-labelledby="offered-title">
         <h2 id="offered-title">Currently offered</h2>
         {enabled.length ? (
-          <div className="grid g2">
+          <div className="grid g3">
             {enabled.map((s) => (
               <article key={s.id} className="svc">
-                <h3 className="mt-0">{s.name}</h3>
+                <h3 className="mt-0 h3-size">{s.name}</h3>
                 <p className="price">
                   {s.priceCents !== null ? <Money cents={s.priceCents} /> : "—"}
                   <small>self-pay</small>
                 </p>
                 <p className="muted">{s.summary}</p>
-                <p className="small">{s.description}</p>
+                {s.description ? (
+                  <details className="more">
+                    <summary>Learn more</summary>
+                    <div>
+                      <p>{s.description}</p>
+                    </div>
+                  </details>
+                ) : null}
                 <div className="btn-row">
                   <ButtonLink href={appHref("/start?entry=services")}>
                     Check if we can help
-                  </ButtonLink>
-                  <ButtonLink href="/pricing" variant="quiet">
-                    What&rsquo;s included
                   </ButtonLink>
                 </div>
               </article>
@@ -65,32 +63,42 @@ export default async function ServicesPage() {
             We are not accepting new assessments right now. Please check back soon.
           </p>
         )}
+        <p className="small">
+          <Link href="/pricing">What&rsquo;s included and refunds</Link>
+        </p>
       </section>
 
-      <section className="card-quiet stack" aria-labelledby="types-title">
-        <h2 id="types-title">Types of leave documentation</h2>
-        <p className="muted">
-          When the clinician determines it is clinically supported, they can complete documentation
-          for one of these arrangements, as appropriate to your situation. The clinician decides
-          what, if anything, is supported.
-        </p>
+      <section className="stack" aria-labelledby="types-title">
+        <div className="stack stack-sm">
+          <h2 id="types-title">Types of leave documentation</h2>
+          <p className="lede">
+            Completed only if the clinician finds it clinically supported. They decide what, if
+            anything, fits.
+          </p>
+        </div>
         <div className="grid g3">
           {LEAVE_TYPES.map((t) => (
-            <div key={t.name} className="card-flat stack stack-sm">
+            <div key={t.name} className="feature">
+              <span className={`bubble${t.bubble}`}>
+                <Icon name="calendar" size={24} />
+              </span>
               <h3>{t.name}</h3>
-              <p className="small muted">{t.body}</p>
+              <p>{t.body}</p>
             </div>
           ))}
         </div>
       </section>
 
       <section className="grid g2" aria-label="Documentation and employer requirements">
-        <div className="stack">
-          <h2>What can be completed</h2>
+        <div className="feature">
+          <span className="bubble bubble-mint">
+            <Icon name="file" size={24} />
+          </span>
+          <h2 className="h3-size">What can be completed</h2>
           <ul className="list-check">
             {[
-              "Your employer's or leave administrator's medical certification form, when you upload it",
-              "A clinician letter for continuous leave, intermittent leave or a reduced schedule",
+              "Your employer's or leave administrator's certification form, when you upload it",
+              "A clinician letter for continuous, intermittent or reduced-schedule leave",
               "A letter explaining the clinician's determination",
             ].map((t) => (
               <li key={t}>
@@ -100,22 +108,21 @@ export default async function ServicesPage() {
             ))}
           </ul>
           <p className="small muted">
-            Documentation is completed only when the clinician finds it clinically supported. It is
-            not completed automatically, and the outcome may be that no documentation is supported.
+            Nothing is completed automatically. The outcome may be that no documentation is
+            supported.
           </p>
         </div>
-        <div className="stack">
-          <h2>Check with HR first</h2>
-          <p className="muted">
-            Employers and leave administrators decide which provider types they accept for medical
-            certification, and whether you are eligible for FMLA or other leave. Before you start,
-            ask your HR team or leave administrator:
-          </p>
+        <div className="feature">
+          <span className="bubble bubble-sun">
+            <Icon name="users" size={24} />
+          </span>
+          <h2 className="h3-size">Check with HR first</h2>
+          <p>Ask your HR team or leave administrator:</p>
           <ul className="list-check">
             {[
-              "Whether they accept certification from a licensed mental-health clinician via telehealth",
-              "Which form they need and when it is due",
-              "Whether you are eligible for the leave you are requesting",
+              "Do you accept certification from a licensed mental-health clinician by telehealth?",
+              "Which form do you need, and when is it due?",
+              "Am I eligible for the leave I'm requesting?",
             ].map((t) => (
               <li key={t}>
                 <Icon name="info" />
@@ -123,17 +130,16 @@ export default async function ServicesPage() {
               </li>
             ))}
           </ul>
-          <Banner tone="info" icon="info">
-            We do not decide FMLA eligibility or approve leave. Those decisions belong to your
-            employer or leave administrator.
-          </Banner>
+          <p className="small muted">
+            We don&rsquo;t decide FMLA eligibility or approve leave. Your employer or leave
+            administrator does.
+          </p>
         </div>
       </section>
 
       {later.length ? (
         <section className="stack" aria-labelledby="later-title">
-          <h2 id="later-title">Not currently offered</h2>
-          <p className="muted">These services may be offered later. We cannot provide them yet.</p>
+          <h2 id="later-title">Not offered yet</h2>
           <ul className="list-rows card-flat">
             {later.map((s) => (
               <li key={s.id} className="row row-between">
@@ -149,7 +155,7 @@ export default async function ServicesPage() {
       ) : null}
 
       <p className="small muted">
-        Have a question about a service? <Link href="/faq">Read common questions</Link> or{" "}
+        Questions? <Link href="/faq">Read common questions</Link> or{" "}
         <Link href="/contact">contact us</Link>.
       </p>
     </div>
