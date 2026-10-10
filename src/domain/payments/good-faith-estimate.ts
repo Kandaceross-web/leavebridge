@@ -13,13 +13,15 @@ export interface EstimateSetting {
   diagnosisCodes: string;
   disclaimers: readonly string[];
   disputeUrl: string;
+  /** Per-service code overrides keyed by service slug. */
+  serviceCodes?: Readonly<Record<string, string>>;
 }
 
 export interface EstimateInput {
   issuedAt: Date;
   reference: string;
   patient: { name: string; dateOfBirth: string | null };
-  service: { id: string; name: string; summary: string };
+  service: { id: string; name: string; summary: string; slug?: string };
   price: { id: string; amountCents: number; currency: string };
   /** Start of a booked visit, if one exists when the estimate is issued. */
   scheduledFor: Date | null;
@@ -50,6 +52,12 @@ export function missingEstimateFields(s: EstimateSetting): (typeof ESTIMATE_OWNE
   return ESTIMATE_OWNER_FIELDS.filter((k) => !s[k].trim());
 }
 
+/** The service's own code when one is configured for its slug, otherwise the general code. */
+export function serviceCodeFor(setting: EstimateSetting, slug: string | undefined): string {
+  const own = slug ? setting.serviceCodes?.[slug]?.trim() : "";
+  return own || setting.serviceCode.trim();
+}
+
 /** Only the service being purchased is itemized, at its current self-pay price. */
 export function buildEstimate(input: EstimateInput): EstimateContent {
   const { setting } = input;
@@ -59,7 +67,7 @@ export function buildEstimate(input: EstimateInput): EstimateContent {
     reference: input.reference,
     patient: { name: input.patient.name, dateOfBirth: input.patient.dateOfBirth ?? "" },
     primaryService: { name: input.service.name, description: input.service.summary, scheduledFor: input.scheduledFor?.toISOString() ?? null },
-    items: [{ description: input.service.name, serviceCode: setting.serviceCode.trim(), quantity: 1, chargeCents: input.price.amountCents }],
+    items: [{ description: input.service.name, serviceCode: serviceCodeFor(setting, input.service.slug), quantity: 1, chargeCents: input.price.amountCents }],
     totalCents: input.price.amountCents,
     currency: input.price.currency,
     diagnosisCodes: setting.diagnosisCodes,

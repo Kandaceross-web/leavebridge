@@ -1,12 +1,13 @@
 import "server-only";
 import { and, desc, eq, gt, isNull, lte, or } from "drizzle-orm";
 import type { Ctx } from "../db/actor";
-import { paymentEvents, payments, prices, refunds, users } from "../db/schema";
+import { automatedScreenings, paymentEvents, payments, prices, refunds, users } from "../db/schema";
 import { audit } from "../audit";
 import { env } from "../env";
 import { payments as provider } from "../providers/payments";
 import { getSetting } from "../settings";
 import { ensureEstimate } from "./estimates";
+import { requireSameDayCheckout } from "./same-day-gate";
 import { getCaseRow, loadCase, notifyPatient, requireGate, syncPreSubmissionStatus, type CaseRow } from "./cases";
 import { requireRole, requireStepUp } from "@/domain/policy";
 import { conflict, forbidden, invalid, notFound } from "@/domain/errors";
@@ -36,7 +37,9 @@ export async function casePayments(ctx: Ctx, caseId: string) {
 export async function startCheckout(ctx: Ctx, caseId: string, shownEstimateId?: string): Promise<string> {
   if (ctx.actor.kind !== "patient") throw forbidden();
   const { row } = await loadCase(ctx, caseId, "owner");
-  await requireGate(ctx, row, "payment");
+  const automated = row.kind === "automated_screening";
+  if (automated) await requireSameDayCheckout(ctx, row);
+  else await requireGate(ctx, row, "payment");
   const existing = await casePayments(ctx, row.id);
   if (existing.some((p) => p.status === "paid" || p.status === "partially_refunded")) throw conflict("This case is already paid.");
   const price = await currentPrice(ctx, row.serviceId!);
@@ -54,6 +57,8 @@ export async function startCheckout(ctx: Ctx, caseId: string, shownEstimateId?: 
     amountCents: price.amountCents,
     currency: price.currency,
     customerEmail: u!.email,
+    // The same neutral URLs for every service, so the processor never learns which service was bought
+    // (the portal forwards a same-day case to its own page).
     successUrl: `${env.APP_ORIGIN}/portal/cases/${row.id}?paid=1`,
     cancelUrl: `${env.APP_ORIGIN}/portal/cases/${row.id}/checkout?cancelled=1`,
   });
@@ -69,6 +74,8 @@ async function markPaid(ctx: Ctx, paymentId: string, providerPaymentRef: string 
   await ctx.tx.update(payments).set({ status: "paid", paidAt: new Date(), providerPaymentRef, updatedAt: new Date() }).where(eq(payments.id, pay.id));
   await audit(ctx, { action: "payment.succeeded", subjectType: "payment", subjectId: pay.id, caseId: pay.caseId, metadata: { amountCents: pay.amountCents } });
   let row = await getCaseRow(ctx, pay.caseId);
+  // Same-Day Mental Health Assessment: payment opens the questionnaires.
+  if (row.kind === "automated_screening") await ctx.tx.update(automatedScreenings).set({ status: "in_progress", updatedAt: new Date() }).where(eq(automatedScreenings.caseId, row.id));
   row = await syncPreSubmissionStatus(ctx, row);
   await notifyPatient(ctx, row, "payment_received");
   return row;

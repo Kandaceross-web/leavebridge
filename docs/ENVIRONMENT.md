@@ -23,6 +23,7 @@ All variables are validated at startup by `src/server/env.ts`. Values are never 
 | `ENCRYPTION_KEYS` | Yes | `id:base64(32 bytes)` list. Prepend a new key to rotate; keep old keys until re-encrypted. Plan: KMS-wrapped data keys. |
 | `HMAC_SECRET` | Yes | ≥16 chars; hashes session tokens, IPs, screening cookies. |
 | `PAYMENTS_PROVIDER`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Yes | Webhook endpoint: `POST /api/webhooks/payments`. |
+| `DOCUMENT_SIGNING_KEY`, `DOCUMENT_SIGNING_CERT`, `DOCUMENT_SIGNING_KEY_PASSPHRASE` | Yes | Key and certificate that digitally sign issued screening records and work excuse letters (PEM, or the PEM base64-encoded). Production refuses to start without the key and certificate; development generates an untrusted self-signed certificate per process. See DEPLOYMENT.md (SEC-19). |
 | `STORAGE_PROVIDER`, `S3_BUCKET`, `S3_REGION`, `S3_KMS_KEY_ID` | Yes | Files are also encrypted by the app before upload. |
 | `SCAN_PROVIDER`, `CLAMAV_HOST` | Recommended | `basic` checks type and known signatures only. |
 | `EMAIL_PROVIDER`, `SMS_PROVIDER`, `EMAIL_FROM` | Yes | Outbox stores messages in the DB for inspection in development. |

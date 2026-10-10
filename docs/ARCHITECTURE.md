@@ -49,6 +49,28 @@ documentation and signature → delivery → close-out checklist with audit trai
 Emergency screening outcomes never create a case. A safety flag raised later (intake or measures) moves the case to
 `safety_hold` and alerts the clinical team; routine work stops until a clinician clears it.
 
+## Same-Day Mental Health Assessment (automated screening)
+
+A purchase is a `cases` row with `kind = 'automated_screening'` and the same-day service, so it reuses payments, the
+Good Faith Estimate, RLS, `measure_responses`, `safety_events`, encrypted storage, notifications and the audit chain.
+It has its own transition table (`AUTOMATED_TRANSITIONS`): started → intake_incomplete (paid) → completed (record
+issued), or → safety_hold → completed or closed by a clinician. `automated_screenings` holds the product state.
+
+1. `/start?product=same-day` runs only the location and safety steps of the screening ruleset; sign-up creates the
+   case and sends an email-confirmation link (`email-verification.ts`).
+2. `/portal/screening/[id]/pay`: acknowledgement (hash + time), estimate, checkout. Payment needs a confirmed email.
+3. PHQ-9 and/or GAD-7 (shared scoring), then the work questions. Completion builds the rule-based summary
+   (`src/domain/same-day/rules.ts`), stores it encrypted with its hash, and either issues the record or holds it.
+4. `issueDocument()` (`issued-documents.ts`) renders the PDF (`issued-pdf.ts`, with a QR code to `/verify/<number>`),
+   signs it (`signing.ts`, CMS detached), stores it through `storeUpload`, records the hash and certificate fingerprint,
+   and the patient gets the neutral "documents ready" email. Issuing is idempotent per (kind, source).
+5. Work excuse letters (`work-excuse.ts`): one request per screening → proposed letter → Ops queue → the assigned
+   clinician edits, attests and approves with MFA and step-up → their signature row binds the version hash → a signed
+   PDF is issued like the record.
+6. `/verify` (app host, anonymous) calls `lb_verify_document()` only; revocation is in Ops > Same-day screenings.
+
+Automated cases stay out of the clinical case list unless they are on safety hold or awaiting screening review.
+
 ## Surfaces
 
 * **Public site** `(site)`: Home, How It Works, Services, Pricing, Employer Services, FAQ, Contact, About, Availability,

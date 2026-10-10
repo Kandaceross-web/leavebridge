@@ -63,6 +63,40 @@ Error reporting (SEC-11, owner decision Q43): server errors go to Sentry only wh
 `SENTRY_BAA_SIGNED=1`. Set the second only after Sentry has signed a BAA with the practice. Reports carry the error
 class, route pattern, method and stack frames, never messages, paths, headers or users (`src/server/error-reporting.ts`).
 
+## Document signing certificate (SEC-19)
+
+Every Automated Mental Health Screening Record and work excuse letter is a PDF with a CMS (PKCS#7) detached signature
+over the whole file (`adbe.pkcs7.detached`, with a signing-certificate-v2 attribute), a random document number, a QR
+code to `APP_ORIGIN/verify/<number>`, and a SHA-256 and certificate fingerprint stored in `issued_documents`. The public
+page `/verify` reports valid, revoked or not found, and can compare an uploaded copy byte for byte.
+
+* Production refuses to start without `DOCUMENT_SIGNING_KEY` and `DOCUMENT_SIGNING_CERT`. Development and tests
+  generate a self-signed certificate per process, named "DEVELOPMENT ... (not trusted)".
+* What PDF readers show depends on the certificate. A self-managed certificate makes Adobe Reader say the signer's
+  identity is unknown, though the document is still tamper-evident and verifiable on `/verify`. For a green check in
+  Adobe, buy a document-signing certificate from a provider on the Adobe Approved Trust List. This is an owner decision
+  with a recurring cost (SEC-19).
+* The key is RSA. Keep it in the secret manager (or a KMS/HSM-backed signer in a later version), never in the image or
+  the repository. Give it only to the web task.
+* From a provider's `.p12`/`.pfx`:
+  `openssl pkcs12 -in signing.p12 -nocerts -nodes | openssl pkcs8 -topk8 -nocrypt -out key.pem` and
+  `openssl pkcs12 -in signing.p12 -nokeys -out cert.pem` (signing certificate first, then intermediates). Store each
+  PEM, or `base64 -w0` of it, as the variable.
+* For staging only, a self-managed certificate:
+  `openssl req -x509 -newkey rsa:3072 -nodes -keyout key.pem -out cert.pem -days 365 -subj "/CN=LeaveBridge Health document signing (staging)/O=Defining You Therapeutic Services" -addext "keyUsage=critical,digitalSignature,nonRepudiation"`.
+* Rotation: deploy the new key and certificate. Documents already issued keep verifying, because the public check
+  compares the stored hash and the fingerprint recorded at issue. Keep the old certificate on file.
+* After deploying, issue a test record in staging and open it in Adobe Reader and on `/verify`.
+
+## Same-Day Mental Health Assessment
+
+* Turn on or off with the `sameDayScreening` setting (and `workExcuseLetter` for letters) in Ops > Business rules. The
+  service row (`same-day-mental-health-assessment`, $29.99) is seeded with the catalog.
+* Safety alerts and letter requests go by email to every active clinician and clinical director. The email names only
+  the console page. Make sure each has a working address and that someone watches it outside office hours (CLN-22).
+* Stripe sees the usual neutral line item ("Professional assessment service") and the usual `/portal/cases/<id>` return
+  URLs, so the processor cannot tell which service was bought.
+
 ## Video visits (Amazon Chime SDK)
 
 Owner decision Q42 (OWN-15, SEC-08). Set `VIDEO_PROVIDER=chime` and `CHIME_REGION` (the Chime SDK Meetings API Region,

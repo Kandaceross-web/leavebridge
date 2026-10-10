@@ -10,6 +10,8 @@ import { generateTotpSecret, verifyTotp } from "../auth/totp";
 import { getSetting } from "../settings";
 import { newCaseReference } from "./cases";
 import { notifyUser } from "./notify";
+import { sendVerificationEmail } from "./email-verification";
+import { createAutomatedScreening, sameDayServiceId } from "./same-day";
 import type { ScreeningRow } from "./screening";
 import { DomainError, invalid } from "@/domain/errors";
 import type { Answers } from "@/domain/screening/engine";
@@ -42,12 +44,16 @@ export async function promoteScreeningToCase(ctx: Ctx, screening: ScreeningRow, 
   const answers = decryptJson<Answers>(screening.answers, {});
   const leave = typeof answers["leave_type"] === "string" && (LEAVE_TYPES as readonly string[]).includes(answers["leave_type"]) ? (answers["leave_type"] as LeaveType) : "unsure";
   const deadline = typeof answers["deadline"] === "string" && /^\d{4}-\d{2}-\d{2}$/.test(answers["deadline"]) ? answers["deadline"] : null;
+  const sameDay = screening.product === "same_day_screening";
   const [c] = await ctx.tx
     .insert(cases)
     .values({
       reference: newCaseReference(),
       patientId,
-      requestedLeaveType: leave,
+      // A same-day screening is its own kind of case with the service already chosen; no leave type is asked.
+      kind: sameDay ? "automated_screening" : "clinical",
+      serviceId: sameDay ? await sameDayServiceId(ctx) : null,
+      requestedLeaveType: sameDay ? null : leave,
       jurisdictionCode: screening.stateCode,
       screeningId: screening.id,
       screeningReview: screening.outcome === "NEEDS_REVIEW" ? "pending" : "none",
@@ -58,6 +64,7 @@ export async function promoteScreeningToCase(ctx: Ctx, screening: ScreeningRow, 
     })
     .returning();
   await ctx.tx.insert(caseStatusHistory).values({ caseId: c!.id, fromStatus: null, toStatus: "started", actorUserId: ctx.actor.kind === "patient" ? ctx.actor.userId : null, reason: "created from screening" });
+  if (sameDay) await createAutomatedScreening(ctx, c!.id);
   await ctx.tx.update(screenings).set({ status: "promoted", patientId }).where(eq(screenings.id, screening.id));
   // An unused "continue" link has no purpose once the account exists.
   await ctx.tx.delete(screeningContinueLinks).where(eq(screeningContinueLinks.screeningId, screening.id));
@@ -90,7 +97,10 @@ export async function signUp(ctx: Ctx, input: z.infer<typeof signUpSchema>, scre
   const caseId = await promoteScreeningToCase(ctx, screening, patient!.id);
   await audit(ctx, { action: "auth.sign_up", subjectType: "user", subjectId: user!.id });
   await notifyUser(ctx, user!.id, "account_created", "/portal");
-  return { userId: user!.id, caseId };
+  const sameDay = screening.product === "same_day_screening";
+  // The same-day record is announced by email, so this flow confirms the address before payment.
+  if (sameDay) await sendVerificationEmail(ctx, user!.id);
+  return { userId: user!.id, caseId, sameDay };
 }
 
 export const signInSchema = z.object({

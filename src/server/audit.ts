@@ -81,7 +81,26 @@ export type AuditAction =
   | "consent_version.published"
   | "service.updated"
   | "price.created"
-  | "waitlist.notified";
+  | "waitlist.notified"
+  | "email.verification_sent"
+  | "email.verified"
+  | "same_day.acknowledged"
+  | "same_day.instruments_chosen"
+  | "same_day.functioning_saved"
+  | "same_day.completed"
+  | "same_day.held"
+  | "same_day.hold_released"
+  | "same_day.closed_without_issue"
+  | "same_day.refund_flag_resolved"
+  | "staff.alerted"
+  | "issued_document.issued"
+  | "issued_document.revoked"
+  | "issued_document.verified"
+  | "letter.requested"
+  | "letter.assigned"
+  | "letter.version_saved"
+  | "letter.approved"
+  | "letter.declined";
 
 export interface AuditInput {
   action: AuditAction;

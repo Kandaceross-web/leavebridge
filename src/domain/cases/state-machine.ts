@@ -1,4 +1,4 @@
-import type { CaseStatus, OpsStage } from "../constants";
+import type { CaseKind, CaseStatus, OpsStage } from "../constants";
 import { conflict } from "../errors";
 
 /**
@@ -23,12 +23,35 @@ const TRANSITIONS: Record<CaseStatus, readonly CaseStatus[]> = {
   safety_hold: ["clinical_review", "cancelled", "closed"],
 };
 
-export function canTransition(from: CaseStatus, to: CaseStatus): boolean {
-  return TRANSITIONS[from].includes(to);
+/**
+ * Same-Day Mental Health Assessment (automated screening). Paid → questionnaires → record issued.
+ * A safety response holds the case for a clinician, who either issues the record after review or
+ * closes it without issuing. It never enters the clinical review, determination or signature steps.
+ */
+const AUTOMATED_TRANSITIONS: Record<CaseStatus, readonly CaseStatus[]> = {
+  started: ["intake_incomplete", "cancelled", "safety_hold"],
+  intake_incomplete: ["completed", "cancelled", "safety_hold"],
+  awaiting_documents: [],
+  submitted: [],
+  clinical_review: [],
+  info_requested: [],
+  appointment_needed: [],
+  appointment_scheduled: [],
+  provider_review: [],
+  provider_signature: [],
+  completed: ["closed"],
+  delivered: [],
+  closed: [],
+  cancelled: [],
+  safety_hold: ["completed", "closed"],
+};
+
+export function canTransition(from: CaseStatus, to: CaseStatus, kind: CaseKind = "clinical"): boolean {
+  return (kind === "automated_screening" ? AUTOMATED_TRANSITIONS : TRANSITIONS)[from].includes(to);
 }
 
-export function assertTransition(from: CaseStatus, to: CaseStatus) {
-  if (!canTransition(from, to)) throw conflict("This case cannot move to that step right now.");
+export function assertTransition(from: CaseStatus, to: CaseStatus, kind: CaseKind = "clinical") {
+  if (!canTransition(from, to, kind)) throw conflict("This case cannot move to that step right now.");
 }
 
 export const TERMINAL_STATUSES: readonly CaseStatus[] = ["closed", "cancelled"];
@@ -66,6 +89,20 @@ export const PATIENT_STATUS: Record<CaseStatus, PatientStatusView> = {
     tone: "alert",
   },
 };
+
+/** Patient labels for the automated screening. Nothing here suggests a clinician examined the person. */
+export const AUTOMATED_PATIENT_STATUS: Partial<Record<CaseStatus, PatientStatusView>> = {
+  started: { label: "Getting started", explainer: "Confirm your email and pay to open your questionnaires.", tone: "action" },
+  intake_incomplete: { label: "Questionnaires open", explainer: "Finish your questionnaires to receive your automated screening record.", tone: "action" },
+  completed: { label: "Screening record ready", explainer: "Your automated screening record is ready to download.", tone: "done" },
+  closed: { label: "Closed", explainer: "This screening is closed.", tone: "neutral" },
+  cancelled: { label: "Cancelled", explainer: "This screening was cancelled.", tone: "neutral" },
+  safety_hold: PATIENT_STATUS.safety_hold,
+};
+
+export function patientStatusFor(kind: CaseKind, status: CaseStatus): PatientStatusView {
+  return (kind === "automated_screening" ? AUTOMATED_PATIENT_STATUS[status] : undefined) ?? PATIENT_STATUS[status];
+}
 
 /** The visible timeline. Statuses not relevant externally collapse into these milestones. */
 export const PATIENT_TIMELINE: { key: string; label: string; statuses: readonly CaseStatus[] }[] = [

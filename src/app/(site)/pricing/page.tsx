@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Banner, ButtonLink, Icon, Money, PageHead } from "@/components/ui";
 import styles from "../site.module.css";
-import { enabledServices, isProduction, launchPriceCents, siteSettings } from "@/server/web/public";
+import { enabledServices, isProduction, launchPriceCents, sameDayService, siteSettings } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
 
 export const metadata: Metadata = {
@@ -22,10 +22,11 @@ const TRIGGER_LABELS: Record<string, string> = {
 };
 
 export default async function PricingPage() {
-  const [{ pricing, refundPolicy }, price, services] = await Promise.all([
+  const [{ pricing, refundPolicy }, price, services, sameDay] = await Promise.all([
     siteSettings(),
     launchPriceCents(),
     enabledServices(),
+    sameDayService(),
   ]);
   const primary = services[0];
   return (
@@ -80,6 +81,16 @@ export default async function PricingPage() {
           </section>
         </div>
       </div>
+
+      {sameDay ? (
+        <section className="card-flat stack stack-sm" aria-labelledby="same-day-price">
+          <h2 id="same-day-price">{sameDay.name}</h2>
+          <p className="muted">
+            {sameDay.priceCents !== null ? <Money cents={sameDay.priceCents} /> : "—"} self-pay, paid before the questionnaires open. An automated screening record, not a clinician
+            examination or work excuse. <Link href="/services/same-day-mental-health-assessment">What it includes</Link>
+          </p>
+        </section>
+      ) : null}
 
       <section className="stack" aria-labelledby="refund-title">
         <h2 id="refund-title">Cancellations and refunds</h2>

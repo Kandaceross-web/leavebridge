@@ -23,6 +23,7 @@ roles. Local development uses the fictional passwords in `.env.example`.
 | `0004_good_faith_estimates.sql` | `good_faith_estimates` (generated), plus its append-only trigger, `SELECT, INSERT` grant to `lb_app` and RLS policy. Its snapshot also records 0003's columns. |
 | `0005_waitlist_notices.sql` | `waitlist_notices` and a unique (email, state) index on `waitlist` (generated), plus: append-only trigger and `SELECT, INSERT` grant on `waitlist_notices`; `DELETE` on `waitlist`; RLS on both (`waitlist`: anyone inserts, staff/system read and delete; SEC-18). |
 | `0006_continue_links.sql` | `screening_continue_links` (generated): HMAC of a single-use "continue" token, the screening and the expiry; never an email address (OWN-25, Q48). Plus `SELECT, INSERT, DELETE` grant (no `UPDATE`) and RLS like `screenings` (anonymous visitor and staff/system). |
+| `0007_same_day_screening.sql` | Same-Day Mental Health Assessment (generated): `cases.kind` (`clinical` or `automated_screening`) and `screenings.product`; `email_verification_tokens` (HMAC of a single-use link, user, expiry); `automated_screenings` (one per case: chosen instruments, encrypted work answers and summary, summary hash, hold reasons, clinician review, refund-review flag, acknowledgement hash and time); `issued_documents` (signed records and letters: random public document number, file, SHA-256, signing-certificate fingerprint, server issue time, issuer, status and encrypted revocation reason; unique per (kind, source)); `work_excuse_requests` (one per screening, unique; encrypted request, proposed draft and decline message). Plus (hand-written): check constraints; grants (`SELECT, INSERT, UPDATE`; `DELETE` only on the token table); `lb_issued_document_guard` (no delete; only status and revocation fields change; revoked stays revoked); `lb_issued_document_stamp` (issue time must be the database clock); RLS (staff/system or the case owner; tokens staff/system only); and the security-definer `lb_verify_document(public_id)` for the public verification page, which returns only type, status, dates and, for letters, the signing clinician and practice. |
 
 Commands: `npm run db:migrate`, `npm run db:seed` (refuses in staging/production), `npm run db:reset` (development only:
 drops schemas, migrates, clears local storage, seeds). Tests use `leavebridge_test`, reset by the test global setup.
@@ -32,8 +33,9 @@ drops schemas, migrates, clears local storage, seeds). Tests use `leavebridge_te
 `withActor()` (`src/server/db/actor.ts`) runs each unit of work in a transaction and sets `app.actor_kind`,
 `app.actor_user_id`, `app.actor_roles` and the patient/clinician ids with `set_config(..., true)`. Policies on
 `patients`, `cases`, `screenings`, `assessment_notes`, `case_notes`, `ai_suggestions`, `files`,
-`identity_verifications`, `document_versions`, `deliveries`, `messages`, `refunds`, `good_faith_estimates` and
-`screening_continue_links` allow:
+`identity_verifications`, `document_versions`, `deliveries`, `messages`, `refunds`, `good_faith_estimates`,
+`screening_continue_links`, `automated_screenings`, `issued_documents`, `work_excuse_requests` and
+`email_verification_tokens` (staff/system only) allow:
 
 * patients: their own rows (and anonymous screening rows bound to their HMAC'd cookie),
 * clinicians: cases assigned to them or covered by an active access grant,
@@ -48,7 +50,8 @@ Identity: `users`, `sessions`, `patients`, `clinicians`, `user_roles`, `access_g
 Config: `settings`, `services`, `prices`, `jurisdictions`, `licenses`, `compact_privileges`, `service_authorizations`,
 `availability_rules`, `consent_documents`/`consent_versions`, `screening_rulesets`, `questionnaires`, `content_entries`,
 `notification_templates`, `compliance_reviews`, `organizations` (referral partners).
-Casework: `screenings`, `screening_continue_links`, `safety_events`, `cases`, `case_status_history`, `consents`, `identity_verifications`,
+Casework: `screenings`, `screening_continue_links`, `safety_events`, `cases` (`kind` = `clinical` or `automated_screening`),
+`automated_screenings`, `issued_documents`, `work_excuse_requests`, `email_verification_tokens`, `case_status_history`, `consents`, `identity_verifications`,
 `location_attestations`, `payments`, `payment_events`, `refunds`, `good_faith_estimates`, `intakes`, `measure_responses`, `files`,
 `document_requests`, `employer_forms`, `clinical_reviews`, `appointments`, `assessment_notes`, `determinations`,
 `documents`, `document_versions`, `ai_suggestions`, `signatures`, `release_authorizations`, `deliveries`,
@@ -63,6 +66,9 @@ Defaults live in the `retention` setting (abandoned screenings 30 days, clinical
 tagged `STATE_RULE_REQUIRED` (STR-05, LEG-10). Only the abandoned-screening purge is automated
 (`npm run jobs -- purge-screenings`, which also deletes expired `screening_continue_links`; a link row is otherwise deleted
 when it is used, replaced by a newer link, or when the account is created); record destruction after retention is a manual, audited process until decided.
+Issued documents (`issued_documents` and their PDFs) cannot be deleted by the app role; they are revoked instead, and their
+retention follows the clinical-records period until LEG-32 is decided. Used or expired `email_verification_tokens` are not
+purged yet (they hold only an HMAC and a user id).
 
 ## Backups
 

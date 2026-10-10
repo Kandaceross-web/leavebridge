@@ -20,7 +20,9 @@ import {
   verifyTotpForUser,
   beginTotpEnrollment,
   userMfaState,
+  promoteScreeningToCase,
 } from "@/server/services/accounts";
+import { requirePatientSession, run } from "@/server/auth/guards";
 import { clearScreeningCookie, currentScreening } from "@/server/services/screening";
 import { handle, formFields, type ActionState } from "@/server/web/action";
 import { DomainError } from "@/domain/errors";
@@ -55,7 +57,7 @@ export async function signInAction(_: ActionState, fd: FormData): Promise<Action
 }
 
 export async function signUpAction(_: ActionState, fd: FormData): Promise<ActionState> {
-  let caseId = "";
+  let dest = "";
   const res = await handle(async () => {
     const meta = await requestMeta();
     await rateLimit("signUp", await clientIpKey());
@@ -72,12 +74,29 @@ export async function signUpAction(_: ActionState, fd: FormData): Promise<Action
     }
     const input = signUpSchema.parse(formFields(fd));
     const out = await withActor(system, (ctx) => signUp(ctx, input, screening), meta);
-    caseId = out.caseId;
+    dest = out.sameDay ? `/portal/screening/${out.caseId}?welcome=1` : `/portal/cases/${out.caseId}?welcome=1`;
     await createSession(out.userId, { mfaVerified: false, ipHash: meta.ipHash });
     await clearScreeningCookie();
   }, fd);
   if (res.error) return res;
-  redirect(`/portal/cases/${caseId}?welcome=1`);
+  redirect(dest);
+}
+
+/**
+ * A signed-in patient who finished the same-day availability questions continues with their existing
+ * account instead of creating a new one. Runs as the patient, so the case can only be theirs.
+ */
+export async function continueSameDayAsPatientAction(): Promise<void> {
+  const { actor } = await requirePatientSession();
+  await rateLimit("signUp", await clientIpKey());
+  const caseId = await run(actor, async (ctx) => {
+    const screening = await currentScreening(ctx);
+    if (!screening || screening.product !== "same_day_screening") return null;
+    return promoteScreeningToCase(ctx, screening, actor.patientId);
+  });
+  if (!caseId) redirect("/start?product=same-day&expired=1");
+  await clearScreeningCookie();
+  redirect(`/portal/screening/${caseId}`);
 }
 
 export async function mfaAction(_: ActionState, fd: FormData): Promise<ActionState> {

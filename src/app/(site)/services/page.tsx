@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Badge, Banner, ButtonLink, Icon, Money, PageHead } from "@/components/ui";
-import { allServices, enabledServices } from "@/server/web/public";
+import { allServices, enabledServices, sameDayService } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ const LEAVE_TYPES = [
 ];
 
 export default async function ServicesPage() {
-  const [enabled, all] = await Promise.all([enabledServices(), allServices()]);
+  const [enabled, all, sameDay] = await Promise.all([enabledServices(), allServices(), sameDayService()]);
   const later = all.filter((s) => !s.enabled);
   return (
     <div className="container page stack stack-xl">
@@ -66,6 +66,25 @@ export default async function ServicesPage() {
           </p>
         )}
       </section>
+
+      {sameDay ? (
+        <section className="card-flat stack stack-sm" aria-labelledby="same-day-title">
+          <h2 id="same-day-title">{sameDay.name}</h2>
+          <p className="muted">
+            An automated screening with a signed record, available any time
+            {sameDay.priceCents !== null ? (
+              <>
+                {" "}
+                for <Money cents={sameDay.priceCents} />
+              </>
+            ) : null}
+            . It is not a clinician examination, leave certification or work excuse.
+          </p>
+          <p>
+            <Link href="/services/same-day-mental-health-assessment">About the {sameDay.name}</Link>
+          </p>
+        </section>
+      ) : null}
 
       <section className="card-quiet stack" aria-labelledby="types-title">
         <h2 id="types-title">Types of leave documentation</h2>

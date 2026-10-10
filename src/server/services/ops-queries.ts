@@ -227,14 +227,14 @@ export async function safetyQueue(ctx: Ctx) {
   requireRole(ctx.actor, STAFF);
   const actor = ctx.actor;
   const rows = await ctx.tx
-    .select({ e: safetyEvents, reference: cases.reference, status: cases.status, assigned: cases.assignedClinicianId, jurisdiction: cases.jurisdictionCode, patientId: cases.patientId, first: patients.legalFirstName, last: patients.legalLastName })
+    .select({ e: safetyEvents, reference: cases.reference, status: cases.status, kind: cases.kind, assigned: cases.assignedClinicianId, jurisdiction: cases.jurisdictionCode, patientId: cases.patientId, first: patients.legalFirstName, last: patients.legalLastName })
     .from(safetyEvents)
     .leftJoin(cases, eq(cases.id, safetyEvents.caseId))
     .leftJoin(patients, eq(patients.id, cases.patientId))
     .where(isNull(safetyEvents.acknowledgedAt))
     .orderBy(desc(safetyEvents.createdAt));
   const held = await ctx.tx
-    .select({ id: cases.id, reference: cases.reference, assigned: cases.assignedClinicianId, jurisdiction: cases.jurisdictionCode, patientId: cases.patientId, status: cases.status, first: patients.legalFirstName, last: patients.legalLastName, updatedAt: cases.lastActivityAt })
+    .select({ id: cases.id, reference: cases.reference, kind: cases.kind, assigned: cases.assignedClinicianId, jurisdiction: cases.jurisdictionCode, patientId: cases.patientId, status: cases.status, first: patients.legalFirstName, last: patients.legalLastName, updatedAt: cases.lastActivityAt })
     .from(cases)
     .innerJoin(patients, eq(patients.id, cases.patientId))
     .where(eq(cases.status, "safety_hold"));
@@ -252,13 +252,14 @@ export async function safetyQueue(ctx: Ctx) {
         reference: r.reference ?? "",
         patient: shortPatientName(`${r.first ?? ""} ${r.last ?? ""}`),
         status: r.status,
+        automated: r.kind === "automated_screening",
         createdAt: r.e.createdAt,
         source: clinical ? r.e.source : null,
         rule: clinical ? r.e.rule : null,
         canAct: clinical && hasRole(actor, ["clinician", "clinical_director"]),
       };
     }),
-    held: held.map((h) => ({ id: h.id, reference: h.reference, patient: shortPatientName(`${h.first} ${h.last}`), updatedAt: h.updatedAt, canAct: clinicalFor(h) && hasRole(actor, ["clinician", "clinical_director"]) })),
+    held: held.map((h) => ({ id: h.id, reference: h.reference, automated: h.kind === "automated_screening", patient: shortPatientName(`${h.first} ${h.last}`), updatedAt: h.updatedAt, canAct: clinicalFor(h) && hasRole(actor, ["clinician", "clinical_director"]) })),
   };
 }
 

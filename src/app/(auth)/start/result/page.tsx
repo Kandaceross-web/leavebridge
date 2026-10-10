@@ -11,7 +11,11 @@ import { ButtonLink, Icon } from "@/components/ui";
 import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/forms";
 import { waitlistAction } from "@/app/(site)/actions";
 import { continueLinkAction } from "../actions";
+import { continueSameDayAsPatientAction } from "../../actions";
+import { getSession } from "@/server/auth/session";
 import { continueLinkOffer } from "@/server/services/continue-link";
+import { SAME_DAY_SCREENING_PRICE_CENTS } from "@/config/catalog";
+import { formatCents } from "@/domain/payments/refunds";
 
 export const metadata: Metadata = { title: "Your results" };
 
@@ -88,6 +92,8 @@ export default async function ScreeningResultPage() {
   const waitlist = outcome === "NOT_AVAILABLE" ? await waitlistOffer(row) : null;
   // OWN-25 (Q48): one optional link back here for people who can continue but are not ready yet.
   const linkExpires = continueLinkOffer(row);
+  const session = row.product === "same_day_screening" ? await getSession() : null;
+  const signedInPatient = Boolean(session?.patientId && !session.isStaff);
   return (
     <div className="container-narrow page stack stack-lg">
       <div className="card stack">
@@ -106,6 +112,29 @@ export default async function ScreeningResultPage() {
         ) : null}
         {outcome === "AVAILABLE" || outcome === "NEEDS_REVIEW" ? (
           <>
+            {row.product === "same_day_screening" ? (
+              <ul className="list-check">
+                <li>
+                  <Icon name="check" />
+                  <span>Next, create your secure account and confirm your email address.</span>
+                </li>
+                <li>
+                  <Icon name="check" />
+                  <span>
+                    Then pay {formatCents(SAME_DAY_SCREENING_PRICE_CENTS)} and complete the
+                    questionnaires. Payment does not guarantee any letter, diagnosis or leave
+                    approval.
+                  </span>
+                </li>
+                <li>
+                  <Icon name="check" />
+                  <span>
+                    Your automated screening record is ready in your portal when you finish, unless
+                    an answer means a clinician should look first.
+                  </span>
+                </li>
+              </ul>
+            ) : (
             <ul className="list-check">
               <li>
                 <Icon name="check" />
@@ -124,8 +153,18 @@ export default async function ScreeningResultPage() {
                 </span>
               </li>
             </ul>
+            )}
+            {row.product === "same_day_screening" && signedInPatient ? (
+              <form action={continueSameDayAsPatientAction} className="btn-row">
+                <button type="submit" className="btn btn-primary">
+                  Continue with your account
+                </button>
+              </form>
+            ) : null}
             <div className="btn-row">
-              <ButtonLink href="/sign-up">Create your account</ButtonLink>
+              <ButtonLink href="/sign-up" variant={row.product === "same_day_screening" && signedInPatient ? "quiet" : undefined}>
+                Create your account
+              </ButtonLink>
               <ButtonLink href="/pricing" variant="quiet">
                 Review pricing first
               </ButtonLink>

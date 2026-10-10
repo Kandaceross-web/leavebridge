@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Banner, DateTime, Empty, Icon, PageHead } from "@/components/ui";
+import { Badge, Banner, DateTime, Empty, Icon, PageHead } from "@/components/ui";
+import { ISSUED_KIND_LABEL, myIssuedDocuments } from "@/server/services/issued-documents";
 import { requirePatientSession, run } from "@/server/auth/guards";
 import { patientCases } from "@/server/services/cases";
 import { myDeliveredDocuments, myPatientProfile } from "@/server/services/portal-queries";
@@ -10,12 +11,16 @@ export const metadata: Metadata = { title: "Documents" };
 
 export default async function DocumentsPage() {
   const { actor } = await requirePatientSession();
-  const { profile, cases, docs, features } = await run(actor, async (ctx) => {
+  const { profile, cases, docs, issued, features } = await run(actor, async (ctx) => {
     const list = await patientCases(ctx);
+    const issued = await myIssuedDocuments(ctx);
+    const issuedFiles = new Set(issued.map((i) => i.d.fileId));
     return {
       profile: await myPatientProfile(ctx),
       cases: list.map((c) => c.c),
-      docs: await myDeliveredDocuments(ctx, list.map((c) => c.c.id)),
+      // Signed letters issued with a verification number are listed once, below, with that number.
+      docs: (await myDeliveredDocuments(ctx, list.map((c) => c.c.id))).filter((d) => !d.signedFileId || !issuedFiles.has(d.signedFileId)),
+      issued,
       features: await getSetting(ctx.tx, "features"),
     };
   });
@@ -55,9 +60,37 @@ export default async function DocumentsPage() {
             </li>
           ))}
         </ul>
-      ) : (
+      ) : issued.length ? null : (
         <Empty title="No documents yet">If your clinician completes documentation, it will appear here after it is signed and delivered.</Empty>
       )}
+      {issued.length ? (
+        <section className="stack stack-sm" aria-labelledby="issued-h">
+          <h2 id="issued-h">Screening records and letters</h2>
+          <p className="small muted">
+            Each has a document number and a QR code. Anyone you share it with can confirm it at <Link href="/verify">the verification page</Link>.
+          </p>
+          <ul className="list-rows">
+            {issued.map(({ d, reference }) => (
+              <li key={d.id}>
+                <Icon name="file" />
+                <div className="grow">
+                  <b>{ISSUED_KIND_LABEL[d.kind]}</b>
+                  <p className="small muted">
+                    {reference} · Issued <DateTime value={d.issuedAt} timeZone={profile.timeZone} /> · <span className="mono">{d.publicId}</span>
+                  </p>
+                </div>
+                {d.status === "valid" ? (
+                  <a className="btn btn-secondary btn-sm" href={`/api/files/${d.fileId}`} download>
+                    Download PDF
+                  </a>
+                ) : (
+                  <Badge tone="alert">Revoked</Badge>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       <section className="card-flat stack stack-sm" aria-labelledby="employer-h">
         <h2 id="employer-h">If your employer has questions or doesn&rsquo;t accept a form</h2>
         <ul>

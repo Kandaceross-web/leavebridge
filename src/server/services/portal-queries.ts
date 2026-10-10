@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne } from "drizzle-orm";
 import type { Ctx } from "../db/actor";
 import { documentRequests, documents, jurisdictions, locationAttestations, patients, services } from "../db/schema";
 import { decryptOptional } from "../crypto";
@@ -53,7 +53,8 @@ export async function allStateOptions(ctx: Ctx) {
 
 /** Enabled services with their current self-pay price. */
 export async function enabledServicesWithPrice(ctx: Ctx) {
-  const rows = await ctx.tx.select().from(services).where(eq(services.enabled, true)).orderBy(asc(services.displayOrder));
+  // Leave services only; the same-day automated screening is bought from its own page.
+  const rows = await ctx.tx.select().from(services).where(and(eq(services.enabled, true), ne(services.documentationType, "automated_screening"))).orderBy(asc(services.displayOrder));
   const out = [];
   for (const s of rows) {
     const price = await currentPrice(ctx, s.id);

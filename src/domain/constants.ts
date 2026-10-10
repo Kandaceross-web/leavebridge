@@ -43,6 +43,13 @@ export const CASE_STATUSES = [
 ] as const;
 export type CaseStatus = (typeof CASE_STATUSES)[number];
 
+/**
+ * "clinical": the clinician-led leave assessment journey. "automated_screening": the Same-Day
+ * Mental Health Assessment, an automated screening record with its own, shorter lifecycle.
+ */
+export const CASE_KINDS = ["clinical", "automated_screening"] as const;
+export type CaseKind = (typeof CASE_KINDS)[number];
+
 export const OPS_STAGES = [
   "new_requests",
   "awaiting_documents",
@@ -82,6 +89,8 @@ export const DOCUMENTATION_TYPES = [
   "extension",
   "return_to_work",
   "follow_up_form",
+  /** Same-Day Mental Health Assessment: an automated screening record, not clinician documentation. */
+  "automated_screening",
 ] as const;
 export type DocumentationType = (typeof DOCUMENTATION_TYPES)[number];
 
@@ -103,6 +112,8 @@ export const DOCUMENT_KINDS = [
   "employer_form_completion",
   "return_to_work",
   "determination_letter",
+  /** Clinician-approved work excuse letter requested after a same-day screening. Created only by that workflow. */
+  "work_excuse_letter",
 ] as const;
 export type DocumentKind = (typeof DOCUMENT_KINDS)[number];
 
