@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { expectAccessible, expectNoHorizontalScroll, expectOneH1, freshIp } from "./helpers";
 
-const PAGES = ["/", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/resources", "/resources/who-can-complete-fmla-forms", "/states/mississippi", "/states/tennessee", "/resources/fmla-basics-check", "/for-therapists", "/contact", "/about", "/availability", "/crisis", "/start", "/sign-in", "/sign-up"];
+const PAGES = ["/", "/how-it-works", "/services", "/pricing", "/employers", "/faq", "/resources", "/resources/who-can-complete-fmla-forms", "/states/mississippi", "/states/tennessee", "/resources/fmla-basics-check", "/for-therapists", "/contact", "/about", "/availability", "/crisis", "/accessibility", "/start", "/sign-in", "/sign-up"];
 
 for (const path of PAGES) {
   test(`public page ${path} is accessible and fits the viewport`, async ({ page }) => {

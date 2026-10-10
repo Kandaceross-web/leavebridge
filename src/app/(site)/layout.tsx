@@ -150,6 +150,9 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                     <Link href={`/legal/${l.key.replace(/^legal\./, "")}`}>{l.title}</Link>
                   </li>
                 ))}
+                <li>
+                  <Link href="/accessibility">Accessibility</Link>
+                </li>
               </ul>
             </div>
           </div>
