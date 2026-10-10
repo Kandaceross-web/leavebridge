@@ -226,7 +226,7 @@ export async function submitCase(ctx: Ctx, caseId: string) {
   await requireGate(ctx, row, "submit");
   if (row.status === "started") throw invalid("Payment is needed first.");
   row = await transition(ctx, row, "submitted", "patient submitted");
-  await notifyPatient(ctx, row, "case_update");
+  await notifyPatient(ctx, row, "assessment_completed");
   return row;
 }
 

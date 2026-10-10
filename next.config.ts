@@ -6,7 +6,11 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(), payment=(), usb=(), interest-cohort=()" },
+  {
+    key: "Permissions-Policy",
+    value:
+      "camera=(self), microphone=(self), geolocation=(), payment=(), usb=(), interest-cohort=()",
+  },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
 ];
@@ -16,10 +20,29 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   // The @signpdf packages stay external together: signpdf checks its signer with instanceof against @signpdf/utils.
-  serverExternalPackages: ["pg", "pdf-lib", "@signpdf/signpdf", "@signpdf/utils", "@signpdf/placeholder-pdf-lib", "pkijs", "asn1js", "qrcode"],
+  serverExternalPackages: [
+    "pg",
+    "pdf-lib",
+    "@signpdf/signpdf",
+    "@signpdf/utils",
+    "@signpdf/placeholder-pdf-lib",
+    "pkijs",
+    "asn1js",
+    "qrcode",
+  ],
   experimental: {
     serverActions: { bodySizeLimit: "16mb" },
     proxyClientMaxBodySize: "16mb",
+  },
+  // Owner spec V1: the same-day page moved to /work-school-excuses. Mirrored in public-site/_redirects by the export.
+  async redirects() {
+    return [
+      {
+        source: "/services/same-day-mental-health-assessment",
+        destination: "/work-school-excuses",
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

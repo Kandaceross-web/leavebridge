@@ -26,6 +26,7 @@ export function renderTemplate(text: string, vars: Partial<Record<TemplateVar, s
 export const NOTIFICATION_EVENTS = [
   "account_created",
   "payment_received",
+  "assessment_completed",
   "intake_incomplete",
   "document_requested",
   "information_requested",

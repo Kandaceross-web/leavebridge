@@ -103,7 +103,7 @@ export default async function PricingPage() {
           <h2 id="same-day-price">{sameDay.name}</h2>
           <p className="muted">
             {sameDay.priceCents !== null ? <Money cents={sameDay.priceCents} /> : "—"} self-pay, paid before the questionnaires open. An automated screening record, not a clinician
-            examination or work excuse. <Link href="/services/same-day-mental-health-assessment">What it includes</Link>
+            examination or work excuse. <Link href="/work-school-excuses">What it includes</Link>
           </p>
         </section>
       ) : null}

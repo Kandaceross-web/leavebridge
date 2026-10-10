@@ -33,14 +33,16 @@ export function publicCopySignedOff(decisions: string): boolean {
 
 /** Removes every script, script preload, nonce and internal review code from server-rendered HTML. */
 export function staticHtml(html: string): string {
-  return html
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<link\b[^>]*rel="(?:modulepreload|preload)"[^>]*as="script"[^>]*\/?>/gi, "")
-    .replace(/<link\b[^>]*as="script"[^>]*rel="preload"[^>]*\/?>/gi, "")
-    .replace(/\snonce="[^"]*"/g, "")
-    // Internal review codes (e.g. LEGAL_REVIEW_REQUIRED) are for the team; the plain-language "pending review" notes stay.
-    .replace(/<p><span class="badge b-review">[^<]*<\/span><\/p>/g, "")
-    .replace(/<span class="badge b-review">[^<]*<\/span>/g, "");
+  return (
+    html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/<link\b[^>]*rel="(?:modulepreload|preload)"[^>]*as="script"[^>]*\/?>/gi, "")
+      .replace(/<link\b[^>]*as="script"[^>]*rel="preload"[^>]*\/?>/gi, "")
+      .replace(/\snonce="[^"]*"/g, "")
+      // Internal review codes (e.g. LEGAL_REVIEW_REQUIRED) are for the team; the plain-language "pending review" notes stay.
+      .replace(/<p><span class="badge b-review">[^<]*<\/span><\/p>/g, "")
+      .replace(/<span class="badge b-review">[^<]*<\/span>/g, "")
+  );
 }
 
 const BASICS_SCRIPT = `// FMLA basics check for the static site. Answers stay in this page: nothing is sent, stored or tracked.
@@ -103,7 +105,8 @@ function write(path: string, body: string | Buffer) {
   writeFileSync(file, body);
 }
 
-const filePath = (pathname: string) => (pathname === "/" ? "index.html" : `${pathname.replace(/^\//, "")}.html`);
+const filePath = (pathname: string) =>
+  pathname === "/" ? "index.html" : `${pathname.replace(/^\//, "")}.html`;
 
 async function waitForServer() {
   for (let i = 0; i < 120; i++) {
@@ -126,21 +129,25 @@ async function get(path: string): Promise<Response> {
 async function main() {
   const indexable = publicCopySignedOff(readFileSync(join(ROOT, "docs/OPEN-DECISIONS.md"), "utf8"));
   const { SITE_ANALYTICS_SRC: _analytics, ...baseEnv } = process.env; // never load analytics on the export
-  const server = spawn(process.execPath, [require.resolve("next/dist/bin/next"), "start", "-p", String(PORT)], {
-    cwd: ROOT,
-    detached: true,
-    stdio: ["ignore", "ignore", "inherit"],
-    env: {
-      ...baseEnv,
-      NODE_ENV: "production",
-      APP_ENV: "development",
-      HOST_MODE: "single",
-      SITE_ORIGIN,
-      APP_ORIGIN: SITE_ORIGIN,
-      PUBLIC_PREVIEW: "1",
-      PUBLIC_PREVIEW_INDEXABLE: indexable ? "1" : "0",
+  const server = spawn(
+    process.execPath,
+    [require.resolve("next/dist/bin/next"), "start", "-p", String(PORT)],
+    {
+      cwd: ROOT,
+      detached: true,
+      stdio: ["ignore", "ignore", "inherit"],
+      env: {
+        ...baseEnv,
+        NODE_ENV: "production",
+        APP_ENV: "development",
+        HOST_MODE: "single",
+        SITE_ORIGIN,
+        APP_ORIGIN: SITE_ORIGIN,
+        PUBLIC_PREVIEW: "1",
+        PUBLIC_PREVIEW_INDEXABLE: indexable ? "1" : "0",
+      },
     },
-  });
+  );
   try {
     await waitForServer();
     rmSync(OUT, { recursive: true, force: true });
@@ -154,11 +161,13 @@ async function main() {
     for (const page of pages) {
       let html = staticHtml(await (await get(page)).text());
       // Framework assets, and the self-hosted illustrations in public/illustrations/.
-      for (const m of html.matchAll(/(?:href|src)="(\/(?:_next\/static|illustrations)\/[^"]+)"/g)) assets.add(m[1]!);
+      for (const m of html.matchAll(/(?:href|src)="(\/(?:_next\/static|illustrations)\/[^"]+)"/g))
+        assets.add(m[1]!);
       for (const m of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)) {
         styleHashes.add(`sha256-${createHash("sha256").update(m[1]!).digest("base64")}`);
       }
-      if (html.includes("data-basics-check")) html = html.replace("</body>", `<script src="/basics-check.js" defer></script></body>`);
+      if (html.includes("data-basics-check"))
+        html = html.replace("</body>", `<script src="/basics-check.js" defer></script></body>`);
       write(filePath(page), html);
     }
 
@@ -187,7 +196,10 @@ async function main() {
     write("sitemap.xml", sitemap);
     write("basics-check.js", BASICS_SCRIPT);
     write("_headers", headersFile([...styleHashes]));
-    console.log(`Exported ${pages.length} pages and ${assets.size} assets to public-site/ (${indexable ? "indexable" : "noindex"}).`);
+    write("_redirects", "/services/same-day-mental-health-assessment /work-school-excuses 301\n");
+    console.log(
+      `Exported ${pages.length} pages and ${assets.size} assets to public-site/ (${indexable ? "indexable" : "noindex"}).`,
+    );
   } finally {
     // next start forks a server process, so stop the whole process group.
     if (server.pid) process.kill(-server.pid);

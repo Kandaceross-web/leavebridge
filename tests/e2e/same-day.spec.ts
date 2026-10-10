@@ -1,11 +1,27 @@
 import { createHmac, randomBytes } from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
 import { Pool } from "pg";
-import { PASSWORD, expectAccessible, expectNoHorizontalScroll, expectOneH1, freshIp, signIn } from "./helpers";
+import {
+  PASSWORD,
+  expectAccessible,
+  expectNoHorizontalScroll,
+  expectOneH1,
+  freshIp,
+  signIn,
+} from "./helpers";
 
 /** The server's HMAC (src/server/crypto.ts) with the fictional development secret. */
-const hmac = (data: string) => createHmac("sha256", process.env.HMAC_SECRET ?? "dev-only-hmac-secret-change-me").update(data).digest("hex");
-const ownerDb = () => new Pool({ connectionString: process.env.E2E_DATABASE_OWNER_URL ?? "postgres://lb_owner:lb_owner_dev@localhost:5432/leavebridge", max: 1 });
+const hmac = (data: string) =>
+  createHmac("sha256", process.env.HMAC_SECRET ?? "dev-only-hmac-secret-change-me")
+    .update(data)
+    .digest("hex");
+const ownerDb = () =>
+  new Pool({
+    connectionString:
+      process.env.E2E_DATABASE_OWNER_URL ??
+      "postgres://lb_owner:lb_owner_dev@localhost:5432/leavebridge",
+    max: 1,
+  });
 
 async function check(page: Page) {
   await expectOneH1(page);
@@ -21,23 +37,34 @@ async function issueVerificationLink(email: string): Promise<string> {
   const token = randomBytes(32).toString("base64url");
   const pool = ownerDb();
   try {
-    const { rows } = await pool.query<{ id: string }>("select id from users where lower(email) = lower($1)", [email]);
-    await pool.query("delete from email_verification_tokens where user_id = $1 and used_at is null", [rows[0]!.id]);
-    await pool.query("insert into email_verification_tokens (user_id, token_hash, expires_at) values ($1, $2, now() + interval '1 hour')", [rows[0]!.id, hmac(`verify-email:${token}`)]);
+    const { rows } = await pool.query<{ id: string }>(
+      "select id from users where lower(email) = lower($1)",
+      [email],
+    );
+    await pool.query(
+      "delete from email_verification_tokens where user_id = $1 and used_at is null",
+      [rows[0]!.id],
+    );
+    await pool.query(
+      "insert into email_verification_tokens (user_id, token_hash, expires_at) values ($1, $2, now() + interval '1 hour')",
+      [rows[0]!.id, hmac(`verify-email:${token}`)],
+    );
   } finally {
     await pool.end();
   }
   return token;
 }
 
-test("same-day screening: sign up, confirm email, pay, answer, get a signed record and verify it publicly", async ({ page }) => {
+test("same-day screening: sign up, confirm email, pay, answer, get a signed record and verify it publicly", async ({
+  page,
+}) => {
   test.setTimeout(180_000);
   await freshIp(page);
 
   // Public service page.
-  await page.goto("/services/same-day-mental-health-assessment");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Same-Day Mental Health Assessment");
-  await expect(page.getByText(/not a medical work excuse/i)).toBeVisible();
+  await page.goto("/work-school-excuses");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/missed work or school\?/i);
+  await expect(page.getByText(/does not guarantee an excuse/i)).toBeVisible();
   await check(page);
 
   // Short availability check: location and safety only.
@@ -82,7 +109,9 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
   await page.getByRole("button", { name: /confirm my email/i }).click();
   await page.waitForURL(/\/verify-email\/done/);
   await page.goto(`/verify-email/${token}`);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(/expired or was already used/i);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    /expired or was already used/i,
+  );
 
   // Payment, with the written estimate and the acknowledgement.
   await page.goto(screeningUrl);
@@ -104,7 +133,8 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
   await page.getByRole("link", { name: /start gad-7/i }).click();
   await page.waitForURL(/\/questionnaire\/gad7/);
   await check(page);
-  for (let i = 1; i <= 7; i++) await page.locator(`input[name="gad7_${i}"][value="1"]`).check({ force: true });
+  for (let i = 1; i <= 7; i++)
+    await page.locator(`input[name="gad7_${i}"][value="1"]`).check({ force: true });
   await page.getByRole("button", { name: /submit answers/i }).click();
   await page.waitForURL(/\/portal\/screening\/[0-9a-f-]+$/);
 
@@ -129,7 +159,9 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
 
   await page.getByRole("button", { name: /finish and get my record/i }).click();
   await page.waitForURL(/\?finished=1/);
-  await expect(page.getByRole("heading", { name: "Automated Mental Health Screening Record" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Automated Mental Health Screening Record" }),
+  ).toBeVisible();
   await expect(page.getByRole("link", { name: /download pdf/i })).toBeVisible();
   await check(page);
   const number = (await page.locator(".kv .mono").first().innerText()).trim();
@@ -138,7 +170,9 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
   expect(page.url()).not.toMatch(/jordan|examplecase|gad|worry/i);
 
   // The PDF downloads as the signed file.
-  const pdf = await page.request.get((await page.getByRole("link", { name: /download pdf/i }).getAttribute("href"))!);
+  const pdf = await page.request.get(
+    (await page.getByRole("link", { name: /download pdf/i }).getAttribute("href"))!,
+  );
   expect(pdf.status()).toBe(200);
   const body = await pdf.body();
   expect(body.subarray(0, 5).toString("latin1")).toBe("%PDF-");
@@ -146,7 +180,9 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
 
   // Optional follow-up: the patient can ask to be contacted about a full assessment.
   await page.getByRole("button", { name: /yes, please contact me/i }).click();
-  await expect(page.getByText(/we will contact you to arrange your assessment/i).first()).toBeVisible();
+  await expect(
+    page.getByText(/we will contact you to arrange your assessment/i).first(),
+  ).toBeVisible();
   await check(page);
 
   // Public verification, signed out: status only, no health information or identity.
@@ -156,13 +192,17 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
   await page.locator('input[name="documentNumber"]').fill(number.toLowerCase());
   await page.getByRole("button", { name: /check document/i }).click();
   await page.waitForURL(new RegExp(`/verify/${number}$`));
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("This document is genuine and valid");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "This document is genuine and valid",
+  );
   const text = await page.locator("main").innerText();
   expect(text).not.toMatch(/jordan|examplecase|1991|gad|worry|score/i);
   await check(page);
 
   // Comparing the downloaded copy confirms it is unchanged.
-  await page.locator('input[name="copy"]').setInputFiles({ name: "record.pdf", mimeType: "application/pdf", buffer: body });
+  await page
+    .locator('input[name="copy"]')
+    .setInputFiles({ name: "record.pdf", mimeType: "application/pdf", buffer: body });
   await page.getByRole("button", { name: /compare/i }).click();
   await expect(page.getByText(/identical to the issued document/i)).toBeVisible();
 
@@ -171,12 +211,18 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
   await check(page);
 });
 
-test("ops: the same-day console shows counts and queues and passes accessibility checks", async ({ page }) => {
+test("ops: the same-day console shows counts and queues and passes accessibility checks", async ({
+  page,
+}) => {
   await signIn(page, "clinician@leavebridge.test", { staff: true });
   await page.goto("/ops/same-day");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Same-day screenings");
   await expect(page.getByRole("region", { name: /same-day screening totals/i })).toBeVisible();
   // The side navigation is collapsed into a menu on phones.
-  if (test.info().project.name === "desktop") await expect(page.getByRole("link", { name: "Same-day screenings" })).toHaveAttribute("aria-current", "page");
+  if (test.info().project.name === "desktop")
+    await expect(page.getByRole("link", { name: "Same-day screenings" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   await check(page);
 });

@@ -8,13 +8,17 @@ import { ensureEstimate } from "@/server/services/estimates";
 import { serviceSummary } from "@/server/services/portal-queries";
 import { getSetting } from "@/server/settings";
 import { SETTING_DEFS } from "@/config/settings";
-import { PURCHASE_ACKNOWLEDGEMENT, SAME_DAY_REVIEW, SAME_DAY_SERVICE_NAME } from "@/config/same-day";
+import {
+  PURCHASE_ACKNOWLEDGEMENT,
+  SAME_DAY_REVIEW,
+  SAME_DAY_SERVICE_NAME,
+} from "@/config/same-day";
 import { isDomainError } from "@/domain/errors";
 import { EstimateBody } from "../../../_components/estimate";
 import { ownedScreening, screeningHref } from "../../_lib/load";
 import { payAction } from "../actions";
 
-export const metadata: Metadata = { title: "Review and pay" };
+export const metadata: Metadata = { title: "Work & School Excuse Evaluation" };
 
 export default async function SameDayPayPage({
   params,
@@ -37,7 +41,12 @@ export default async function SameDayPayPage({
         estimateProblem = e.message;
       }
     }
-    return { service: await serviceSummary(ctx, v.row.serviceId), refund: await getSetting(ctx.tx, "refundPolicy"), estimate, estimateProblem };
+    return {
+      service: await serviceSummary(ctx, v.row.serviceId),
+      refund: await getSetting(ctx.tx, "refundPolicy"),
+      estimate,
+      estimateProblem,
+    };
   });
   const { row, checkoutBlocker } = view;
   if (row.status !== "started") redirect(screeningHref(row.id));
@@ -47,11 +56,24 @@ export default async function SameDayPayPage({
   return (
     <div className="stack stack-lg" style={{ maxWidth: 760 }}>
       <header className="page-head">
-        <p className="eyebrow">
-          {SAME_DAY_SERVICE_NAME} · {row.reference}
+        <p className="eyebrow">Reference {row.reference}</p>
+        <h1>Work &amp; School Excuse Evaluation</h1>
+        <p className="lede">
+          Price:{" "}
+          {service?.priceCents != null ? (
+            <Money cents={service.priceCents} currency={service.currency} />
+          ) : (
+            "—"
+          )}
         </p>
-        <h1>Review and pay</h1>
-        <p className="lede">Your payment covers an automated screening and a record of it. It does not guarantee any letter, certification, diagnosis or leave approval.</p>
+        <p>
+          Complete the required intake and assessment process for your mental health-related
+          documentation request.
+        </p>
+        <p className="small muted">
+          Your payment covers an automated screening and a record of it. It does not guarantee any
+          letter, certification, diagnosis or leave approval.
+        </p>
       </header>
       <p className="small">
         <Link href={screeningHref(row.id)}>Back to your screening</Link>
@@ -59,7 +81,8 @@ export default async function SameDayPayPage({
 
       {sp.cancelled ? (
         <Banner tone="info" icon="info">
-          Payment was not completed. You have not been charged. You can try again when you are ready.
+          Payment was not completed. You have not been charged. You can try again when you are
+          ready.
         </Banner>
       ) : null}
 
@@ -73,9 +96,17 @@ export default async function SameDayPayPage({
         <h2 id="sum-h">Summary</h2>
         <div className="row row-between">
           <b>{service?.name ?? SAME_DAY_SERVICE_NAME}</b>
-          <b>{service?.priceCents != null ? <Money cents={service.priceCents} currency={service.currency} /> : "—"}</b>
+          <b>
+            {service?.priceCents != null ? (
+              <Money cents={service.priceCents} currency={service.currency} />
+            ) : (
+              "—"
+            )}
+          </b>
         </div>
-        <p className="small muted">Self-pay. We do not bill insurance. Payment is taken now, before your questionnaires open.</p>
+        <p className="small muted">
+          Self-pay. We do not bill insurance. Payment is taken now, before your questionnaires open.
+        </p>
         <ul className="list-check small">
           <li>
             <Icon name="check" />
@@ -87,13 +118,26 @@ export default async function SameDayPayPage({
           </li>
           <li>
             <Icon name="check" />
-            <span>A digitally signed Automated Mental Health Screening Record with a verification number</span>
+            <span>
+              A digitally signed Automated Mental Health Screening Record with a verification number
+            </span>
           </li>
           <li>
             <Icon name="x" />
             <span>Not a clinician examination, diagnosis, FMLA certification or work excuse</span>
           </li>
         </ul>
+        <h3>Clinician review</h3>
+        <p className="small">
+          Your screening is scored by software. After you receive your record you may request a work
+          excuse letter at no additional charge. A licensed clinician reviews each request
+          individually and may approve, change or decline it.
+        </p>
+        <h3>Processing time</h3>
+        <p className="small">
+          Your screening record is available as soon as you finish. Letter requests are reviewed by
+          a clinician; we do not promise a set turnaround.
+        </p>
       </section>
 
       {estimate ? (
@@ -102,7 +146,10 @@ export default async function SameDayPayPage({
             <h2 id="gfe-h">Good Faith Estimate</h2>
             {showTags ? <ReviewTag tag={SETTING_DEFS.goodFaithEstimate.reviewTag} /> : null}
           </div>
-          <p className="small muted">Because you are paying for this service yourself, you have the right to a written estimate of the expected charges before you pay. It is saved to your record.</p>
+          <p className="small muted">
+            Because you are paying for this service yourself, you have the right to a written
+            estimate of the expected charges before you pay. It is saved to your record.
+          </p>
           <EstimateBody content={estimate.content} hash={estimate.row.contentHash} level={3} />
           <div className="btn-row">
             <a className="btn btn-quiet" href={`/api/estimates/${estimate.row.id}`}>
@@ -118,7 +165,10 @@ export default async function SameDayPayPage({
           {showTags ? <ReviewTag tag={SETTING_DEFS.refundPolicy.reviewTag} /> : null}
         </div>
         <p className="small">{refund.summary}</p>
-        <p className="small muted">If a clinician needs to review your answers before the record is issued, the practice reviews the payment for that screening and contacts you.</p>
+        <p className="small muted">
+          If a clinician needs to review your answers before the record is issued, the practice
+          reviews the payment for that screening and contacts you.
+        </p>
       </section>
 
       {estimateProblem ? (
@@ -148,11 +198,14 @@ export default async function SameDayPayPage({
             I have read and understand these statements.
           </Checkbox>
           <SubmitButton pendingText="Opening secure checkout…">
-            Continue to secure payment{service?.priceCents != null ? " · " : ""}
-            {service?.priceCents != null ? <Money cents={service.priceCents} currency={service.currency} /> : null}
+            Continue to Secure Payment{service?.priceCents != null ? " · " : ""}
+            {service?.priceCents != null ? (
+              <Money cents={service.priceCents} currency={service.currency} />
+            ) : null}
           </SubmitButton>
           <p className="fine">
-            <Icon name="lock" /> You will complete payment on our payment processor&rsquo;s secure page. It receives only the amount, a general description and your email for a receipt.
+            <Icon name="lock" /> You will complete payment on our payment processor&rsquo;s secure
+            page. It receives only the amount, a general description and your email for a receipt.
           </p>
         </ActionForm>
       ) : null}

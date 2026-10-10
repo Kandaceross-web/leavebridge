@@ -7,12 +7,15 @@ import { DevBanner } from "@/components/dev-banner";
 import { legalPages, siteSettings, statePages } from "@/server/web/public";
 import { env } from "@/server/env";
 import { appHref } from "@/server/web/app-link";
+import { PUBLIC_PROVIDER } from "@/config/provider";
 
+// Owner spec V1 (2026-10-10), Part 3: menu items in this exact order; "Get Started" goes to the service cards.
 const NAV = [
-  { href: "/services", label: "Services" },
+  { href: "/work-school-excuses", label: "Work & School Excuses" },
+  { href: "/fmla-evaluations", label: "FMLA Evaluations" },
   { href: "/how-it-works", label: "How It Works" },
-  { href: "/about", label: "About" },
   { href: "/faq", label: "FAQs" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
@@ -42,22 +45,26 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             <Link href={appHref("/sign-in")} className="signin hide-mobile">
               Patient Sign In
             </Link>
-            <Link href={appHref("/start?entry=header")} className="btn btn-primary btn-sm btn-start">
-              Begin Your Assessment
+            <Link href="/#services" className="btn btn-primary btn-sm btn-start">
+              Get Started
             </Link>
             <details className="menu-toggle">
-              <summary aria-label="Open menu">Menu</summary>
+              <summary aria-label="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+                </svg>
+              </summary>
               <nav className="mobile-nav" aria-label="Mobile">
+                <NavLink href="/" exact>
+                  Home
+                </NavLink>
                 {NAV.map((n) => (
                   <NavLink key={n.href} href={n.href}>
                     {n.label}
                   </NavLink>
                 ))}
-                <NavLink href="/pricing">Pricing</NavLink>
-                <NavLink href="/contact">Contact</NavLink>
-                <NavLink href={appHref("/sign-in")}>Patient Sign In</NavLink>
-                <Link href={appHref("/start?entry=mobile-menu")} className="btn btn-primary">
-                  Begin Your Assessment
+                <Link href="/#services" className="btn btn-primary">
+                  Get Started
                 </Link>
               </nav>
             </details>
@@ -87,83 +94,88 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             <div className="stack stack-sm">
               <Lockup reverse />
               <p className="blurb">
-                Professional mental health assessments and leave documentation support, thoughtfully delivered
-                online.
+                Professional mental health evaluations, with convenience and confidentiality at the center of your experience.
               </p>
             </div>
             <div>
-              <h2>Patients</h2>
+              <h2>Services</h2>
               <ul>
                 <li>
-                  <Link href="/how-it-works">How it works</Link>
+                  <Link href="/work-school-excuses">Work &amp; School Excuses</Link>
                 </li>
                 <li>
-                  <Link href="/services">Services</Link>
+                  <Link href="/fmla-evaluations">FMLA Evaluations</Link>
                 </li>
                 <li>
-                  <Link href="/pricing">Pricing</Link>
+                  <Link href="/fmla-evaluations#accommodations">Workplace Accommodations</Link>
                 </li>
                 <li>
-                  <Link href="/availability">Where we serve</Link>
-                </li>
-                {states.map((st) => (
-                  <li key={st.slug}>
-                    <Link href={`/states/${st.slug}`}>{st.state.name}</Link>
-                  </li>
-                ))}
-                <li>
-                  <Link href={appHref("/start?entry=footer")}>Begin your assessment</Link>
-                </li>
-                <li>
-                  <Link href={appHref("/sign-in")}>Patient portal</Link>
+                  <Link href="/how-it-works">How It Works</Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h2>Company</h2>
+              <h2>Support</h2>
               <ul>
-                <li>
-                  <Link href="/about">About and credentials</Link>
-                </li>
-                <li>
-                  <Link href="/employers">Employer services</Link>
-                </li>
-                <li>
-                  <Link href="/for-therapists">For therapists</Link>
-                </li>
-                <li>
-                  <Link href="/faq">FAQ</Link>
-                </li>
-                <li>
-                  <Link href="/resources">Guides</Link>
-                </li>
                 <li>
                   <Link href="/contact">Contact</Link>
                 </li>
-              </ul>
-            </div>
-            <div>
-              <h2>Policies</h2>
-              <ul>
-                {legal.map((l) => (
-                  <li key={l.key}>
-                    <Link href={`/legal/${l.key.replace(/^legal\./, "")}`}>{l.title}</Link>
-                  </li>
-                ))}
+                <li>
+                  <Link href="/faq">Frequently Asked Questions</Link>
+                </li>
+                <li>
+                  <Link href="/legal/financial-policy">Refund Policy</Link>
+                </li>
                 <li>
                   <Link href="/accessibility">Accessibility</Link>
                 </li>
+                <li>
+                  <Link href={appHref("/sign-in")}>Patient Sign In</Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2>Legal</h2>
+              <ul>
+                {legal.some((l) => l.key === "legal.privacy") ? (
+                  <li>
+                    <Link href="/legal/privacy">Privacy Policy</Link>
+                  </li>
+                ) : null}
+                {legal.some((l) => l.key === "legal.terms") ? (
+                  <li>
+                    <Link href="/legal/terms">Terms of Service</Link>
+                  </li>
+                ) : null}
+                {legal.some((l) => l.key === "legal.notice-of-privacy-practices") ? (
+                  <li>
+                    <Link href="/legal/notice-of-privacy-practices">Notice of Privacy Practices</Link>
+                  </li>
+                ) : null}
+                {legal.some((l) => l.key === "legal.telehealth") ? (
+                  <li>
+                    <Link href="/legal/telehealth">Clinical Disclosures</Link>
+                  </li>
+                ) : null}
+                {legal.some((l) => l.key === "legal.records") ? (
+                  <li>
+                    <Link href="/legal/records">Records Access and Retention</Link>
+                  </li>
+                ) : null}
               </ul>
             </div>
           </div>
           <div className="legal">
             <p>
-              Independent clinical assessments. Clinicians make their own determinations. We do not
-              decide FMLA eligibility or approve leave; your employer or leave administrator does.
+              Clinical services are provided by {PUBLIC_PROVIDER.name}, {PUBLIC_PROVIDER.postNominals}:{" "}
+              {PUBLIC_PROVIDER.licenses.map((l) => `${l.state} ${l.abbreviation} no. ${l.number}`).join("; ")}. Services are available only to people
+              located in {states.map((st) => st.state.name).join(" or ") || "the states we serve"} during care.
             </p>
             <p>
-              Support: <a href={`mailto:${brand.supportEmail}`}>{brand.supportEmail}</a> ·{" "}
-              {brand.supportHours}
+              Clinicians make their own determinations. We do not decide FMLA eligibility or approve leave; your employer or leave administrator does.
+            </p>
+            <p>
+              Support: <a href={`mailto:${brand.supportEmail}`}>{brand.supportEmail}</a> · {brand.supportHours}
             </p>
             <p>
               © {new Date().getFullYear()} {brand.name}

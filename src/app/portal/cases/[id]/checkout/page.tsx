@@ -66,20 +66,30 @@ export default async function CheckoutPage({
         reference={row.reference}
         steps={steps}
         step="payment"
-        title="Pay securely"
-        lede="Your payment covers a professional clinical assessment. It does not guarantee any particular outcome."
+        title="Mental Health Leave & FMLA Evaluation"
+        lede="Purchase a comprehensive mental health evaluation to determine whether leave-related clinical documentation is appropriate."
       />
+      <p className="lede">
+        Price:{" "}
+        {service?.priceCents != null ? (
+          <Money cents={service.priceCents} currency={service.currency} />
+        ) : (
+          "—"
+        )}
+      </p>
 
       {sp.cancelled ? (
         <Banner tone="info" icon="info">
-          Payment was not completed. You have not been charged. You can try again when you are ready.
+          Payment was not completed. You have not been charged. You can try again when you are
+          ready.
         </Banner>
       ) : null}
 
       {paid ? (
         <div className="stack">
           <Banner tone="sage" icon="check">
-            Payment of <Money cents={paid.amountCents} currency={paid.currency} /> received <DateTime value={paid.paidAt} />. Thank you.
+            Payment of <Money cents={paid.amountCents} currency={paid.currency} /> received{" "}
+            <DateTime value={paid.paidAt} />. Thank you.
           </Banner>
           <div className="btn-row">
             <ButtonLink href={stepHref(row.id, "consents_intake")}>Continue to consents</ButtonLink>
@@ -100,7 +110,13 @@ export default async function CheckoutPage({
         </div>
         <div className="row row-between">
           <b>{service?.name ?? "Service not chosen"}</b>
-          <b>{service?.priceCents != null ? <Money cents={service.priceCents} currency={service.currency} /> : "—"}</b>
+          <b>
+            {service?.priceCents != null ? (
+              <Money cents={service.priceCents} currency={service.currency} />
+            ) : (
+              "—"
+            )}
+          </b>
         </div>
         <p className="small muted">Self-pay. We do not bill insurance. {pricing.paymentTiming}</p>
         <div className="grid g2">
@@ -136,7 +152,8 @@ export default async function CheckoutPage({
             {showTags ? <ReviewTag tag={SETTING_DEFS.goodFaithEstimate.reviewTag} /> : null}
           </div>
           <p className="small muted">
-            Because you are paying for this service yourself, you have the right to a written estimate of the expected charges before you pay. This estimate is saved to your record.
+            Because you are paying for this service yourself, you have the right to a written
+            estimate of the expected charges before you pay. This estimate is saved to your record.
           </p>
           <EstimateBody content={estimate.content} hash={estimate.row.contentHash} level={3} />
           <div className="btn-row">
@@ -175,17 +192,24 @@ export default async function CheckoutPage({
         <ActionForm action={beginCheckout.bind(null, row.id)}>
           <input type="hidden" name="estimateId" value={estimate.row.id} />
           <Banner tone="info" icon="info">
-            Payment does not guarantee a diagnosis, documentation, or approval of leave. A licensed clinician makes an independent clinical determination, and leave decisions are made by your employer or leave administrator. Your employer also decides whether it accepts a form from your clinician&rsquo;s license type, so please check with HR before you pay.
+            Payment does not guarantee a diagnosis, documentation, or approval of leave. A licensed
+            clinician makes an independent clinical determination, and leave decisions are made by
+            your employer or leave administrator. Your employer also decides whether it accepts a
+            form from your clinician&rsquo;s license type, so please check with HR before you pay.
           </Banner>
           <Checkbox name="understand" value="yes" required>
-            I understand that I am paying for a professional assessment, not a particular outcome, and that my employer decides whether to accept the form.
+            I understand that I am paying for a professional assessment, not a particular outcome,
+            and that my employer decides whether to accept the form.
           </Checkbox>
           <SubmitButton pendingText="Opening secure checkout…">
-            Continue to secure payment{service?.priceCents != null ? " · " : ""}
-            {service?.priceCents != null ? <Money cents={service.priceCents} currency={service.currency} /> : null}
+            Continue to Secure Payment{service?.priceCents != null ? " · " : ""}
+            {service?.priceCents != null ? (
+              <Money cents={service.priceCents} currency={service.currency} />
+            ) : null}
           </SubmitButton>
           <p className="fine">
-            <Icon name="lock" /> You will complete payment on our payment processor&rsquo;s secure page. It receives only the amount and your email for a receipt.
+            <Icon name="lock" /> You will complete payment on our payment processor&rsquo;s secure
+            page. It receives only the amount and your email for a receipt.
           </p>
         </ActionForm>
       ) : null}

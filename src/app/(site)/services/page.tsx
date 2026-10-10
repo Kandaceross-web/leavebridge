@@ -4,18 +4,13 @@ import { Badge, ButtonLink, Icon, Money } from "@/components/ui";
 import { SiteHero } from "@/components/illustration";
 import { allServices, enabledServices, sameDayService } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
+import { LEAVE_CATEGORIES } from "@/config/home";
 
 export const metadata: Metadata = {
-  title: "FMLA and leave services",
+  title: "Services and pricing",
   description:
     "The mental-health leave services currently offered, their price, the types of leave documentation a clinician can complete when clinically supported, and what is not yet offered.",
 };
-
-const LEAVE_TYPES = [
-  { name: "Continuous leave", body: "One unbroken period away, such as several weeks.", bubble: "" },
-  { name: "Intermittent leave", body: "Separate days or part-days as symptoms require.", bubble: " bubble-lav" },
-  { name: "Reduced schedule", body: "Fewer hours a day or days a week, for a time.", bubble: " bubble-mint" },
-];
 
 export default async function ServicesPage() {
   const [enabled, all, sameDay] = await Promise.all([enabledServices(), allServices(), sameDayService()]);
@@ -23,9 +18,9 @@ export default async function ServicesPage() {
   return (
     <div className="container page stack stack-xl">
       <SiteHero
-        eyebrow="FMLA / Leave Services"
-        title="Leave services"
-        lede="Independent assessments when mental-health symptoms are affecting your work."
+        eyebrow="Services"
+        title="Our Services"
+        lede="Choose the service that fits your needs. Clear pricing, confidential intake, and a straightforward process from the beginning."
       />
 
       <section className="stack" aria-labelledby="offered-title">
@@ -49,8 +44,8 @@ export default async function ServicesPage() {
                   </details>
                 ) : null}
                 <div className="btn-row">
-                  <ButtonLink href={appHref("/start?entry=services")}>
-                    Begin Your Assessment
+                  <ButtonLink href={s.slug === "mental-health-leave-assessment" ? "/fmla-evaluations" : appHref("/start?entry=services")}>
+                    {s.slug === "mental-health-leave-assessment" ? "View Service Details" : "Begin Your Evaluation"}
                   </ButtonLink>
                 </div>
               </article>
@@ -62,48 +57,46 @@ export default async function ServicesPage() {
           </p>
         )}
         <p className="small">
-          <Link href="/pricing">What&rsquo;s included and refunds</Link>
+          <Link href="/pricing">Pricing and refunds</Link>
         </p>
       </section>
 
       {sameDay ? (
-        <section className="card-flat stack stack-sm" aria-labelledby="same-day-title">
-          <h2 id="same-day-title">{sameDay.name}</h2>
-          <p className="muted">
-            An automated screening with a signed record, available any time
-            {sameDay.priceCents !== null ? (
-              <>
-                {" "}
-                for <Money cents={sameDay.priceCents} />
-              </>
-            ) : null}
-            . It is not a clinician examination, leave certification or work excuse.
-          </p>
-          <p>
-            <Link href="/services/same-day-mental-health-assessment">About the {sameDay.name}</Link>
+        <section className="stack" aria-labelledby="includes-title">
+          <h2 id="includes-title">What Your Evaluation Includes</h2>
+          <article className="svc-card svc-card-compact" aria-labelledby="same-day-title">
+            <h3 id="same-day-title">Work &amp; School Excuse Evaluation</h3>
+            <p className="svc-price">{sameDay.priceCents !== null ? <Money cents={sameDay.priceCents} /> : "—"}</p>
+            <p>
+              Request a confidential mental health evaluation for a work or school absence. Complete your intake online, provide information about your symptoms, and receive
+              clear next steps regarding your documentation request.
+            </p>
+            <ButtonLink href="/work-school-excuses">View Service Details</ButtonLink>
+          </article>
+          <p className="svc-disclosure">
+            Documentation requests are subject to appropriate clinical evaluation and approval. Screening completion alone does not guarantee an excuse.
           </p>
         </section>
       ) : null}
 
       <section className="stack" aria-labelledby="types-title">
-        <div className="stack stack-sm">
-          <h2 id="types-title">Types of leave documentation</h2>
+        <div className="section-head">
+          <h2 id="types-title">Explore Your Leave Options</h2>
           <p className="lede">
-            Completed only if the clinician finds it clinically supported. They decide what, if
-            anything, fits.
+            Mental health concerns affect everyone differently. Your evaluation helps determine what type of documentation, if any, may be clinically appropriate.
           </p>
         </div>
-        <div className="grid g3">
-          {LEAVE_TYPES.map((t) => (
-            <div key={t.name} className="feature">
-              <span className={`bubble${t.bubble}`}>
-                <Icon name="calendar" size={24} />
-              </span>
-              <h3>{t.name}</h3>
-              <p>{t.body}</p>
+        <div className="cat-grid">
+          {LEAVE_CATEGORIES.map(([title, body]) => (
+            <div key={title} className="cat-card">
+              <h3>{title}</h3>
+              <p>{body}</p>
             </div>
           ))}
         </div>
+        <p>
+          <Link href="/faq#evaluation-requirements">Learn About Evaluation Requirements</Link>
+        </p>
       </section>
 
       <section className="grid g2" aria-label="Documentation and employer requirements">

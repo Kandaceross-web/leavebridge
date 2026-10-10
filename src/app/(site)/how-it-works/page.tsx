@@ -4,12 +4,12 @@ import type { ReactNode } from "react";
 import { ButtonLink, Icon, Money } from "@/components/ui";
 import { SiteHero } from "@/components/illustration";
 import { launchPriceCents, siteSettings } from "@/server/web/public";
-import { appHref } from "@/server/web/app-link";
+import { HOME_STEPS } from "@/config/home";
 
 export const metadata: Metadata = {
   title: "How it works",
   description:
-    "The seven steps of a LeaveBridge Health assessment, from a short screening to secure delivery of any documents a licensed clinician completes.",
+    "How to choose a service, complete your intake and receive your evaluation outcome, with every step of the leave evaluation explained.",
 };
 
 export default async function HowItWorksPage() {
@@ -62,37 +62,65 @@ export default async function HowItWorksPage() {
   ];
   return (
     <div className="container page stack stack-xl">
-      <SiteHero
-        eyebrow="How it works"
-        title="Seven steps, one secure portal"
-        lede="From a two-minute check to documents in your hands."
-      />
+      <SiteHero eyebrow="How it works" title={HOME_STEPS.title} lede={HOME_STEPS.body} />
 
-      <ol className="flow flow-cols-4" aria-label="Steps in the assessment">
-        {steps.map((s, i) => (
-          <li key={i} className={s.clinical ? "clin" : undefined}>
-            <span className="num" aria-hidden="true">
-              {i + 1}
-            </span>
-            <h2 className="h3-size">
-              {s.title}
-              {s.clinical ? <span className="visually-hidden"> (clinician-only step)</span> : null}
-            </h2>
-            <p>{s.body}</p>
-            {s.clinical ? (
-              <span className="clin-tag">
-                <Icon name="badge" /> Clinician only
+      <section aria-label="The three steps">
+        <ol className="steps2">
+          {HOME_STEPS.steps.map(([title, body], i) => (
+            <li key={title}>
+              <span className="num" aria-hidden="true">
+                {i + 1}
               </span>
-            ) : null}
-            <details className="more">
-              <summary>More detail</summary>
-              <div>
-                <p>{s.more}</p>
-              </div>
-            </details>
-          </li>
-        ))}
-      </ol>
+              <h2 className="h3-size">
+                <span className="visually-hidden">Step {i + 1}: </span>
+                {title}
+              </h2>
+              <p>{body}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-4">
+          <ButtonLink href="/#services">{HOME_STEPS.cta}</ButtonLink>
+        </div>
+      </section>
+
+      <section className="stack" aria-labelledby="detail-title">
+        <div className="section-head">
+          <h2 id="detail-title">The Mental Health Leave &amp; FMLA Evaluation, Step by Step</h2>
+          <p className="lede">
+            This evaluation includes clinician review and, when your clinician needs one, a video
+            visit. The Work &amp; School Excuse Evaluation steps are on{" "}
+            <Link href="/work-school-excuses">its own page</Link>.
+          </p>
+        </div>
+        <ol className="flow flow-cols-4" aria-label="Steps in the leave evaluation">
+          {steps.map((s, i) => (
+            <li key={i} className={s.clinical ? "clin" : undefined}>
+              <span className="num" aria-hidden="true">
+                {i + 1}
+              </span>
+              <h3 className="h3-size">
+                {s.title}
+                {s.clinical ? (
+                  <span className="visually-hidden"> (clinician-only step)</span>
+                ) : null}
+              </h3>
+              <p>{s.body}</p>
+              {s.clinical ? (
+                <span className="clin-tag">
+                  <Icon name="badge" /> Clinician only
+                </span>
+              ) : null}
+              <details className="more">
+                <summary>More detail</summary>
+                <div>
+                  <p>{s.more}</p>
+                </div>
+              </details>
+            </li>
+          ))}
+        </ol>
+      </section>
 
       <div className="grid g3">
         <div className="feature">
@@ -149,10 +177,9 @@ export default async function HowItWorksPage() {
 
       <section className="cta-band" aria-labelledby="next-title">
         <div>
-          <h2 id="next-title">Ready to see if we can help?</h2>
-          <p className="lede">The screening questions take about two minutes.</p>
+          <h2 id="next-title">Take the Next Step With Confidence.</h2>
           <div className="btn-row">
-            <ButtonLink href={appHref("/start?entry=how-it-works")}>Begin Your Assessment</ButtonLink>
+            <ButtonLink href="/#services">Explore Our Services</ButtonLink>
             <ButtonLink href="/faq" variant="quiet">
               Common questions
             </ButtonLink>
