@@ -94,7 +94,6 @@ export const HOME_WHY = {
 export const HOME_CREDIBILITY = {
   title: "Licensed Across Three States",
   body: "Professional mental health services delivered with clinical expertise, discretion, and convenience.",
-  more: "View Full Professional Credentials",
 };
 
 /** Homepage FAQ preview: questions from the published FAQ, by key, linking to /faq for the rest. */

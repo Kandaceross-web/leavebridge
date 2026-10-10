@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink, Icon, Markdown, ReviewTag } from "@/components/ui";
-import { BridgeArt, CredentialCards, CredentialDetail, SectionHead, ServiceCard } from "@/components/site";
+import { BridgeArt, CredentialCards, SectionHead, ServiceCard } from "@/components/site";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, servicesLd } from "@/server/web/structured-data";
 import { activeStates, enabledServices, publishedFaq, sameDayService, siteSettings } from "@/server/web/public";
@@ -132,17 +132,6 @@ export default async function HomePage() {
             <p className="lede">{HOME_CREDIBILITY.body}</p>
           </SectionHead>
           <CredentialCards />
-          <details className="cred-more">
-            <summary>
-              {HOME_CREDIBILITY.more} <span aria-hidden="true">→</span>
-            </summary>
-            <div className="cred-more-panel">
-              <CredentialDetail />
-              <p>
-                <Link href="/credentials">Professional Credentials page</Link>
-              </p>
-            </div>
-          </details>
         </div>
       </section>
 
