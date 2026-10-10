@@ -72,6 +72,23 @@ export async function runScreening(overrides: ScreeningAnswers = {}, refCode: st
   return { screening: final, outcome };
 }
 
+/** The Same-Day Mental Health Assessment's short screening: location and safety only. */
+export async function runSameDayScreening(overrides: ScreeningAnswers = {}) {
+  const answers = { ...AVAILABLE_ANSWERS, ...overrides };
+  const { row } = await withActor(anonymous, (ctx) => createScreening(ctx, null, null, "same_day_screening"));
+  let outcome: string | undefined;
+  for (const step of ["location", "safety"]) {
+    const res = await withActor(anonymous, async (ctx) => saveScreeningStep(ctx, await screeningById(ctx, row.id), step, answers));
+    if (Object.keys(res.errors).length) throw new Error(`Screening step ${step} invalid: ${JSON.stringify(res.errors)}`);
+    if (res.done) {
+      outcome = res.outcome;
+      break;
+    }
+  }
+  const final = await withActor(system, (ctx) => screeningById(ctx, row.id));
+  return { screening: final, outcome };
+}
+
 export interface FixturePatient {
   userId: string;
   patientId: string;

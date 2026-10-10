@@ -18,6 +18,7 @@ function navFor(actor: StaffActor) {
     { href: "/ops/cases", label: "Cases" },
     { href: "/ops/schedule", label: "Schedule" },
     { href: "/ops/safety", label: "Safety follow-up" },
+    { href: "/ops/same-day", label: "Same-day screenings" },
   ];
   const admin = [
     ...(isAdmin || hasRole(actor, ["compliance"]) ? [{ href: "/ops/admin/jurisdictions", label: "States" }] : []),

@@ -15,7 +15,8 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
-  serverExternalPackages: ["pg", "pdf-lib"],
+  // The @signpdf packages stay external together: signpdf checks its signer with instanceof against @signpdf/utils.
+  serverExternalPackages: ["pg", "pdf-lib", "@signpdf/signpdf", "@signpdf/utils", "@signpdf/placeholder-pdf-lib", "pkijs", "asn1js", "qrcode"],
   experimental: {
     serverActions: { bodySizeLimit: "16mb" },
     proxyClientMaxBodySize: "16mb",

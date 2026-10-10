@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { and, asc, desc, eq, gt, isNull, lte, or } from "drizzle-orm";
+import { and, asc, desc, eq, gt, isNull, lte, ne, or } from "drizzle-orm";
 import { db } from "../db/client";
 import { clinicians, contentEntries, jurisdictions, organizations, prices, services } from "../db/schema";
 import { getSettings } from "../settings";
@@ -15,9 +15,25 @@ export const siteSettings = cache(() => getSettings(db, ["brand", "pricing", "re
 
 export const isProduction = env.APP_ENV === "production";
 
+/** Self-pay price in effect now for one service (public configuration). */
+async function currentSelfPayCents(serviceId: string): Promise<number | null> {
+  const now = new Date();
+  const [p] = await db
+    .select()
+    .from(prices)
+    .where(and(eq(prices.serviceId, serviceId), eq(prices.payerType, "self_pay"), lte(prices.effectiveFrom, now), or(isNull(prices.effectiveTo), gt(prices.effectiveTo, now))))
+    .orderBy(desc(prices.effectiveFrom))
+    .limit(1);
+  return p?.amountCents ?? null;
+}
+
+/**
+ * The clinician-led leave services. The Same-Day Mental Health Assessment (an automated screening)
+ * is listed separately with its own page, never as a leave service.
+ */
 export const enabledServices = cache(async () => {
   const now = new Date();
-  const rows = await db.select().from(services).where(eq(services.enabled, true)).orderBy(asc(services.displayOrder));
+  const rows = await db.select().from(services).where(and(eq(services.enabled, true), ne(services.documentationType, "automated_screening"))).orderBy(asc(services.displayOrder));
   const out = [];
   for (const s of rows) {
     const [p] = await db
@@ -31,7 +47,14 @@ export const enabledServices = cache(async () => {
   return out;
 });
 
-export const allServices = cache(() => db.select().from(services).orderBy(asc(services.displayOrder)));
+export const allServices = cache(() => db.select().from(services).where(ne(services.documentationType, "automated_screening")).orderBy(asc(services.displayOrder)));
+
+/** The Same-Day Mental Health Assessment when it is enabled, with its current price. */
+export const sameDayService = cache(async () => {
+  const [s] = await db.select().from(services).where(and(eq(services.documentationType, "automated_screening"), eq(services.enabled, true))).limit(1);
+  if (!s) return null;
+  return { ...s, priceCents: await currentSelfPayCents(s.id) };
+});
 
 /** The launch price shown in marketing copy: the primary enabled service's current price. */
 export const launchPriceCents = cache(async () => (await enabledServices())[0]?.priceCents ?? null);

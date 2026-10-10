@@ -90,6 +90,11 @@ export const SETTING_DEFS = {
       diagnosisCodes: z.string().min(1),
       disclaimers: z.array(z.string().min(1)).min(1),
       disputeUrl: z.string().url(),
+      /**
+       * Service code per service slug, when a service needs a different code from `serviceCode`
+       * (for example the automated same-day screening). Empty means `serviceCode` applies.
+       */
+      serviceCodes: z.record(z.string(), z.string().regex(/^([0-9A-Z]{5})?$/, "A service (CPT/HCPCS) code is 5 characters.")).default({}),
     }),
     default: {
       providerName: "Defining You Therapeutic Services",
@@ -105,6 +110,7 @@ export const SETTING_DEFS = {
         "This Good Faith Estimate is not a contract and does not require you to get the items or services from the provider named in it.",
       ],
       disputeUrl: "https://www.cms.gov/nosurprises",
+      serviceCodes: {} as Record<string, string>,
     },
     reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
     reviewNote:
@@ -326,6 +332,42 @@ export const SETTING_DEFS = {
     },
     reviewTag: "CLINICAL_REVIEW_REQUIRED" as ReviewTag,
     reviewNote: "CLN-01, CLN-02: crisis workflow and content.",
+  },
+  sameDayScreening: {
+    label: "Same-Day Mental Health Assessment (automated screening)",
+    schema: z.object({
+      /** Turns the public page's start button and new purchases on or off. Records already issued stay verifiable. */
+      enabled: z.boolean(),
+      /** Practice named as the issuer on screening records and letters, and on the public verification page. */
+      practiceName: z.string().min(2),
+      /** Hours a verification email link stays valid. */
+      emailLinkHours: z.number().int().min(1).max(168),
+    }),
+    default: {
+      enabled: true,
+      practiceName: "Defining You Therapeutic Services",
+      emailLinkHours: 48,
+    },
+    reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
+    reviewNote:
+      "OWN-30, CLN-20, LEG-30: launch of the automated screening and the issuer name on documents. Scoring and summary wording live in src/config/same-day.ts (CLINICAL_REVIEW_REQUIRED).",
+  },
+  workExcuseLetter: {
+    label: "Work excuse letters (clinician-approved)",
+    schema: z.object({
+      /** Whether patients with an issued screening record may request a letter. */
+      enabled: z.boolean(),
+      /** The statement the clinician confirms when approving and signing a letter. */
+      attestation: z.string().min(10),
+    }),
+    default: {
+      enabled: true,
+      attestation:
+        "I reviewed this patient's screening responses and the information available to me. The letter reflects my own independent clinical judgment, and I approve issuing it with my electronic signature.",
+    },
+    reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
+    reviewNote:
+      "OWN-31: letter requests are free (no charge is built). CLN-21: attestation and the proposed-letter wording in src/config/same-day.ts.",
   },
   retention: {
     label: "Retention",

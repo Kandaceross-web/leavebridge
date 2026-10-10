@@ -11,6 +11,9 @@ export const LAUNCH_PRICE_CENTS = 27999;
 export const RECERTIFICATION_PRICE_CENTS = 11999;
 /** Owner decision 2026-10-08: each follow-up form. Assumed to mean per form request, no visit (confirm with owner). */
 export const FOLLOW_UP_FORM_PRICE_CENTS = 999;
+/** Owner request 2026-10-09: Same-Day Mental Health Assessment (automated screening record). */
+export const SAME_DAY_SCREENING_PRICE_CENTS = 2999;
+export const SAME_DAY_SERVICE_SLUG = "same-day-mental-health-assessment";
 
 export interface ServiceSeed {
   slug: string;
@@ -76,6 +79,22 @@ export const SERVICES: ServiceSeed[] = [
     displayOrder: 3,
     priceCents: FOLLOW_UP_FORM_PRICE_CENTS,
     reviewTag: "OWNER_DECISION_REQUIRED",
+  },
+  {
+    slug: SAME_DAY_SERVICE_SLUG,
+    name: "Same-Day Mental Health Assessment",
+    summary: "An automated mental-health screening (PHQ-9, GAD-7 or both) with a secure, verifiable screening record, available any time.",
+    description:
+      "You answer standard screening questionnaires and questions about how symptoms affect your work. The system scores them automatically and issues an Automated Mental Health Screening Record. It is an automated screening, not an examination by a clinician, a diagnosis, an FMLA certification or a work excuse. A clinician-reviewed work excuse letter can be requested separately.",
+    documentationType: "automated_screening",
+    enabled: true,
+    requiresSession: false,
+    requiresIdentityVerification: false,
+    requiresEmployerForm: false,
+    sessionMinutes: 0,
+    displayOrder: 6,
+    priceCents: SAME_DAY_SCREENING_PRICE_CENTS,
+    reviewTag: "CLINICAL_REVIEW_REQUIRED",
   },
   {
     slug: "leave-extension",

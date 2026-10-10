@@ -41,7 +41,7 @@ export default async function SafetyPage() {
               <li key={e.id} className="card-flat stack">
                 <div className="row row-between">
                   <div className="stack stack-sm">
-                    <Link href={`/ops/cases/${e.caseId}`}>
+                    <Link href={e.automated ? `/ops/same-day/${e.caseId}` : `/ops/cases/${e.caseId}`}>
                       <b className="mono">{e.reference}</b> · {e.patient}
                     </Link>
                     <span className="muted small">
@@ -60,15 +60,23 @@ export default async function SafetyPage() {
                     {e.status ? <Badge tone="neutral">{STATUS_STAFF_LABEL[e.status as CaseStatus]}</Badge> : null}
                   </div>
                 </div>
-                {e.canAct ? (
+                {e.automated && e.status === "safety_hold" ? (
+                  <p className="small">
+                    Held same-day screening. <Link href={`/ops/same-day/${e.caseId}`}>Review it and decide whether to issue the record</Link>; your decision note closes this event.
+                  </p>
+                ) : e.canAct ? (
                   <details>
                     <summary className="btn btn-secondary btn-sm">Record follow-up</summary>
                     <div className="mt-2">
                       <ActionForm action={acknowledgeSafetyAction.bind(null, e.id, e.caseId)}>
                         <TextArea name="note" label="Follow-up taken" hint="Saved encrypted with the event." required rows={3} maxLength={4000} />
-                        <Checkbox name="hold" defaultChecked={e.status === "safety_hold"}>
-                          Place the case on safety hold (pauses the case until a clinician releases it)
-                        </Checkbox>
+                        {e.automated ? (
+                          <p className="fine">Same-day screening still in progress: if the patient finishes it, the record is held for your review automatically.</p>
+                        ) : (
+                          <Checkbox name="hold" defaultChecked={e.status === "safety_hold"}>
+                            Place the case on safety hold (pauses the case until a clinician releases it)
+                          </Checkbox>
+                        )}
                         <SubmitButton>Acknowledge event</SubmitButton>
                       </ActionForm>
                     </div>
@@ -91,14 +99,18 @@ export default async function SafetyPage() {
             {q.held.map((h) => (
               <li key={h.id} className="card-flat stack">
                 <div className="row row-between">
-                  <Link href={`/ops/cases/${h.id}`}>
+                  <Link href={h.automated ? `/ops/same-day/${h.id}` : `/ops/cases/${h.id}`}>
                     <b className="mono">{h.reference}</b> · {h.patient}
                   </Link>
                   <span className="muted small">
                     Last activity <DateTime value={h.updatedAt} />
                   </span>
                 </div>
-                {h.canAct ? (
+                {h.automated ? (
+                  <p className="small">
+                    Held same-day screening. <Link href={`/ops/same-day/${h.id}`}>Review and decide</Link>.
+                  </p>
+                ) : h.canAct ? (
                   <details>
                     <summary className="btn btn-secondary btn-sm">Release hold</summary>
                     <div className="mt-2">

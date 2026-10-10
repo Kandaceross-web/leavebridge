@@ -11,7 +11,7 @@ import { buildCsp, isVisitPath } from "@/server/web/csp";
  *  - marks app responses no-store so PHI is never cached by browsers or shared caches,
  *  - records first-party campaign attribution (marketing pages and the screening entry only).
  */
-const APP_PREFIXES = ["/start", "/sign-in", "/sign-up", "/sign-out", "/mfa", "/step-up", "/forgot-password", "/portal", "/ops", "/api"];
+const APP_PREFIXES = ["/start", "/sign-in", "/sign-up", "/sign-out", "/mfa", "/step-up", "/forgot-password", "/verify", "/verify-email", "/portal", "/ops", "/api"];
 
 const isAppPath = (p: string) => APP_PREFIXES.some((x) => p === x || p.startsWith(`${x}/`));
 

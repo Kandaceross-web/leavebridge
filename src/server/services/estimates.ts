@@ -61,7 +61,7 @@ export async function ensureEstimate(ctx: Ctx, row: CaseRow) {
     issuedAt: new Date(),
     reference: row.reference,
     patient: { name: p ? `${p.legalFirstName} ${p.legalLastName}` : "", dateOfBirth: p?.dateOfBirth ? decrypt(p.dateOfBirth) : null },
-    service: { id: svc!.id, name: svc!.name, summary: svc!.summary },
+    service: { id: svc!.id, name: svc!.name, summary: svc!.summary, slug: svc!.slug },
     price: { id: price.id, amountCents: price.amountCents, currency: price.currency },
     scheduledFor: visit?.startsAt ?? null,
     provider: { name: setting.providerName, location: state ? `By telehealth to you in ${state.name}` : "By telehealth" },

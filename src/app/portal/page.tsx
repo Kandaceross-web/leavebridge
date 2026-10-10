@@ -6,9 +6,10 @@ import { patientCases, patientChecklist, type CaseRow } from "@/server/services/
 import { caseAppointments } from "@/server/services/scheduling";
 import { myNotifications } from "@/server/services/messaging";
 import { myOpenRequests, myPatientProfile } from "@/server/services/portal-queries";
-import { PATIENT_STATUS, isOpen } from "@/domain/cases/state-machine";
+import { PATIENT_STATUS, isOpen, patientStatusFor } from "@/domain/cases/state-machine";
+import { SAME_DAY_SERVICE_NAME } from "@/config/same-day";
 import type { ChecklistStep } from "@/domain/cases/checklist";
-import { caseHref, PRE_SUBMISSION, REQUEST_KIND_LABEL, stepHref } from "./_lib/steps";
+import { caseHref, portalCaseHref, PRE_SUBMISSION, REQUEST_KIND_LABEL, stepHref } from "./_lib/steps";
 
 export const metadata: Metadata = { title: "Home" };
 
@@ -40,15 +41,17 @@ export default async function PortalHome() {
   const data = await run(actor, async (ctx) => {
     const profile = await myPatientProfile(ctx);
     const list = await patientCases(ctx);
-    const current = list.find((c) => isOpen(c.c.status))?.c ?? null;
+    // The next-step card follows the open clinician-led request; same-day screenings have their own card.
+    const current = list.find((c) => c.c.kind === "clinical" && isOpen(c.c.status))?.c ?? null;
+    const sameDay = list.find((c) => c.c.kind === "automated_screening" && isOpen(c.c.status))?.c ?? null;
     const steps = current ? await patientChecklist(ctx, current) : [];
     const appts = current ? await caseAppointments(ctx, current.id) : [];
     const upcoming = appts.filter((a) => a.a.status === "booked" && a.a.endsAt.getTime() > Date.now()).sort((x, y) => x.a.startsAt.getTime() - y.a.startsAt.getTime())[0] ?? null;
     const requests = await myOpenRequests(ctx, list.map((c) => c.c.id));
     const unread = (await myNotifications(ctx, 20)).filter((n) => !n.readAt).slice(0, 5);
-    return { profile, list, current, steps, upcoming, requests, unread };
+    return { profile, list, current, sameDay, steps, upcoming, requests, unread };
   });
-  const { profile, list, current, steps, upcoming, requests, unread } = data;
+  const { profile, list, current, sameDay, steps, upcoming, requests, unread } = data;
   const next = current ? nextAction(current, steps) : null;
 
   return (
@@ -100,6 +103,22 @@ export default async function PortalHome() {
               </div>
             </div>
           )}
+        </section>
+      ) : null}
+
+      {sameDay ? (
+        <section className="card stack" aria-labelledby="sameday-heading">
+          <div className="card-head">
+            <div className="stack stack-sm">
+              <p className="eyebrow">{SAME_DAY_SERVICE_NAME} · {sameDay.reference}</p>
+              <h2 id="sameday-heading">{patientStatusFor(sameDay.kind, sameDay.status).label}</h2>
+            </div>
+            <Badge tone={patientStatusFor(sameDay.kind, sameDay.status).tone}>{patientStatusFor(sameDay.kind, sameDay.status).label}</Badge>
+          </div>
+          <p className="muted">{patientStatusFor(sameDay.kind, sameDay.status).explainer}</p>
+          <div className="btn-row">
+            <ButtonLink href={portalCaseHref(sameDay)}>Open your screening</ButtonLink>
+          </div>
         </section>
       ) : null}
 
@@ -173,15 +192,15 @@ export default async function PortalHome() {
               <li key={c.id}>
                 <div className="grow stack stack-sm">
                   <div className="row">
-                    <Link href={caseHref(c.id)}>
-                      <b>Case {c.reference}</b>
+                    <Link href={portalCaseHref(c)}>
+                      <b>{c.kind === "automated_screening" ? "Screening" : "Case"} {c.reference}</b>
                     </Link>
-                    <Badge tone={PATIENT_STATUS[c.status].tone}>{PATIENT_STATUS[c.status].label}</Badge>
+                    <Badge tone={patientStatusFor(c.kind, c.status).tone}>{patientStatusFor(c.kind, c.status).label}</Badge>
                   </div>
                   <p className="small muted">
                     {serviceName ?? "Service not chosen yet"} · Started <DateTime value={c.createdAt} timeZone={profile.timeZone} dateOnly />
                   </p>
-                  <p className="small">{PATIENT_STATUS[c.status].explainer}</p>
+                  <p className="small">{patientStatusFor(c.kind, c.status).explainer}</p>
                 </div>
               </li>
             ))}

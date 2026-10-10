@@ -42,6 +42,16 @@ const schema = z.object({
   /** Model id for AI_PROVIDER=bedrock. Only use a model covered by your BAA with no training or retention (LEG-06, SEC-04). */
   BEDROCK_MODEL_ID: z.string().optional(),
   IDV_PROVIDER: z.enum(["manual"]).default("manual"),
+  /**
+   * The practice's document-signing certificate and private key as a base64 PKCS#12 bundle, used to
+   * digitally sign every issued screening record and letter (src/server/signing.ts). Required in
+   * production; development and tests generate a self-signed one. See docs/DEPLOYMENT.md.
+   */
+  /** Document-signing private key, PKCS#8 PEM (or that PEM base64-encoded). From the secret manager. */
+  DOCUMENT_SIGNING_KEY: z.string().optional(),
+  DOCUMENT_SIGNING_KEY_PASSPHRASE: z.string().optional(),
+  /** The signing certificate, then any intermediates, as PEM (or that PEM base64-encoded). */
+  DOCUMENT_SIGNING_CERT: z.string().optional(),
   /** Optional privacy-preserving analytics script for marketing pages only. Never loaded in the app. */
   SITE_ANALYTICS_SRC: z.string().url().optional(),
   /** Sentry project DSN for server error reports (SEC-11). Used only with SENTRY_BAA_SIGNED=1; see src/server/error-reporting.ts. */
@@ -96,6 +106,7 @@ function load(): Env {
           problems.push(`${key} must be the real https origin`);
       if (/\.invalid>?$/.test(data.EMAIL_FROM))
         problems.push("EMAIL_FROM uses the placeholder domain");
+      if (!data.DOCUMENT_SIGNING_KEY || !data.DOCUMENT_SIGNING_CERT) problems.push("DOCUMENT_SIGNING_KEY and DOCUMENT_SIGNING_CERT (document-signing key and certificate) missing");
       if (data.PUBLIC_PREVIEW === "1")
         problems.push("PUBLIC_PREVIEW is only for the static public-site export");
     }

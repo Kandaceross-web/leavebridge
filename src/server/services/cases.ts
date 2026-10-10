@@ -88,7 +88,7 @@ export async function loadCase(ctx: Ctx, caseId: string, level: "owner" | "opera
 
 export async function transition(ctx: Ctx, row: CaseRow, to: CaseStatus, reason: string | null = null): Promise<CaseRow> {
   if (row.status === to) return row;
-  assertTransition(row.status, to);
+  assertTransition(row.status, to, row.kind);
   const now = new Date();
   const patch: Partial<CaseRow> = { status: to, lastActivityAt: now, updatedAt: now };
   if (to === "submitted" && !row.submittedAt) patch.submittedAt = now;
@@ -204,8 +204,9 @@ export async function patientChecklist(ctx: Ctx, row: CaseRow) {
 export async function selectService(ctx: Ctx, caseId: string, input: { serviceId: string; leaveType: LeaveType; deadline: string | null; employerName: string | null }) {
   const { row } = await loadCase(ctx, caseId, "owner");
   if (row.status !== "started") throw invalid("The service can't be changed after payment. Contact support for help.");
+  if (row.kind !== "clinical") throw invalid("The service can't be changed for this request.");
   const [svc] = await ctx.tx.select().from(services).where(and(eq(services.id, input.serviceId), eq(services.enabled, true))).limit(1);
-  if (!svc) throw invalid("That service is not currently available.");
+  if (!svc || svc.documentationType === "automated_screening") throw invalid("That service is not currently available.");
   await ctx.tx
     .update(cases)
     .set({

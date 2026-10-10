@@ -110,7 +110,24 @@ export const DOCUMENT_TEMPLATES: Record<DocumentKind, DocumentTemplate> = {
     requiresAttachment: false,
     fields: [...base, { key: "summary", label: "Summary", kind: "textarea", required: true, aiAllowed: false }, clinicianStatement],
   },
+  // Created only by the same-day work excuse workflow (src/server/services/work-excuse.ts), never from a clinical case.
+  work_excuse_letter: {
+    kind: "work_excuse_letter",
+    title: "Work excuse letter",
+    description: "A clinician-approved letter requested after a same-day screening (CLN-21 pending review).",
+    requiresAttachment: false,
+    fields: [
+      { key: "patient_name", label: "Patient name", kind: "text", required: true, fromRecord: "patient.name", aiAllowed: false },
+      { key: "excused_from", label: "Excused from (first day)", kind: "date", required: true, aiAllowed: false },
+      { key: "excused_through", label: "Excused through (last day)", kind: "date", required: true, aiAllowed: false },
+      { key: "return_date", label: "May return on (optional)", kind: "date", required: false, aiAllowed: false },
+      { key: "letter_body", label: "Letter text", kind: "textarea", required: true, aiAllowed: false, help: "Your own words. Do not include a diagnosis unless the patient asked for it." },
+    ],
+  },
 };
+
+/** Kinds a clinician can create from the documents tab of a clinical case. */
+export const CASE_DOCUMENT_KINDS = (Object.keys(DOCUMENT_TEMPLATES) as DocumentKind[]).filter((k) => k !== "work_excuse_letter");
 
 export const DOCUMENT_DISCLAIMER =
   "This document reflects the independent clinical judgment of the signing clinician. Eligibility for leave and any leave decision are determined by the employer, insurer or leave administrator.";

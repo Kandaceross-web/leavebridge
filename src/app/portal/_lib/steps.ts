@@ -16,6 +16,8 @@ const STEP_PATH: Record<StepKey, string> = {
 
 export const stepHref = (caseId: string, key: StepKey) => `/portal/cases/${caseId}/${STEP_PATH[key]}`;
 export const caseHref = (caseId: string) => `/portal/cases/${caseId}`;
+/** Where a case lives in the portal: same-day automated screenings have their own page. */
+export const portalCaseHref = (c: { id: string; kind: string }) => (c.kind === "automated_screening" ? `/portal/screening/${c.id}` : caseHref(c.id));
 
 export const PRE_SUBMISSION: readonly CaseStatus[] = ["started", "intake_incomplete", "awaiting_documents"];
 
@@ -40,6 +42,7 @@ export const DOCUMENT_KIND_LABEL: Record<DocumentKind, string> = {
   employer_form_completion: "Completed employer or leave-administrator form",
   return_to_work: "Return-to-work note",
   determination_letter: "Assessment summary letter",
+  work_excuse_letter: "Work excuse letter",
 };
 
 /**

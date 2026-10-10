@@ -54,7 +54,7 @@ async function recordPrefill(ctx: Ctx, caseId: string) {
 export async function createDocument(ctx: Ctx, caseId: string, kind: string, employerFormId: string | null) {
   requireRole(ctx.actor, CLINICAL);
   requireStaffMfa(ctx.actor);
-  if (!(DOCUMENT_KINDS as readonly string[]).includes(kind)) throw invalid("Unknown document type.");
+  if (!(DOCUMENT_KINDS as readonly string[]).includes(kind) || kind === "work_excuse_letter") throw invalid("Unknown document type.");
   const { row } = await loadCase(ctx, caseId, "clinical");
   requireAssignedClinician(ctx.actor, row.assignedClinicianId);
   const d = await latestDetermination(ctx, row.id);

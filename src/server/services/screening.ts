@@ -20,6 +20,10 @@ import {
   type RulesetDefinition,
 } from "@/domain/screening/engine";
 import { invalid } from "@/domain/errors";
+import { SAME_DAY_SCREENING_STEPS } from "@/config/same-day";
+
+/** Which product a screening leads to. The Same-Day Mental Health Assessment asks only location and safety. */
+export type ScreeningProduct = "leave_assessment" | "same_day_screening";
 
 export const SCREENING_COOKIE = "lb_screening";
 export const REFERRAL_COOKIE = "lb_ref";
@@ -65,7 +69,12 @@ export async function currentScreening(ctx: Ctx): Promise<ScreeningRow | null> {
 }
 
 /** Creates a screening row. Cookie handling stays in startScreening so this also runs outside a request. */
-export async function createScreening(ctx: Ctx, refCode: string | null, attribution: StoredAttribution | null = null): Promise<{ row: ScreeningRow; token: string; maxAgeSeconds: number }> {
+export async function createScreening(
+  ctx: Ctx,
+  refCode: string | null,
+  attribution: StoredAttribution | null = null,
+  product: ScreeningProduct = "leave_assessment",
+): Promise<{ row: ScreeningRow; token: string; maxAgeSeconds: number }> {
   const ruleset = await publishedRuleset(ctx.tx);
   const retention = await getSetting(ctx.tx, "retention");
   const token = randomToken(32);
@@ -82,6 +91,7 @@ export async function createScreening(ctx: Ctx, refCode: string | null, attribut
       answers: encryptJson({}),
       referralOrganizationId,
       attribution,
+      product,
       expiresAt: new Date(Date.now() + retention.abandonedScreeningDays * 86_400_000),
     })
     .returning();
@@ -109,6 +119,11 @@ export async function clearScreeningCookie() {
 
 export async function screeningState(ctx: Ctx, row: ScreeningRow) {
   const ruleset = await rulesetById(ctx.tx, row.rulesetId);
+  if (row.product === "same_day_screening") {
+    // Same ruleset, fewer steps. Rules only fire on answered questions, so the leave-specific rules stay quiet.
+    const keep = new Set<string>(SAME_DAY_SCREENING_STEPS);
+    ruleset.def = { ...ruleset.def, steps: ruleset.def.steps.filter((s) => keep.has(s.key)) };
+  }
   const answers = decryptJson<Answers>(row.answers, {});
   return { ruleset, answers };
 }

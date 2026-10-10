@@ -23,7 +23,8 @@ export async function beginScreening(fd: FormData) {
   const ref = String(fd.get("ref") ?? "") || null;
   const meta = await requestMeta();
   const attribution = await readAttribution(String(fd.get("entry") ?? "") || null);
-  const { token, maxAgeSeconds } = await withActor(anon, (ctx) => createScreening(ctx, ref, attribution), meta);
+  const product = fd.get("product") === "same-day" ? "same_day_screening" : "leave_assessment";
+  const { token, maxAgeSeconds } = await withActor(anon, (ctx) => createScreening(ctx, ref, attribution, product), meta);
   const jar = await cookies();
   jar.set(SCREENING_COOKIE, token, {
     httpOnly: true,

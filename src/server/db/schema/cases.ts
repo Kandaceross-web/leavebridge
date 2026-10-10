@@ -5,6 +5,7 @@ import { consentVersions, jurisdictions, organizations, prices, questionnaires, 
 import type { StoredAttribution } from "@/domain/attribution";
 import type {
   AppointmentStatus,
+  CaseKind,
   CaseStatus,
   ClinicalReviewOutcome,
   DeterminationDecision,
@@ -32,6 +33,8 @@ export const screenings = pgTable(
     outcome: text("outcome").$type<ScreeningOutcome>(),
     reasonCodes: text("reason_codes").array().notNull().default(sql`'{}'::text[]`),
     status: text("status").$type<"in_progress" | "completed" | "promoted" | "expired">().notNull().default("in_progress"),
+    /** Which product the visitor started from. "same_day_screening" asks only the location and safety steps. */
+    product: text("product").$type<"leave_assessment" | "same_day_screening">().notNull().default("leave_assessment"),
     referralOrganizationId: uuid("referral_organization_id").references(() => organizations.id),
     /** First-party campaign attribution (src/domain/attribution.ts). Marketing data only; never sent to third parties. */
     attribution: jsonb("attribution").$type<StoredAttribution>(),
@@ -68,6 +71,8 @@ export const cases = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     /** Short non-PHI reference shown to patients and staff, e.g. LB-7K3Q9M. */
     reference: text("reference").notNull().unique(),
+    /** "automated_screening" cases (Same-Day Mental Health Assessment) follow their own short lifecycle. */
+    kind: text("kind").$type<CaseKind>().notNull().default("clinical"),
     patientId: uuid("patient_id").notNull().references(() => patients.id),
     serviceId: uuid("service_id").references(() => services.id),
     requestedLeaveType: text("requested_leave_type").$type<LeaveType>(),

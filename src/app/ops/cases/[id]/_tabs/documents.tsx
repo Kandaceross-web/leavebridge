@@ -4,8 +4,8 @@ import { Badge, DateTime, Empty, type Tone } from "@/components/ui";
 import { run } from "@/server/auth/guards";
 import { caseDocuments } from "@/server/services/documents";
 import { caseFileList } from "@/server/services/ops-queries";
-import { DOCUMENT_TEMPLATES } from "@/config/document-templates";
-import { DOCUMENT_KINDS, type DocumentStatus } from "@/domain/constants";
+import { CASE_DOCUMENT_KINDS, DOCUMENT_TEMPLATES } from "@/config/document-templates";
+import type { DocumentStatus } from "@/domain/constants";
 import { hasRole } from "@/domain/policy";
 import { createDocumentAction, deliverAction } from "../actions";
 import { isAssigned, LimitedPanel, FORM_KIND_LABEL, tryClinical, type TabProps } from "../_shared";
@@ -61,7 +61,7 @@ export async function DocumentsTab(props: TabProps) {
               label="Document type"
               required
               placeholder="Choose…"
-              options={DOCUMENT_KINDS.map((k) => ({ value: k, label: DOCUMENT_TEMPLATES[k].title }))}
+              options={CASE_DOCUMENT_KINDS.map((k) => ({ value: k, label: DOCUMENT_TEMPLATES[k].title }))}
             />
             {data.files.forms.length ? (
               <SelectField

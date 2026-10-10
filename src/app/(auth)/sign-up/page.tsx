@@ -6,6 +6,7 @@ import { Banner } from "@/components/ui";
 import { withActor } from "@/server/db/actor";
 import { currentScreening } from "@/server/services/screening";
 import { signUpAction } from "../actions";
+import { SAME_DAY_SERVICE_NAME } from "@/config/same-day";
 
 export const metadata: Metadata = { title: "Create your account" };
 
@@ -21,7 +22,9 @@ export default async function SignUpPage() {
     <div className="auth-wrap">
       <div className="auth-card card stack" style={{ maxWidth: 560 }}>
         <div className="stack stack-sm">
-          <p className="eyebrow">Step 2 of 7</p>
+          <p className="eyebrow">
+            {screening.product === "same_day_screening" ? SAME_DAY_SERVICE_NAME : "Step 2 of 7"}
+          </p>
           <h1>Create your secure account</h1>
           <p className="muted">
             Use your legal name as it appears on your photo ID. Your clinician&rsquo;s documents

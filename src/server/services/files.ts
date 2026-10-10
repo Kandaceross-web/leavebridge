@@ -1,7 +1,7 @@
 import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import type { Ctx } from "../db/actor";
-import { cases, deliveries, documents, employerForms, files } from "../db/schema";
+import { cases, deliveries, documents, employerForms, files, issuedDocuments } from "../db/schema";
 import { audit } from "../audit";
 import { decrypt, encrypt, sha256Hex } from "../crypto";
 import { scanUpload } from "../providers/scan";
@@ -97,15 +97,20 @@ export async function authorizeFileDownload(ctx: Ctx, fileId: string): Promise<{
     throw forbidden();
   }
   if (ctx.actor.kind === "patient" && f.category === "generated") {
-    // Only the rendered signed version of a document delivered to the patient.
-    const [doc] = await ctx.tx
-      .select({ id: documents.id })
-      .from(deliveries)
-      .innerJoin(documents, eq(documents.id, deliveries.documentId))
-      .where(and(eq(documents.signedFileId, f.id), eq(deliveries.recipientType, "patient")))
-      .limit(1);
-    if (!doc) throw forbidden();
-    await ctx.tx.update(deliveries).set({ accessCount: sql`${deliveries.accessCount} + 1`, firstAccessedAt: sql`coalesce(${deliveries.firstAccessedAt}, now())` }).where(eq(deliveries.documentId, doc.id));
+    // An issued (signed) screening record or letter: the stored file, unchanged, and only while it is valid.
+    const [issued] = await ctx.tx.select({ kind: issuedDocuments.kind, status: issuedDocuments.status }).from(issuedDocuments).where(eq(issuedDocuments.fileId, f.id)).limit(1);
+    if (issued && issued.status !== "valid") throw forbidden("This document has been revoked and can no longer be downloaded.");
+    if (issued?.kind !== "automated_screening_record") {
+      // Otherwise only the rendered signed version of a document delivered to the patient.
+      const [doc] = await ctx.tx
+        .select({ id: documents.id })
+        .from(deliveries)
+        .innerJoin(documents, eq(documents.id, deliveries.documentId))
+        .where(and(eq(documents.signedFileId, f.id), eq(deliveries.recipientType, "patient")))
+        .limit(1);
+      if (!doc) throw forbidden();
+      await ctx.tx.update(deliveries).set({ accessCount: sql`${deliveries.accessCount} + 1`, firstAccessedAt: sql`coalesce(${deliveries.firstAccessedAt}, now())` }).where(eq(deliveries.documentId, doc.id));
+    }
   }
   const data = await storage().get(f.storageKey);
   await audit(ctx, { action: "file.downloaded", subjectType: "file", subjectId: f.id, caseId: f.caseId, metadata: { category: f.category } });

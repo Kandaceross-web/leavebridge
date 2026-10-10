@@ -105,6 +105,8 @@ export async function opsCases(ctx: Ctx, opts: { includeClosed?: boolean } = {})
     left join services s on s.id = c.service_id
     left join clinicians cl on cl.id = c.assigned_clinician_id
     where ${closedFilter} and ${scope}
+      -- Same-day automated screenings have their own console page; they join the pipeline only when a person must act.
+      and (c.kind = 'clinical' or c.status = 'safety_hold' or c.screening_review = 'pending')
     order by c.priority desc, c.last_activity_at asc
     limit 2000`);
   return (res.rows as Record<string, unknown>[]).map((r) => ({

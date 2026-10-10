@@ -1,5 +1,5 @@
 import "server-only";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { isDomainError } from "@/domain/errors";
 import { requirePatientSession, run } from "@/server/auth/guards";
 import { loadCase, patientChecklist } from "@/server/services/cases";
@@ -18,12 +18,16 @@ export async function orNotFound<T>(p: Promise<T>): Promise<T> {
 /** Loads the patient's own case plus anything else the page needs in the same transaction. */
 export async function ownedCase<T = undefined>(id: string, extra?: (ctx: Ctx, row: Awaited<ReturnType<typeof loadCase>>["row"]) => Promise<T>) {
   const { actor, session } = await requirePatientSession();
-  return orNotFound(
+  const out = await orNotFound(
     run(actor, async (ctx) => {
       const { row } = await loadCase(ctx, id, "owner");
+      // A same-day automated screening has its own pages; none of the clinician-led steps apply to it.
+      if (row.kind === "automated_screening") return null;
       const steps = await patientChecklist(ctx, row);
       const more = extra ? await extra(ctx, row) : (undefined as T);
       return { actor, session, row, steps, extra: more };
     }),
   );
+  if (!out) redirect(`/portal/screening/${id}`);
+  return out;
 }
