@@ -130,3 +130,22 @@ export const HOME_FAQ: [string, string][] = [
     "Your clinician explains the decision in your portal. The fee covers the assessment whatever the outcome, and you can request a copy of your records to share with another provider.",
   ],
 ];
+
+/**
+ * The Same-Day Mental Health Assessment on the homepage. Wording follows src/config/same-day.ts: the screening is
+ * automated, and a work excuse letter is a separate request a licensed clinician reviews and may decline.
+ * Never call it a "doctor's excuse": the clinician is a licensed professional counselor.
+ */
+export const HOME_SAME_DAY = {
+  unit: "screening",
+  forWho: "For a missed day of work, when you need something sooner than a full assessment.",
+  includes: [
+    "Standard anxiety and depression questionnaires (GAD-7 and PHQ-9), online at any time",
+    "A digitally signed record of your results that anyone can verify",
+    "The option to request a work excuse letter afterward",
+  ],
+  prereq: "Located in {states} when you complete it.",
+  scope:
+    "The screening is automated, not a clinician examination or a work excuse. A licensed clinician reviews each excuse letter request and may approve, change or decline it.",
+  cta: "About the same-day assessment",
+};

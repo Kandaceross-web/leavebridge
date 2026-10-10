@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { Banner, ButtonLink, Money } from "@/components/ui";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, servicesLd } from "@/server/web/structured-data";
-import { activeStates, enabledServices, isProduction, siteSettings } from "@/server/web/public";
+import { activeStates, enabledServices, isProduction, sameDayService, siteSettings } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
 import {
   HOME_EXPERIENCE,
   HOME_FAQ,
   HOME_HERO,
+  HOME_SAME_DAY,
   HOME_SERVICE_COPY,
   HOME_STEPS,
   HOME_TRUST,
@@ -28,10 +29,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [{ brand, refundPolicy }, states, services] = await Promise.all([
+  const [{ brand, refundPolicy }, states, services, sameDay] = await Promise.all([
     siteSettings(),
     activeStates(),
     enabledServices(),
+    sameDayService(),
   ]);
   const primary = services[0];
   const price = primary?.priceCents ?? null;
@@ -252,6 +254,46 @@ export default async function HomePage() {
                 </article>
               );
             })}
+            {sameDay ? (
+              <article className="menu-item" aria-labelledby="svc-same-day">
+                <div className="menu-head">
+                  <h3 id="svc-same-day">{sameDay.name}</h3>
+                  <span className="dots" aria-hidden="true" />
+                  {sameDay.priceCents !== null ? (
+                    <span className="amt">
+                      <Money cents={sameDay.priceCents} />
+                    </span>
+                  ) : null}
+                  <span className="unit">{HOME_SAME_DAY.unit}</span>
+                </div>
+                <div className="act">
+                  <p className="for">{HOME_SAME_DAY.forWho}</p>
+                  <ButtonLink href="/services/same-day-mental-health-assessment" variant="secondary">
+                    {HOME_SAME_DAY.cta}
+                  </ButtonLink>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Includes</dt>
+                    <dd>
+                      <ul>
+                        {HOME_SAME_DAY.includes.map((x) => (
+                          <li key={x}>{x}</li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>You will need</dt>
+                    <dd>{HOME_SAME_DAY.prereq.replace("{states}", stateNames || "a state we serve")}</dd>
+                  </div>
+                  <div>
+                    <dt>Please note</dt>
+                    <dd>{HOME_SAME_DAY.scope}</dd>
+                  </div>
+                </dl>
+              </article>
+            ) : null}
           </div>
           <p className="small muted mt-3">
             Payment does not guarantee a diagnosis, certification, documentation or approval of leave.{" "}
