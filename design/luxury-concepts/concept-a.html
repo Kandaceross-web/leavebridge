@@ -81,8 +81,42 @@ header{border-bottom:1px solid var(--line);background:var(--ivory);position:stic
 .hero-photo::before{content:"";position:absolute;inset:-14px 14px 14px -14px;border:1px solid var(--gold);pointer-events:none}
 @media (max-width:860px){.hero{grid-template-columns:1fr;align-items:start}.hero-photo::before{display:none}.hero-photo .ph{aspect-ratio:4/4.4}}
 
+/* key visual + booking bar (Clinique La Prairie reference: one key visual, a booking-style summary) */
+.kv{position:relative;isolation:isolate;display:grid}
+.kv .ph{grid-area:1/1;width:100%;height:100%;min-height:640px}
+.kv .ph .ph-cap{left:auto;right:16px;top:16px;bottom:auto}
+.kv-text{position:relative;z-index:1;grid-area:1/1;align-self:end;padding-block:220px 72px;background:linear-gradient(180deg,rgba(48,39,34,0) 0%,rgba(48,39,34,.62) 40%,rgba(38,31,27,.88) 100%);color:var(--porcelain)}
+.kv .eyebrow{color:#e6dccd}
+.kv h1{font-size:clamp(2.7rem,5.6vw,5.1rem);font-weight:400;margin-top:18px;max-width:17ch}
+.kv h1 em{color:#e9dcc2}
+.kv .sub{font-size:var(--step-1);line-height:1.5;max-width:44ch;margin-top:20px}
+.kv .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.kv .note{margin-top:14px;font-size:.95rem;color:#e6dccd;max-width:50ch}
+.btn-light{background:var(--porcelain);color:var(--espresso)}
+.btn-light:hover{background:var(--sand)}
+.btn-outline-light{border-color:rgba(255,253,250,.75);color:var(--porcelain)}
+.btn-outline-light:hover{background:rgba(255,253,250,.12)}
+.bookbar{position:relative;margin-top:-1px;display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto;align-items:center;gap:0;background:var(--porcelain);border:1px solid var(--line);border-top:2px solid var(--gold)}
+.bookbar > div{display:grid;gap:4px;padding:22px 28px;border-right:1px solid var(--line)}
+.bb-label{font:600 .72rem/1.3 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--taupe)}
+.bb-val{font:500 1.3rem/1.25 var(--serif)}
+.bb-price{font-size:1.7rem;font-variant-numeric:lining-nums tabular-nums}
+.bookbar .btn{margin:16px 24px}
+@media (max-width:860px){
+  .kv .ph{min-height:0}
+  .kv .ph .ph-cap{left:12px;right:12px}
+  .kv-text{padding-block:230px 40px;background:linear-gradient(180deg,rgba(48,39,34,.15) 0%,rgba(48,39,34,.7) 30%,rgba(38,31,27,.9) 100%)}
+  .bookbar{grid-template-columns:1fr 1fr}
+  .bookbar > div:first-child{grid-column:1 / -1;border-bottom:1px solid var(--line)}
+  .bookbar > div{padding:16px 18px}
+  .bookbar > div:nth-child(3){border-right:0}
+  .bookbar .btn{grid-column:1 / -1;margin:0 18px 18px}
+}
+h2 em{font-style:italic;color:var(--forest)}
+.final h2 em{color:var(--forest)}
+
 /* trust */
-.trust{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.trust{margin-top:clamp(40px,5vw,72px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .trust div{padding:28px clamp(16px,2.5vw,36px);border-left:1px solid var(--line)}
 .trust div:first-child{border-left:0;padding-left:0}
 .trust h2{font:500 1.35rem/1.2 var(--serif)}
@@ -178,7 +212,7 @@ footer .disc b{color:var(--porcelain)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style></head><body>
 
-<div class="preview-bar" role="note">Design preview · Concept A, Editorial Private Care · Fictional demo content, not the live site</div>
+<div class="preview-bar" role="note">Design preview · Concept A, Maison (after Clinique La Prairie) · Fictional demo content, not the live site</div>
 <header>
   <div class="wrap nav">
     
@@ -202,31 +236,31 @@ footer .disc b{color:var(--porcelain)}
 </header>
 
 <main id="top">
-  <div class="wrap hero">
-    <div>
+  <div class="kv">
+    
+<figure class="ph " role="img" aria-label="Photo placeholder: Architectural key visual: a quiet consulting room or reading room with tall windows, morning light on plaster, linen and oak. No person as the focal point.">
+  <span class="ph-window" aria-hidden="true"></span>
+  <span class="ph-plant" aria-hidden="true"></span>
+  <span class="ph-table" aria-hidden="true"></span>
+  <figcaption class="ph-cap"><b>Photo placeholder · 2400 × 1200 px, 2:1 (mobile crop 4:5)</b><span>Architectural key visual: a quiet consulting room or reading room with tall windows, morning light on plaster, linen and oak. No person as the focal point.</span></figcaption>
+</figure>
+    <div class="kv-text"><div class="wrap">
       <p class="eyebrow">A more personal approach to mental healthcare</p>
       <h1>Your Wellbeing Deserves <em>Exceptional</em> Care.</h1>
       <p class="sub">Professional mental health assessments and leave documentation support, thoughtfully delivered online.</p>
       <div class="actions">
-        <a class="btn btn-primary" href="#">Begin Your Assessment</a>
-        <a class="btn btn-ghost" href="#services">Explore Our Services</a>
+        <a class="btn btn-light" href="#">Begin Your Assessment</a>
+        <a class="btn btn-outline-light" href="#services">Explore Our Services</a>
       </div>
       <p class="note">Start with a brief screening to explore whether our service may be right for you.</p>
-      <div class="lineitem">
-        <span class="li-name">Mental Health Leave Assessment</span>
-        <span class="li-meta">Online clinical assessment</span>
-        <span class="li-price">$279.99</span>
-        <a class="link" href="#how">See what happens next</a>
-      </div>
-    </div>
-    <div class="hero-photo">
-      
-<figure class="ph " role="img" aria-label="Photo placeholder: Quiet consulting-room interior: tall window with morning light, linen armchair, oak side table, a plant. Architectural, calm, no person as the focal point.">
-  <span class="ph-window" aria-hidden="true"></span>
-  <span class="ph-plant" aria-hidden="true"></span>
-  <span class="ph-table" aria-hidden="true"></span>
-  <figcaption class="ph-cap"><b>Photo placeholder · 1600 × 2000 px, 4:5</b><span>Quiet consulting-room interior: tall window with morning light, linen armchair, oak side table, a plant. Architectural, calm, no person as the focal point.</span></figcaption>
-</figure>
+    </div></div>
+  </div>
+  <div class="wrap">
+    <div class="bookbar" aria-label="Assessment summary">
+      <div><span class="bb-label">Service</span><span class="bb-val">Mental Health Leave Assessment</span></div>
+      <div><span class="bb-label">Format</span><span class="bb-val">Online clinical assessment</span></div>
+      <div><span class="bb-label">Fee</span><span class="bb-val bb-price">$279.99</span></div>
+      <a class="btn btn-primary" href="#">Begin Your Assessment</a>
     </div>
   </div>
 
@@ -236,7 +270,7 @@ footer .disc b{color:var(--porcelain)}
 
   <section class="block" aria-labelledby="u-title">
     <div class="wrap split">
-      <div><p class="eyebrow">Our service</p><h2 id="u-title" class="big">Support when your mental health affects your work.</h2></div>
+      <div><p class="eyebrow">Our service</p><h2 id="u-title" class="big">Support when your mental health <em>affects your work.</em></h2></div>
       <div>
         <div class="prose"><p>Anxiety, depression, burnout and other symptoms can make ordinary workdays feel impossible. An assessment gives you a careful, professional look at what is happening.</p><p>Your clinician considers your symptoms, how they affect your daily functioning and your work, and whether leave-related documentation is clinically appropriate.</p></div>
         <div class="fit">
@@ -250,7 +284,7 @@ footer .disc b{color:var(--porcelain)}
 
   <section class="block exp" aria-labelledby="e-title">
     <div class="wrap split">
-      <div><p class="eyebrow">The experience</p><h2 id="e-title" class="big">Expert care, arranged around your life.</h2></div>
+      <div><p class="eyebrow">The experience</p><h2 id="e-title" class="big">Expert care, <em>arranged around your life.</em></h2></div>
       <dl class="exp-list"><div><dt>Clinical expertise</dt><dd>A licensed professional counselor reviews your case and makes every clinical decision. No software decides, and payment never does.</dd></div><div><dt>Discreet by design</dt><dd>We do not bill insurance, and nothing reaches your employer unless you choose to share it.</dd></div><div><dt>Online, at your pace</dt><dd>Begin whenever suits you. Save your intake and return later; a video visit is arranged only when your clinician needs one.</dd></div><div><dt>Clear from the start</dt><dd>Each fee is published in full, and the refund rules are shown before you pay.</dd></div></dl>
     </div>
   </section>
@@ -258,7 +292,7 @@ footer .disc b{color:var(--porcelain)}
   <section class="block process" id="how" aria-labelledby="h-title">
     <div class="wrap">
       <p class="eyebrow">How it works</p>
-      <h2 id="h-title" class="big" style="max-width:18ch">Three considered steps, one private portal.</h2>
+      <h2 id="h-title" class="big" style="max-width:18ch">Three steps. <em>One private portal.</em></h2>
       <ol class="steps">
         <li><span class="num" aria-hidden="true">i.</span><h3>Start your screening</h3><p class="lede">Answer a few questions and review the next steps.</p><ul><li>About two minutes, with no account or payment.</li><li>Create your account, upload a photo ID and confirm where you are located.</li><li>Pay $279.99 once, by card, for the assessment.</li></ul></li><li><span class="num" aria-hidden="true">ii.</span><h3>Complete your assessment</h3><p class="lede">Complete the required intake and participate in the clinical assessment process.</p><ul><li>Share your history and answer two short questionnaires. You can save and return.</li><li>Upload any forms from your employer or leave administrator.</li><li>Your clinician reviews everything and books a 30-minute secure video visit when one is needed.</li></ul></li><li><span class="num" aria-hidden="true">iii.</span><h3>Receive your outcome</h3><p class="lede">Review your assessment outcome and access documentation when clinically appropriate.</p><ul><li>Your clinician makes an independent decision and explains it.</li><li>Signed documents appear in your private portal.</li><li>You read them first and choose who receives them.</li></ul></li>
       </ol>
@@ -268,7 +302,7 @@ footer .disc b{color:var(--porcelain)}
   <section class="block" id="services" aria-labelledby="s-title">
     <div class="wrap">
       <div class="split" style="align-items:end">
-        <div><p class="eyebrow">Services and pricing</p><h2 id="s-title" class="big">Transparent fees, set out plainly.</h2></div>
+        <div><p class="eyebrow">Services and pricing</p><h2 id="s-title" class="big">Clear services. <em>Published fees.</em></h2></div>
         <p style="max-width:52ch;color:var(--taupe)">Self-pay, with no subscription. We do not bill insurance. Each fee covers the clinical work described, never a particular outcome.</p>
       </div>
       <div class="menu">
@@ -303,7 +337,7 @@ footer .disc b{color:var(--porcelain)}
 
   <section class="block" id="credentials" aria-labelledby="c-title">
     <div class="wrap split">
-      <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title" class="big" style="font-size:var(--step-2)">Who provides your care</h2><p style="margin-top:16px;color:var(--taupe);max-width:40ch">Every assessment is provided by a licensed professional counselor. Your clinician’s name, license and state are also shown inside your assessment, before you share any information.</p></div>
+      <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title" class="big" style="font-size:var(--step-2)">Who provides <em>your care</em></h2><p style="margin-top:16px;color:var(--taupe);max-width:40ch">Every assessment is provided by a licensed professional counselor. Your clinician’s name, license and state are also shown inside your assessment, before you share any information.</p></div>
       <ul class="creds">
         <li><span>Clinician</span><span>Kandace S. Ross, LPC, NCC</span></li>
         <li><span>Mississippi</span><span>Licensed Professional Counselor (LPC), license no. 2581</span></li><li><span>Tennessee</span><span>Licensed Professional Counselor, Mental Health Service Provider (LPC-MHSP), license no. 7581</span></li><li><span>National</span><span>National Certified Counselor (NCC)</span></li>
@@ -314,7 +348,7 @@ footer .disc b{color:var(--porcelain)}
 
   <section class="block" id="faq" aria-labelledby="f-title">
     <div class="wrap faq-grid">
-      <div class="intro"><p class="eyebrow">FAQs</p><h2 id="f-title" class="big">Questions, answered clearly.</h2><p style="margin-top:20px;color:var(--taupe)">Still unsure? Email <span style="color:var(--espresso)">support@leavebridgehealth.com</span>.</p></div>
+      <div class="intro"><p class="eyebrow">FAQs</p><h2 id="f-title" class="big">Questions, <em>answered clearly.</em></h2><p style="margin-top:20px;color:var(--taupe)">Still unsure? Email <span style="color:var(--espresso)">support@leavebridgehealth.com</span>.</p></div>
       <div><details open><summary>What does the assessment include?</summary><p>A review of your intake, two standard questionnaires and any employer forms, a secure video visit when your clinician needs one, a written outcome, and completed leave forms when they are clinically supported.</p></details><details><summary>Does payment guarantee documentation?</summary><p>No. Payment covers the clinical assessment. Your clinician decides independently whether documentation is clinically appropriate, and your employer or leave administrator decides whether leave is approved.</p></details><details><summary>How does the process work?</summary><p>Start with a two-minute screening. Then create your account, verify your ID and location, pay, and complete your intake. Your clinician reviews your case, meets with you by video if needed, and shares the outcome in your portal.</p></details><details><summary>Who provides the assessment?</summary><p>Kandace S. Ross, LPC, NCC, a licensed professional counselor in Mississippi and Tennessee. Assessments are not provided by a physician.</p></details><details><summary>Where is the service available?</summary><p>Right now, for adults who are physically located in Mississippi or Tennessee during their care. Your clinician can only provide care where they are licensed.</p></details><details><summary>What information or forms should I prepare?</summary><p>A photo ID, any form your employer or leave administrator gave you (such as a WH-380-E), the date it is due, and notes on how your symptoms have affected your work.</p></details><details><summary>How will I receive my outcome?</summary><p>In your private patient portal. Signed documents appear there for you to read first. We do not send anything to your employer unless you ask us to.</p></details><details><summary>What if documentation is not clinically appropriate?</summary><p>Your clinician explains the decision in your portal. The fee covers the assessment whatever the outcome, and you can request a copy of your records to share with another provider.</p></details><details><summary>What are the current refund and cancellation policies?</summary><p>You get a full refund if you cancel before your clinician starts reviewing your case, if your clinician decides the service is not right for you, or if your case is paused for safety reasons. There is no refund once a determination is made, if you miss your video visit, or if you cancel less than 24 hours before it.</p></details><details><summary>Can I request recertification or additional paperwork?</summary><p>Yes. Recertification is $119.99 per visit. Additional or updated forms after your assessment are $9.99 each, and are completed only when they match your clinician’s findings.</p></details><details><summary>How can I contact support?</summary><p>Patients can message us from the portal. Everyone else can email support@leavebridgehealth.com.</p></details></div>
     </div>
   </section>
@@ -327,7 +361,7 @@ footer .disc b{color:var(--porcelain)}
   <path d="M1 19 H39" fill="none" stroke="var(--espresso)" stroke-width="1.6" stroke-linecap="round"/>
   <path d="M13 11.2 V19 M20 9 V19 M27 11.2 V19" fill="none" stroke="var(--gold)" stroke-width="1" stroke-linecap="round" opacity=".75"/>
 </svg>
-      <h2 id="final-title">Take the next step toward support.</h2>
+      <h2 id="final-title">Take the next step <em>toward support.</em></h2>
       <p>The screening takes about two minutes and asks for no payment.</p>
       <a class="btn btn-primary" href="#">Begin Your Assessment</a>
     </div>

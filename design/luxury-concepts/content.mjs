@@ -82,6 +82,7 @@ export const STEPS = [
 export const SERVICES = [
   {
     id: "assessment",
+    tag: "Assessment",
     name: "Mental Health Leave Assessment",
     price: PRICES.assessment,
     unit: "one-time fee",
@@ -98,6 +99,7 @@ export const SERVICES = [
   },
   {
     id: "recert",
+    tag: "After your assessment",
     name: "Leave Recertification",
     price: PRICES.recert,
     unit: "per recertification visit",
@@ -113,6 +115,7 @@ export const SERVICES = [
   },
   {
     id: "followup",
+    tag: "After your assessment",
     name: "Follow-up Form",
     price: PRICES.followUp,
     unit: "per form",
@@ -194,6 +197,17 @@ export const FAQ = [
     "Patients can message us from the portal. Everyone else can email support@leavebridgehealth.com.",
   ],
 ];
+
+// Section headings: short two-part lines with one emphasised phrase (set in italic by each concept).
+export const H = {
+  understand: "Support when your mental health <em>affects your work.</em>",
+  experience: "Expert care, <em>arranged around your life.</em>",
+  how: "Three steps. <em>One private portal.</em>",
+  services: "Clear services. <em>Published fees.</em>",
+  credentials: "Who provides <em>your care</em>",
+  faq: "Questions, <em>answered clearly.</em>",
+  final: "Take the next step <em>toward support.</em>",
+};
 
 export const FINAL = {
   heading: "Take the next step toward support.",

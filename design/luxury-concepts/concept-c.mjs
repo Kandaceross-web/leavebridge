@@ -57,27 +57,6 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:rg
 #mobile-menu .btn{margin-top:16px;width:100%;font:500 1rem/1 var(--sans)}
 @media (max-width:1060px){.nav{grid-template-columns:auto 1fr}.nav-links,.nav-end{display:none}.menu-btn{display:inline-flex}.wordmark{justify-items:start}.wm-text{justify-items:start}.wm-sub{padding-left:0}}
 
-.hero{position:relative;padding-block:0 clamp(40px,6vw,80px)}
-.hero .ph{width:100%;aspect-ratio:16/6;min-height:420px}
-.hero .ph .ph-cap{left:auto;right:16px;top:16px;bottom:auto}
-.hero-panel{position:relative;margin:-180px auto 0;max-width:820px;background:var(--porcelain);padding:clamp(28px,5vw,64px);text-align:center;outline:1px solid var(--gold);outline-offset:-12px;z-index:1}
-.hero-panel h1{font-size:clamp(2.4rem,5.4vw,4.6rem);margin-top:20px;line-height:1.04}
-.hero-panel h1 em{color:var(--forest)}
-.hero-panel .sub{font-size:1.2rem;max-width:40ch;margin:22px auto 0}
-.hero-panel .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 28px;margin-top:32px}
-.hero-panel .note{margin-top:16px;color:var(--taupe);font-size:1rem}
-.hero-sum{margin:32px auto 0;display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:6px 18px;padding-top:22px;border-top:1px solid var(--sand);font-size:.98rem}
-.hero-sum b{font:400 1.2rem/1.2 var(--serif)}
-.hero-sum .p{font:400 1.6rem/1 var(--serif);color:var(--forest);font-variant-numeric:lining-nums}
-.hero-sum .dot{color:var(--gold)}
-@media (max-width:760px){
-  .hero{display:flex;flex-direction:column-reverse}
-  .hero .ph{aspect-ratio:4/3;min-height:0}
-  .hero-panel{margin:0;outline-offset:-8px;text-align:left}
-  .hero-panel .actions{justify-content:flex-start}
-  .hero-sum{justify-content:flex-start}
-  .hero-panel .sub{margin-left:0}
-}
 
 .trust{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;padding-block:24px 8px;text-align:center}
 .trust h2{font:500 1rem/1.4 var(--sans);letter-spacing:.06em}
@@ -99,6 +78,31 @@ section.block{padding-block:clamp(72px,10vw,136px)}
 @media (max-width:860px){.story{grid-template-columns:1fr}.fit{grid-template-columns:1fr}}
 
 .chapters{background:var(--sand-2)}
+/* Lanserhof reference: large image, then a quiet two-column statement; focus cards with one short line each */
+.hero{padding-block:0 clamp(48px,6vw,88px)}
+.hero .ph{width:100%;aspect-ratio:16/6.4;min-height:340px}
+.hero .ph .ph-cap{left:auto;right:16px;top:16px;bottom:auto}
+.hero-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(28px,5vw,80px);align-items:end;padding-top:clamp(36px,5vw,64px)}
+.hero h1{font-size:clamp(2.6rem,5.2vw,4.6rem);margin-top:18px;line-height:1.04}
+.hero h1 em,h2 em{color:var(--forest)}
+.final h2 em{color:var(--sage)}
+.hero .sub{font-size:1.2rem}
+.hero .actions{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:26px;align-items:center}
+.hero .note{margin-top:14px;color:var(--taupe);font-size:.98rem}
+.hero-sum{margin-top:26px;padding-top:18px;border-top:1px solid var(--sand);display:flex;flex-wrap:wrap;gap:4px 20px;font-size:.98rem;color:var(--taupe);align-items:baseline}
+.hero-sum span:first-child{color:var(--espresso);font-weight:500}
+.hero-sum .p{font:400 1.5rem/1 var(--serif);color:var(--forest);margin-left:auto}
+@media (max-width:860px){.hero{display:flex;flex-direction:column-reverse}.hero .ph{aspect-ratio:4/3;min-height:0}.hero-grid{grid-template-columns:1fr;padding-bottom:32px}.hero-sum .p{margin-left:0}}
+.focus{list-style:none;padding:0;margin:56px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3vw,40px)}
+.focus > li{display:grid;gap:12px;align-content:start}
+.focus .ph{aspect-ratio:4/3;margin-bottom:8px}
+.focus .label{font:400 1.1rem/1 var(--serif);color:var(--gold-deep)}
+.focus h3{font-size:1.7rem}
+.focus .lede{color:#4f453e}
+.focus details{border-top:1px solid var(--sand);margin-top:4px}
+.focus summary{font:500 .98rem/1.3 var(--sans);padding:14px 0}
+.focus ul{margin:0 0 8px;padding-left:1.1em;display:grid;gap:8px;font-size:.98rem;color:#4f453e}
+@media (max-width:900px){.focus{grid-template-columns:1fr}}
 .chapter-list{list-style:none;padding:0;margin:64px 0 0;display:grid;gap:clamp(48px,7vw,96px)}
 .chapter{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(28px,6vw,96px);align-items:center}
 .chapter:nth-child(even) .ph{order:2}
@@ -112,8 +116,8 @@ section.block{padding-block:clamp(72px,10vw,136px)}
 @media (max-width:860px){.chapter{grid-template-columns:1fr}.chapter:nth-child(even) .ph{order:0}}
 
 .pricecard{margin-top:56px;background:var(--porcelain);border:1px solid var(--gold);padding:8px}
-.pricecard-in{border:1px solid rgba(183,154,101,.5);display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.pc{padding:clamp(28px,3.5vw,44px);display:grid;gap:16px;align-content:start;border-left:1px solid var(--sand)}
+.pricecard-in{margin-top:56px;border-top:1px solid var(--espresso);display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.pc{padding:clamp(24px,3vw,36px) clamp(20px,2.5vw,32px) 0;display:grid;gap:16px;align-content:start;border-left:1px solid var(--sand)}
 .pc:first-child{border-left:0}
 .pc h3{font-size:1.55rem;min-height:2.3em}
 .pc .price{font:400 3rem/1 var(--serif);font-variant-numeric:lining-nums tabular-nums;color:var(--forest)}
@@ -180,7 +184,7 @@ footer .disc{margin-top:48px;padding-top:24px;border-top:1px solid #d6c8b4;displ
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
-${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
+${C.PREVIEW_BAR("Concept C, Quiet Clinic (after Lanserhof)")}
 <header>
   <div class="wrap nav">
     <nav class="nav-links" aria-label="Main">${navLinks}</nav>
@@ -197,14 +201,15 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
 <main id="top">
   <div class="hero">
     ${C.photo("", "2400 × 1080 px, wide", "Wide architectural interior: arched window, plaster walls, soft daylight on linen and wood. Spacious and still, no person as the focal point.")}
-    <div class="wrap"><div class="hero-panel">
-      <p class="eyebrow">${C.HERO.eyebrow}</p>
-      <h1>Your Wellbeing Deserves <em>Exceptional</em> Care.</h1>
-      <p class="sub">${C.HERO.sub}</p>
-      <div class="actions"><a class="btn btn-primary" href="#">${C.HERO.primary}</a><a class="btn btn-text" href="#services">${C.HERO.secondary}</a></div>
-      <p class="note">${C.HERO.note}</p>
-      <p class="hero-sum"><b>Mental Health Leave Assessment</b><span class="dot" aria-hidden="true">◆</span><span>Online clinical assessment</span><span class="dot" aria-hidden="true">◆</span><span class="p">${C.PRICES.assessment}</span></p>
-    </div></div>
+    <div class="wrap hero-grid">
+      <div><p class="eyebrow">${C.HERO.eyebrow}</p><h1>Your Wellbeing Deserves <em>Exceptional</em> Care.</h1></div>
+      <div class="hero-side">
+        <p class="sub">${C.HERO.sub}</p>
+        <div class="actions"><a class="btn btn-primary" href="#">${C.HERO.primary}</a><a class="btn btn-text" href="#services">${C.HERO.secondary}</a></div>
+        <p class="note">${C.HERO.note}</p>
+        <p class="hero-sum"><span>Mental Health Leave Assessment</span><span>Online clinical assessment</span><span class="p">${C.PRICES.assessment}</span></p>
+      </div>
+    </div>
   </div>
 
   <div class="wrap"><div class="trust">
@@ -213,7 +218,7 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
 
   <section class="block" aria-labelledby="u-title">
     <div class="wrap">
-      <div class="center"><p class="eyebrow">Our service</p><h2 id="u-title">${C.UNDERSTAND.heading}</h2></div>
+      <div class="center"><p class="eyebrow">Our service</p><h2 id="u-title">${C.H.understand}</h2></div>
       <div class="story">
         ${C.photo("", "1500 × 1200 px, 5:4", "A ceramic mug and a closed notebook on an oak table, window light and soft shadow. No people or readable text.")}
         <div class="prose">
@@ -230,18 +235,19 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
 
   <section class="block" aria-labelledby="e-title" style="padding-top:clamp(48px,6vw,88px)">
     <div class="wrap">
-      <div class="center"><p class="eyebrow">The experience</p><h2 id="e-title">Expert care, arranged around your life.</h2></div>
+      <div class="center"><p class="eyebrow">The experience</p><h2 id="e-title">${C.H.experience}</h2></div>
       <div class="exp">${C.EXPERIENCE.map(([t, d]) => `<div><h3>${t}</h3><p>${d}</p></div>`).join("")}</div>
     </div>
   </section>
 
   <section class="block chapters" id="how" aria-labelledby="h-title">
     <div class="wrap">
-      <div class="center"><p class="eyebrow">How it works</p><h2 id="h-title">Your path, from first question to outcome.</h2></div>
-      <ol class="chapter-list">
-        ${C.STEPS.map((s, i) => `<li class="chapter">
-          ${C.photo("", "1600 × 1200 px, 4:3", ["A phone resting on the arm of a linen sofa in soft afternoon light, screen not readable.", "A laptop on an oak desk by a window, ready for a video call, screen not readable.", "A window seat with a cup of coffee and a closed folder, morning light, a sense of calm."][i])}
-          <div><span class="label">Step ${["one", "two", "three"][i]}</span><h3>${s.title}</h3><p class="lede">${s.lede}</p><ul>${s.details.map((d) => `<li>${d}</li>`).join("")}</ul></div>
+      <div class="center"><p class="eyebrow">How it works</p><h2 id="h-title">${C.H.how}</h2></div>
+      <ol class="focus">
+        ${C.STEPS.map((s, i) => `<li>
+          ${C.photo("", "1200 × 900 px, 4:3", ["A phone resting on the arm of a linen sofa, soft afternoon light, screen not readable.", "A laptop on an oak desk by a window, ready for a video call, screen not readable.", "A window seat with a cup of coffee and a closed folder, morning light."][i])}
+          <span class="label">${i + 1}</span><h3>${s.title}</h3><p class="lede">${s.lede}</p>
+          <details><summary>What this involves</summary><ul>${s.details.map((d) => `<li>${d}</li>`).join("")}</ul></details>
         </li>`).join("")}
       </ol>
     </div>
@@ -249,8 +255,8 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
 
   <section class="block" id="services" aria-labelledby="s-title">
     <div class="wrap">
-      <div class="center"><p class="eyebrow">Services and pricing</p><h2 id="s-title">Clear fees, thoughtfully explained.</h2><p style="margin-top:18px;color:var(--taupe)">Self-pay, with no subscription and no insurance billing. Each fee covers clinical work, never a particular outcome.</p></div>
-      <div class="pricecard"><div class="pricecard-in">
+      <div class="center"><p class="eyebrow">Services and pricing</p><h2 id="s-title">${C.H.services}</h2><p style="margin-top:18px;color:var(--taupe)">Self-pay, with no subscription and no insurance billing. Each fee covers clinical work, never a particular outcome.</p></div>
+      <div class="pricecard-in">
         ${C.SERVICES.map((s) => `<article class="pc" aria-labelledby="svc-${s.id}">
           <h3 id="svc-${s.id}">${s.name}</h3>
           <p><span class="price">${s.price}</span><span class="unit">${s.unit}</span></p>
@@ -262,14 +268,14 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
           </dl>
           <a class="btn ${s.id === "assessment" ? "btn-primary" : "btn-text"}" href="#">${s.cta}</a>
         </article>`).join("")}
-      </div></div>
+      </div>
     </div>
   </section>
 
   <section class="block chapters" id="credentials" aria-labelledby="c-title" style="padding-block:clamp(56px,7vw,96px)">
     <div class="wrap">
       <div class="credline">
-        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">Who provides your care</h2><p>${C.CLINICIAN.intro}</p></div>
+        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">${C.H.credentials}</h2><p>${C.CLINICIAN.intro}</p></div>
         <dl>
           <div><dt>Clinician</dt><dd>${C.CLINICIAN.name}, ${C.CLINICIAN.post}</dd></div>
           ${C.CLINICIAN.credentials.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}
@@ -281,7 +287,7 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
 
   <section class="block" id="faq" aria-labelledby="f-title">
     <div class="wrap">
-      <div class="center"><p class="eyebrow">FAQs</p><h2 id="f-title">Questions you may have.</h2><p style="margin-top:18px;color:var(--taupe)">Anything else? Email ${C.FOOTER.contact}.</p></div>
+      <div class="center"><p class="eyebrow">FAQs</p><h2 id="f-title">${C.H.faq}</h2><p style="margin-top:18px;color:var(--taupe)">Anything else? Email ${C.FOOTER.contact}.</p></div>
       <div class="faq">${C.FAQ.map(([q, a], i) => `<details${i === 0 ? " open" : ""}><summary>${q}</summary><p>${a}</p></details>`).join("")}</div>
     </div>
   </section>
@@ -289,7 +295,7 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
   <section class="final" aria-labelledby="final-title">
     <div class="wrap">
       ${C.bridgeMark("var(--porcelain)", "var(--gold)", 48)}
-      <h2 id="final-title">${C.FINAL.heading}</h2>
+      <h2 id="final-title">${C.H.final}</h2>
       <p>${C.FINAL.body}</p>
       <a class="btn" href="#">${C.FINAL.cta}</a>
     </div>

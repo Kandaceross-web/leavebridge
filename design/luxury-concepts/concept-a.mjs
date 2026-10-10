@@ -73,8 +73,42 @@ header{border-bottom:1px solid var(--line);background:var(--ivory);position:stic
 .hero-photo::before{content:"";position:absolute;inset:-14px 14px 14px -14px;border:1px solid var(--gold);pointer-events:none}
 @media (max-width:860px){.hero{grid-template-columns:1fr;align-items:start}.hero-photo::before{display:none}.hero-photo .ph{aspect-ratio:4/4.4}}
 
+/* key visual + booking bar (Clinique La Prairie reference: one key visual, a booking-style summary) */
+.kv{position:relative;isolation:isolate;display:grid}
+.kv .ph{grid-area:1/1;width:100%;height:100%;min-height:640px}
+.kv .ph .ph-cap{left:auto;right:16px;top:16px;bottom:auto}
+.kv-text{position:relative;z-index:1;grid-area:1/1;align-self:end;padding-block:220px 72px;background:linear-gradient(180deg,rgba(48,39,34,0) 0%,rgba(48,39,34,.62) 40%,rgba(38,31,27,.88) 100%);color:var(--porcelain)}
+.kv .eyebrow{color:#e6dccd}
+.kv h1{font-size:clamp(2.7rem,5.6vw,5.1rem);font-weight:400;margin-top:18px;max-width:17ch}
+.kv h1 em{color:#e9dcc2}
+.kv .sub{font-size:var(--step-1);line-height:1.5;max-width:44ch;margin-top:20px}
+.kv .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.kv .note{margin-top:14px;font-size:.95rem;color:#e6dccd;max-width:50ch}
+.btn-light{background:var(--porcelain);color:var(--espresso)}
+.btn-light:hover{background:var(--sand)}
+.btn-outline-light{border-color:rgba(255,253,250,.75);color:var(--porcelain)}
+.btn-outline-light:hover{background:rgba(255,253,250,.12)}
+.bookbar{position:relative;margin-top:-1px;display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto;align-items:center;gap:0;background:var(--porcelain);border:1px solid var(--line);border-top:2px solid var(--gold)}
+.bookbar > div{display:grid;gap:4px;padding:22px 28px;border-right:1px solid var(--line)}
+.bb-label{font:600 .72rem/1.3 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--taupe)}
+.bb-val{font:500 1.3rem/1.25 var(--serif)}
+.bb-price{font-size:1.7rem;font-variant-numeric:lining-nums tabular-nums}
+.bookbar .btn{margin:16px 24px}
+@media (max-width:860px){
+  .kv .ph{min-height:0}
+  .kv .ph .ph-cap{left:12px;right:12px}
+  .kv-text{padding-block:230px 40px;background:linear-gradient(180deg,rgba(48,39,34,.15) 0%,rgba(48,39,34,.7) 30%,rgba(38,31,27,.9) 100%)}
+  .bookbar{grid-template-columns:1fr 1fr}
+  .bookbar > div:first-child{grid-column:1 / -1;border-bottom:1px solid var(--line)}
+  .bookbar > div{padding:16px 18px}
+  .bookbar > div:nth-child(3){border-right:0}
+  .bookbar .btn{grid-column:1 / -1;margin:0 18px 18px}
+}
+h2 em{font-style:italic;color:var(--forest)}
+.final h2 em{color:var(--forest)}
+
 /* trust */
-.trust{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.trust{margin-top:clamp(40px,5vw,72px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .trust div{padding:28px clamp(16px,2.5vw,36px);border-left:1px solid var(--line)}
 .trust div:first-child{border-left:0;padding-left:0}
 .trust h2{font:500 1.35rem/1.2 var(--serif)}
@@ -170,7 +204,7 @@ footer .disc b{color:var(--porcelain)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 
-${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
+${C.PREVIEW_BAR("Concept A, Maison (after Clinique La Prairie)")}
 <header>
   <div class="wrap nav">
     ${C.wordmark()}
@@ -185,25 +219,25 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
 </header>
 
 <main id="top">
-  <div class="wrap hero">
-    <div>
+  <div class="kv">
+    ${C.photo("", "2400 × 1200 px, 2:1 (mobile crop 4:5)", "Architectural key visual: a quiet consulting room or reading room with tall windows, morning light on plaster, linen and oak. No person as the focal point.")}
+    <div class="kv-text"><div class="wrap">
       <p class="eyebrow">${C.HERO.eyebrow}</p>
       <h1>Your Wellbeing Deserves <em>Exceptional</em> Care.</h1>
       <p class="sub">${C.HERO.sub}</p>
       <div class="actions">
-        <a class="btn btn-primary" href="#">${C.HERO.primary}</a>
-        <a class="btn btn-ghost" href="#services">${C.HERO.secondary}</a>
+        <a class="btn btn-light" href="#">${C.HERO.primary}</a>
+        <a class="btn btn-outline-light" href="#services">${C.HERO.secondary}</a>
       </div>
       <p class="note">${C.HERO.note}</p>
-      <div class="lineitem">
-        <span class="li-name">Mental Health Leave Assessment</span>
-        <span class="li-meta">Online clinical assessment</span>
-        <span class="li-price">${C.PRICES.assessment}</span>
-        <a class="link" href="#how">See what happens next</a>
-      </div>
-    </div>
-    <div class="hero-photo">
-      ${C.photo("", "1600 × 2000 px, 4:5", "Quiet consulting-room interior: tall window with morning light, linen armchair, oak side table, a plant. Architectural, calm, no person as the focal point.")}
+    </div></div>
+  </div>
+  <div class="wrap">
+    <div class="bookbar" aria-label="Assessment summary">
+      <div><span class="bb-label">Service</span><span class="bb-val">Mental Health Leave Assessment</span></div>
+      <div><span class="bb-label">Format</span><span class="bb-val">Online clinical assessment</span></div>
+      <div><span class="bb-label">Fee</span><span class="bb-val bb-price">${C.PRICES.assessment}</span></div>
+      <a class="btn btn-primary" href="#">Begin Your Assessment</a>
     </div>
   </div>
 
@@ -213,7 +247,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
 
   <section class="block" aria-labelledby="u-title">
     <div class="wrap split">
-      <div><p class="eyebrow">Our service</p><h2 id="u-title" class="big">${C.UNDERSTAND.heading}</h2></div>
+      <div><p class="eyebrow">Our service</p><h2 id="u-title" class="big">${C.H.understand}</h2></div>
       <div>
         <div class="prose">${C.UNDERSTAND.body.map((p) => `<p>${p}</p>`).join("")}</div>
         <div class="fit">
@@ -227,7 +261,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
 
   <section class="block exp" aria-labelledby="e-title">
     <div class="wrap split">
-      <div><p class="eyebrow">The experience</p><h2 id="e-title" class="big">Expert care, arranged around your life.</h2></div>
+      <div><p class="eyebrow">The experience</p><h2 id="e-title" class="big">${C.H.experience}</h2></div>
       <dl class="exp-list">${C.EXPERIENCE.map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join("")}</dl>
     </div>
   </section>
@@ -235,7 +269,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
   <section class="block process" id="how" aria-labelledby="h-title">
     <div class="wrap">
       <p class="eyebrow">How it works</p>
-      <h2 id="h-title" class="big" style="max-width:18ch">Three considered steps, one private portal.</h2>
+      <h2 id="h-title" class="big" style="max-width:18ch">${C.H.how}</h2>
       <ol class="steps">
         ${C.STEPS.map((s, i) => `<li><span class="num" aria-hidden="true">${["i.", "ii.", "iii."][i]}</span><h3>${s.title}</h3><p class="lede">${s.lede}</p><ul>${s.details.map((d) => `<li>${d}</li>`).join("")}</ul></li>`).join("")}
       </ol>
@@ -245,7 +279,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
   <section class="block" id="services" aria-labelledby="s-title">
     <div class="wrap">
       <div class="split" style="align-items:end">
-        <div><p class="eyebrow">Services and pricing</p><h2 id="s-title" class="big">Transparent fees, set out plainly.</h2></div>
+        <div><p class="eyebrow">Services and pricing</p><h2 id="s-title" class="big">${C.H.services}</h2></div>
         <p style="max-width:52ch;color:var(--taupe)">Self-pay, with no subscription. We do not bill insurance. Each fee covers the clinical work described, never a particular outcome.</p>
       </div>
       <div class="menu">
@@ -264,7 +298,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
 
   <section class="block" id="credentials" aria-labelledby="c-title">
     <div class="wrap split">
-      <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title" class="big" style="font-size:var(--step-2)">Who provides your care</h2><p style="margin-top:16px;color:var(--taupe);max-width:40ch">${C.CLINICIAN.intro}</p></div>
+      <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title" class="big" style="font-size:var(--step-2)">${C.H.credentials}</h2><p style="margin-top:16px;color:var(--taupe);max-width:40ch">${C.CLINICIAN.intro}</p></div>
       <ul class="creds">
         <li><span>Clinician</span><span>${C.CLINICIAN.name}, ${C.CLINICIAN.post}</span></li>
         ${C.CLINICIAN.credentials.map(([k, v]) => `<li><span>${k}</span><span>${v}</span></li>`).join("")}
@@ -275,7 +309,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
 
   <section class="block" id="faq" aria-labelledby="f-title">
     <div class="wrap faq-grid">
-      <div class="intro"><p class="eyebrow">FAQs</p><h2 id="f-title" class="big">Questions, answered clearly.</h2><p style="margin-top:20px;color:var(--taupe)">Still unsure? Email <span style="color:var(--espresso)">${C.FOOTER.contact}</span>.</p></div>
+      <div class="intro"><p class="eyebrow">FAQs</p><h2 id="f-title" class="big">${C.H.faq}</h2><p style="margin-top:20px;color:var(--taupe)">Still unsure? Email <span style="color:var(--espresso)">${C.FOOTER.contact}</span>.</p></div>
       <div>${C.FAQ.map(([q, a], i) => `<details${i === 0 ? " open" : ""}><summary>${q}</summary><p>${a}</p></details>`).join("")}</div>
     </div>
   </section>
@@ -283,7 +317,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
   <section class="final" aria-labelledby="final-title">
     <div class="wrap">
       ${C.bridgeMark("var(--espresso)", "var(--gold)", 44)}
-      <h2 id="final-title">${C.FINAL.heading}</h2>
+      <h2 id="final-title">${C.H.final}</h2>
       <p>${C.FINAL.body}</p>
       <a class="btn btn-primary" href="#">${C.FINAL.cta}</a>
     </div>

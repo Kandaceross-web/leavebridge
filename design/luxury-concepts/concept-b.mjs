@@ -129,7 +129,18 @@ section.block{padding-block:clamp(64px,8vw,112px)}
 .timeline ul .ic{flex:none;width:17px;height:17px;margin-top:4px;color:var(--forest)}
 @media (max-width:900px){.timeline{grid-template-columns:1fr}.timeline::before{left:23px;right:auto;top:24px;bottom:24px;border-top:0;border-left:1px solid var(--gold)}.timeline > li{grid-template-columns:48px 1fr;gap:16px}}
 
-.prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:48px;align-items:stretch}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;margin-top:48px;align-items:stretch}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
+.tab{font:600 .95rem/1 var(--sans);padding:12px 18px;min-height:44px;border-radius:999px;border:1px solid #c6d0c2;background:var(--porcelain);color:var(--forest);cursor:pointer;transition:background .2s,color .2s}
+.tab[aria-pressed="true"]{background:var(--forest);color:var(--porcelain);border-color:var(--forest)}
+.tabs + .prices{margin-top:24px}
+.svc[hidden]{display:none}
+.svc .tag{justify-self:start;font:600 .72rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:var(--sage-2);color:var(--forest)}
+.svc.feature .tag{background:rgba(255,253,250,.14);color:var(--porcelain)}
+.svc{transition:border-color .2s,box-shadow .2s}
+.svc:hover{border-color:#c9bba6;box-shadow:0 14px 30px -24px rgba(48,39,34,.45)}
+h1 i,h2 em{font-style:italic;color:var(--forest)}
+.final h2 em{color:var(--sage)}
 .svc{border:1px solid var(--sand);border-radius:8px;background:var(--porcelain);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
 .svc .top{padding:26px 26px 22px;border-bottom:1px solid var(--sand);display:grid;gap:10px}
 .svc.feature .top{background:var(--forest);color:var(--porcelain);border-color:var(--forest)}
@@ -194,6 +205,8 @@ details p{padding:0 20px 20px;color:#4a3f38;font-size:1.02rem}
 .final p{color:#dbe4dc}
 .final .btn{background:var(--porcelain);color:var(--forest)}
 .final .btn:hover{background:var(--sage)}
+.final .btn-ondark{background:transparent;color:var(--porcelain);border-color:rgba(255,253,250,.6)}
+.final .btn-ondark:hover{background:rgba(255,253,250,.1)}
 @media (max-width:900px){.final h2,.final .side{grid-column:1 / -1}}
 
 footer{background:var(--ivory);padding-block:64px 36px;font-size:1rem;border-top:1px solid var(--sand)}
@@ -206,7 +219,7 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
-${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
+${C.PREVIEW_BAR("Concept B, Concierge (after SHA)")}
 <header>
   <div class="wrap nav">
     ${C.wordmark({ accent: "var(--gold)" })}
@@ -253,14 +266,14 @@ ${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
 
   <section class="block" aria-labelledby="e-title" style="padding-bottom:0">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">The experience</p><h2 id="e-title">Expert care, arranged around your life.</h2></div></div>
+      <div class="head"><div><p class="eyebrow">The experience</p><h2 id="e-title">${C.H.experience}</h2></div></div>
       <div class="exp">${C.EXPERIENCE.map(([t, d]) => `<div><h3>${t}</h3><p>${d}</p></div>`).join("")}</div>
     </div>
   </section>
 
   <section class="block" aria-labelledby="u-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">Our service</p><h2 id="u-title">${C.UNDERSTAND.heading}</h2></div></div>
+      <div class="head"><div><p class="eyebrow">Our service</p><h2 id="u-title">${C.H.understand}</h2></div></div>
       <div class="understand">
         <div class="prose">${C.UNDERSTAND.body.map((p) => `<p>${p}</p>`).join("")}<p class="disclose">${C.UNDERSTAND.qualification}</p></div>
         <div class="fit">
@@ -273,7 +286,7 @@ ${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
 
   <section class="block process" id="how" aria-labelledby="h-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">How it works</p><h2 id="h-title">Three clear stages, handled in one secure portal.</h2></div><p>Every clinical decision is made by your clinician. No software makes it, and payment never decides it.</p></div>
+      <div class="head"><div><p class="eyebrow">How it works</p><h2 id="h-title">${C.H.how}</h2></div><p>Every clinical decision is made by your clinician. No software makes it, and payment never decides it.</p></div>
       <ol class="timeline">
         ${C.STEPS.map((s, i) => `<li><span class="num" aria-hidden="true">${i + 1}</span><div class="card"><h3>${s.title}</h3><p class="lede">${s.lede}</p><ul>${s.details.map((d) => `<li>${icon("check")}<span>${d}</span></li>`).join("")}</ul></div></li>`).join("")}
       </ol>
@@ -282,10 +295,13 @@ ${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
 
   <section class="block" id="services" aria-labelledby="s-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">Services and pricing</p><h2 id="s-title">One clear fee for each service.</h2></div><p>Self-pay, no subscription, no insurance billing. Fees cover clinical work, never a particular outcome.</p></div>
+      <div class="head"><div><p class="eyebrow">Services and pricing</p><h2 id="s-title">${C.H.services}</h2></div><p>Self-pay, no subscription, no insurance billing. Fees cover clinical work, never a particular outcome.</p></div>
+      <div class="tabs" role="group" aria-label="Filter services">
+        ${[["all", "All services"], ["Assessment", "Assessment"], ["After your assessment", "After your assessment"]].map(([v, l], i) => `<button type="button" class="tab" data-filter="${v}" aria-pressed="${i === 0}">${l}</button>`).join("")}
+      </div>
       <div class="prices">
-        ${C.SERVICES.map((s) => `<article class="svc${s.id === "assessment" ? " feature" : ""}" aria-labelledby="svc-${s.id}">
-          <div class="top"><h3 id="svc-${s.id}">${s.name}</h3><div class="amount"><span class="price">${s.price}</span><span class="unit">${s.unit}</span></div><p class="for">${s.forWho}</p></div>
+        ${C.SERVICES.map((s) => `<article class="svc${s.id === "assessment" ? " feature" : ""}" data-tag="${s.tag}" aria-labelledby="svc-${s.id}">
+          <div class="top"><span class="tag">${s.tag}</span><h3 id="svc-${s.id}">${s.name}</h3><div class="amount"><span class="price">${s.price}</span><span class="unit">${s.unit}</span></div><p class="for">${s.forWho}</p></div>
           <div class="body">
             <div><h4>Included</h4><ul>${s.includes.map((x) => `<li>${icon("check")}<span>${x}</span></li>`).join("")}</ul></div>
             <div><h4>Before you start</h4><p>${s.prereq}</p></div>
@@ -300,7 +316,7 @@ ${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
   <section class="block" id="credentials" aria-labelledby="c-title" style="padding-top:0">
     <div class="wrap">
       <div class="credbox">
-        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">Who provides your care</h2><p>${C.CLINICIAN.intro}</p></div>
+        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">${C.H.credentials}</h2><p>${C.CLINICIAN.intro}</p></div>
         <table><tbody>
           <tr><th scope="row">Clinician</th><td>${C.CLINICIAN.name}, ${C.CLINICIAN.post}</td></tr>
           ${C.CLINICIAN.credentials.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}
@@ -312,15 +328,15 @@ ${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
 
   <section class="block faq-band" id="faq" aria-labelledby="f-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">FAQs</p><h2 id="f-title">Answers before you begin.</h2></div><p>Still have a question? Email ${C.FOOTER.contact}.</p></div>
+      <div class="head"><div><p class="eyebrow">FAQs</p><h2 id="f-title">${C.H.faq}</h2></div><p>Still have a question? Email ${C.FOOTER.contact}.</p></div>
       <div class="faq">${C.FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("")}</div>
     </div>
   </section>
 
   <section class="final" aria-labelledby="final-title">
     <div class="wrap">
-      <h2 id="final-title">${C.FINAL.heading}</h2>
-      <div class="side"><p>${C.FINAL.body}</p><a class="btn" href="#">${C.FINAL.cta} ${icon("arrow")}</a></div>
+      <h2 id="final-title">${C.H.final}</h2>
+      <div class="side"><p>${C.FINAL.body}</p><div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn" href="#">${C.FINAL.cta} ${icon("arrow")}</a><a class="btn btn-ondark" href="#faq">Contact Us</a></div></div>
     </div>
   </section>
 </main>
@@ -336,5 +352,15 @@ ${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
     <div class="disc"><p><b>In crisis?</b> ${C.FOOTER.emergency}</p><p>${C.FOOTER.clinical}</p><p style="color:var(--taupe)">© 2026 LeaveBridge Health</p></div>
   </div>
 </footer>
-${C.MENU_JS}`;
+${C.MENU_JS}
+<script>
+(function(){
+  var tabs=document.querySelectorAll('.tab');var cards=document.querySelectorAll('.svc');
+  tabs.forEach(function(t){t.addEventListener('click',function(){
+    tabs.forEach(function(x){x.setAttribute('aria-pressed',String(x===t))});
+    var f=t.getAttribute('data-filter');
+    cards.forEach(function(c){c.hidden=!(f==='all'||c.getAttribute('data-tag')===f)});
+  })});
+})();
+</script>`;
 }

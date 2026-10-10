@@ -20,16 +20,21 @@ Replace the tokens and type in `globals.css`, rebuild header/footer/wordmark, bu
 clinician profile, dashboard panels and status chips in the chosen style, then apply them to public pages and the patient journey.
 No changes to scoring, clinical rules, auth, payments, refunds or document permissions.
 
-## Concepts
-- **A, Editorial Private Care**: Cormorant Garamond + Inter. One tall 4:5 photograph with a champagne offset frame; menu-style price list
-  with dotted leaders; hairlines instead of boxes. Journey: read, trust, then act.
-- **B, Contemporary Concierge**: Libre Baskerville + Source Sans 3. Hero photo with an assessment summary panel (service, format, clinician,
-  fee, next step); sage trust band with line icons; numbered timeline; three price cards. Journey: see the offer and act in the first screen.
-- **C, Boutique Healthcare**: DM Serif Display + Jost. Wide immersive photo with an ivory panel set into it; each step told as a photo
-  "chapter"; one framed price card with gold double rules. Journey: feel reassured, then read the price.
+## Concepts (reworked 2026-10-10 after the owner's reference sites)
+References: Clinique La Prairie (primary), Lanserhof (simplicity), SHA (service presentation). The reference sites can't be
+opened in a browser from this environment, so they were studied as page structure (navigation, section order, how services
+and calls to action are presented), not as rendered visuals. No logos, wording, photos, code or claims were copied.
+Shared across all three: short two-part headings with one italic phrase, one clear primary action, published fees.
 
-Recommendation: B. Service, price and next step are all visible above the fold on desktop, and it carries over most naturally
-to the patient portal (panels, steps, status).
+- **A, Maison (after Clinique La Prairie)**: Cormorant Garamond + Inter. One full-bleed architectural key visual with the headline
+  set on it, then a booking-style bar (service, format, fee, Begin Your Assessment); menu-style price list; quiet hairlines.
+- **B, Concierge (after SHA)**: Libre Baskerville + Source Sans 3. Hero with an assessment summary panel; service cards with
+  category tags and filter tabs (All, Assessment, After your assessment); closing band with Begin and Contact actions.
+- **C, Quiet Clinic (after Lanserhof)**: DM Serif Display + Jost. A wide image, then a two-column statement (headline left,
+  copy, actions and price right); process as three image cards with one line each and details on demand; plain price columns.
+
+Recommendation: A. It follows the primary reference most closely, and the booking bar keeps the service, price and next step
+visible directly under the key visual.
 
 ## Needed from the owner
 - License numbers received 2026-10-10: MS 2581, TN 7581 (a photo is optional and not part of the design).

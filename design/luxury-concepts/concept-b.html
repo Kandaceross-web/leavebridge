@@ -126,7 +126,18 @@ section.block{padding-block:clamp(64px,8vw,112px)}
 .timeline ul .ic{flex:none;width:17px;height:17px;margin-top:4px;color:var(--forest)}
 @media (max-width:900px){.timeline{grid-template-columns:1fr}.timeline::before{left:23px;right:auto;top:24px;bottom:24px;border-top:0;border-left:1px solid var(--gold)}.timeline > li{grid-template-columns:48px 1fr;gap:16px}}
 
-.prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:48px;align-items:stretch}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;margin-top:48px;align-items:stretch}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
+.tab{font:600 .95rem/1 var(--sans);padding:12px 18px;min-height:44px;border-radius:999px;border:1px solid #c6d0c2;background:var(--porcelain);color:var(--forest);cursor:pointer;transition:background .2s,color .2s}
+.tab[aria-pressed="true"]{background:var(--forest);color:var(--porcelain);border-color:var(--forest)}
+.tabs + .prices{margin-top:24px}
+.svc[hidden]{display:none}
+.svc .tag{justify-self:start;font:600 .72rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:var(--sage-2);color:var(--forest)}
+.svc.feature .tag{background:rgba(255,253,250,.14);color:var(--porcelain)}
+.svc{transition:border-color .2s,box-shadow .2s}
+.svc:hover{border-color:#c9bba6;box-shadow:0 14px 30px -24px rgba(48,39,34,.45)}
+h1 i,h2 em{font-style:italic;color:var(--forest)}
+.final h2 em{color:var(--sage)}
 .svc{border:1px solid var(--sand);border-radius:8px;background:var(--porcelain);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
 .svc .top{padding:26px 26px 22px;border-bottom:1px solid var(--sand);display:grid;gap:10px}
 .svc.feature .top{background:var(--forest);color:var(--porcelain);border-color:var(--forest)}
@@ -191,6 +202,8 @@ details p{padding:0 20px 20px;color:#4a3f38;font-size:1.02rem}
 .final p{color:#dbe4dc}
 .final .btn{background:var(--porcelain);color:var(--forest)}
 .final .btn:hover{background:var(--sage)}
+.final .btn-ondark{background:transparent;color:var(--porcelain);border-color:rgba(255,253,250,.6)}
+.final .btn-ondark:hover{background:rgba(255,253,250,.1)}
 @media (max-width:900px){.final h2,.final .side{grid-column:1 / -1}}
 
 footer{background:var(--ivory);padding-block:64px 36px;font-size:1rem;border-top:1px solid var(--sand)}
@@ -203,7 +216,7 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 
-<div class="preview-bar" role="note">Design preview · Concept B, Contemporary Concierge · Fictional demo content, not the live site</div>
+<div class="preview-bar" role="note">Design preview · Concept B, Concierge (after SHA) · Fictional demo content, not the live site</div>
 <header>
   <div class="wrap nav">
     
@@ -265,14 +278,14 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
 
   <section class="block" aria-labelledby="e-title" style="padding-bottom:0">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">The experience</p><h2 id="e-title">Expert care, arranged around your life.</h2></div></div>
+      <div class="head"><div><p class="eyebrow">The experience</p><h2 id="e-title">Expert care, <em>arranged around your life.</em></h2></div></div>
       <div class="exp"><div><h3>Clinical expertise</h3><p>A licensed professional counselor reviews your case and makes every clinical decision. No software decides, and payment never does.</p></div><div><h3>Discreet by design</h3><p>We do not bill insurance, and nothing reaches your employer unless you choose to share it.</p></div><div><h3>Online, at your pace</h3><p>Begin whenever suits you. Save your intake and return later; a video visit is arranged only when your clinician needs one.</p></div><div><h3>Clear from the start</h3><p>Each fee is published in full, and the refund rules are shown before you pay.</p></div></div>
     </div>
   </section>
 
   <section class="block" aria-labelledby="u-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">Our service</p><h2 id="u-title">Support when your mental health affects your work.</h2></div></div>
+      <div class="head"><div><p class="eyebrow">Our service</p><h2 id="u-title">Support when your mental health <em>affects your work.</em></h2></div></div>
       <div class="understand">
         <div class="prose"><p>Anxiety, depression, burnout and other symptoms can make ordinary workdays feel impossible. An assessment gives you a careful, professional look at what is happening.</p><p>Your clinician considers your symptoms, how they affect your daily functioning and your work, and whether leave-related documentation is clinically appropriate.</p><p class="disclose">Payment covers a clinical assessment. Documentation depends on the clinician’s findings; leave approval is determined by the applicable employer or administrator.</p></div>
         <div class="fit">
@@ -285,7 +298,7 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
 
   <section class="block process" id="how" aria-labelledby="h-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">How it works</p><h2 id="h-title">Three clear stages, handled in one secure portal.</h2></div><p>Every clinical decision is made by your clinician. No software makes it, and payment never decides it.</p></div>
+      <div class="head"><div><p class="eyebrow">How it works</p><h2 id="h-title">Three steps. <em>One private portal.</em></h2></div><p>Every clinical decision is made by your clinician. No software makes it, and payment never decides it.</p></div>
       <ol class="timeline">
         <li><span class="num" aria-hidden="true">1</span><div class="card"><h3>Start your screening</h3><p class="lede">Answer a few questions and review the next steps.</p><ul><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>About two minutes, with no account or payment.</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Create your account, upload a photo ID and confirm where you are located.</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Pay $279.99 once, by card, for the assessment.</span></li></ul></div></li><li><span class="num" aria-hidden="true">2</span><div class="card"><h3>Complete your assessment</h3><p class="lede">Complete the required intake and participate in the clinical assessment process.</p><ul><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Share your history and answer two short questionnaires. You can save and return.</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Upload any forms from your employer or leave administrator.</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Your clinician reviews everything and books a 30-minute secure video visit when one is needed.</span></li></ul></div></li><li><span class="num" aria-hidden="true">3</span><div class="card"><h3>Receive your outcome</h3><p class="lede">Review your assessment outcome and access documentation when clinically appropriate.</p><ul><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Your clinician makes an independent decision and explains it.</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Signed documents appear in your private portal.</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>You read them first and choose who receives them.</span></li></ul></div></li>
       </ol>
@@ -294,26 +307,29 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
 
   <section class="block" id="services" aria-labelledby="s-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">Services and pricing</p><h2 id="s-title">One clear fee for each service.</h2></div><p>Self-pay, no subscription, no insurance billing. Fees cover clinical work, never a particular outcome.</p></div>
+      <div class="head"><div><p class="eyebrow">Services and pricing</p><h2 id="s-title">Clear services. <em>Published fees.</em></h2></div><p>Self-pay, no subscription, no insurance billing. Fees cover clinical work, never a particular outcome.</p></div>
+      <div class="tabs" role="group" aria-label="Filter services">
+        <button type="button" class="tab" data-filter="all" aria-pressed="true">All services</button><button type="button" class="tab" data-filter="Assessment" aria-pressed="false">Assessment</button><button type="button" class="tab" data-filter="After your assessment" aria-pressed="false">After your assessment</button>
+      </div>
       <div class="prices">
-        <article class="svc feature" aria-labelledby="svc-assessment">
-          <div class="top"><h3 id="svc-assessment">Mental Health Leave Assessment</h3><div class="amount"><span class="price">$279.99</span><span class="unit">one-time fee</span></div><p class="for">Adults whose mental health is affecting their work and who need leave documentation considered.</p></div>
+        <article class="svc feature" data-tag="Assessment" aria-labelledby="svc-assessment">
+          <div class="top"><span class="tag">Assessment</span><h3 id="svc-assessment">Mental Health Leave Assessment</h3><div class="amount"><span class="price">$279.99</span><span class="unit">one-time fee</span></div><p class="for">Adults whose mental health is affecting their work and who need leave documentation considered.</p></div>
           <div class="body">
             <div><h4>Included</h4><ul><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Clinical review of your intake, questionnaires and employer forms</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>A secure video visit when your clinician needs one</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>A written outcome from your clinician</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Completed FMLA or leave forms when clinically supported</span></li></ul></div>
             <div><h4>Before you start</h4><p>18 or older and located in Mississippi or Tennessee.</p></div>
             <div><h4>Scope</h4><p>Covers the assessment, not a particular outcome.</p></div>
           </div>
           <div class="foot"><a class="btn btn-primary" href="#">Begin Your Assessment</a></div>
-        </article><article class="svc" aria-labelledby="svc-recert">
-          <div class="top"><h3 id="svc-recert">Leave Recertification</h3><div class="amount"><span class="price">$119.99</span><span class="unit">per recertification visit</span></div><p class="for">Patients whose employer or leave administrator has asked to recertify an existing leave.</p></div>
+        </article><article class="svc" data-tag="After your assessment" aria-labelledby="svc-recert">
+          <div class="top"><span class="tag">After your assessment</span><h3 id="svc-recert">Leave Recertification</h3><div class="amount"><span class="price">$119.99</span><span class="unit">per recertification visit</span></div><p class="for">Patients whose employer or leave administrator has asked to recertify an existing leave.</p></div>
           <div class="body">
             <div><h4>Included</h4><ul><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Reassessment of your current condition and functioning</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>A secure video visit</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Updated documentation when clinically supported</span></li></ul></div>
             <div><h4>Before you start</h4><p>The recertification request from your employer or administrator.</p></div>
             <div><h4>Scope</h4><p>Recertification is not automatic.</p></div>
           </div>
           <div class="foot"><a class="btn btn-line" href="#">Request Recertification</a></div>
-        </article><article class="svc" aria-labelledby="svc-followup">
-          <div class="top"><h3 id="svc-followup">Follow-up Form</h3><div class="amount"><span class="price">$9.99</span><span class="unit">per form</span></div><p class="for">Existing patients whose employer sends an additional or updated form after the assessment.</p></div>
+        </article><article class="svc" data-tag="After your assessment" aria-labelledby="svc-followup">
+          <div class="top"><span class="tag">After your assessment</span><h3 id="svc-followup">Follow-up Form</h3><div class="amount"><span class="price">$9.99</span><span class="unit">per form</span></div><p class="for">Existing patients whose employer sends an additional or updated form after the assessment.</p></div>
           <div class="body">
             <div><h4>Included</h4><ul><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Your clinician completes the form if it matches their clinical findings</span></li><li><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>No new visit</span></li></ul></div>
             <div><h4>Before you start</h4><p>A completed LeaveBridge assessment.</p></div>
@@ -328,7 +344,7 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
   <section class="block" id="credentials" aria-labelledby="c-title" style="padding-top:0">
     <div class="wrap">
       <div class="credbox">
-        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">Who provides your care</h2><p>Every assessment is provided by a licensed professional counselor. Your clinician’s name, license and state are also shown inside your assessment, before you share any information.</p></div>
+        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">Who provides <em>your care</em></h2><p>Every assessment is provided by a licensed professional counselor. Your clinician’s name, license and state are also shown inside your assessment, before you share any information.</p></div>
         <table><tbody>
           <tr><th scope="row">Clinician</th><td>Kandace S. Ross, LPC, NCC</td></tr>
           <tr><th scope="row">Mississippi</th><td>Licensed Professional Counselor (LPC), license no. 2581</td></tr><tr><th scope="row">Tennessee</th><td>Licensed Professional Counselor, Mental Health Service Provider (LPC-MHSP), license no. 7581</td></tr><tr><th scope="row">National</th><td>National Certified Counselor (NCC)</td></tr>
@@ -340,15 +356,15 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
 
   <section class="block faq-band" id="faq" aria-labelledby="f-title">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">FAQs</p><h2 id="f-title">Answers before you begin.</h2></div><p>Still have a question? Email support@leavebridgehealth.com.</p></div>
+      <div class="head"><div><p class="eyebrow">FAQs</p><h2 id="f-title">Questions, <em>answered clearly.</em></h2></div><p>Still have a question? Email support@leavebridgehealth.com.</p></div>
       <div class="faq"><details><summary>What does the assessment include?</summary><p>A review of your intake, two standard questionnaires and any employer forms, a secure video visit when your clinician needs one, a written outcome, and completed leave forms when they are clinically supported.</p></details><details><summary>Does payment guarantee documentation?</summary><p>No. Payment covers the clinical assessment. Your clinician decides independently whether documentation is clinically appropriate, and your employer or leave administrator decides whether leave is approved.</p></details><details><summary>How does the process work?</summary><p>Start with a two-minute screening. Then create your account, verify your ID and location, pay, and complete your intake. Your clinician reviews your case, meets with you by video if needed, and shares the outcome in your portal.</p></details><details><summary>Who provides the assessment?</summary><p>Kandace S. Ross, LPC, NCC, a licensed professional counselor in Mississippi and Tennessee. Assessments are not provided by a physician.</p></details><details><summary>Where is the service available?</summary><p>Right now, for adults who are physically located in Mississippi or Tennessee during their care. Your clinician can only provide care where they are licensed.</p></details><details><summary>What information or forms should I prepare?</summary><p>A photo ID, any form your employer or leave administrator gave you (such as a WH-380-E), the date it is due, and notes on how your symptoms have affected your work.</p></details><details><summary>How will I receive my outcome?</summary><p>In your private patient portal. Signed documents appear there for you to read first. We do not send anything to your employer unless you ask us to.</p></details><details><summary>What if documentation is not clinically appropriate?</summary><p>Your clinician explains the decision in your portal. The fee covers the assessment whatever the outcome, and you can request a copy of your records to share with another provider.</p></details><details><summary>What are the current refund and cancellation policies?</summary><p>You get a full refund if you cancel before your clinician starts reviewing your case, if your clinician decides the service is not right for you, or if your case is paused for safety reasons. There is no refund once a determination is made, if you miss your video visit, or if you cancel less than 24 hours before it.</p></details><details><summary>Can I request recertification or additional paperwork?</summary><p>Yes. Recertification is $119.99 per visit. Additional or updated forms after your assessment are $9.99 each, and are completed only when they match your clinician’s findings.</p></details><details><summary>How can I contact support?</summary><p>Patients can message us from the portal. Everyone else can email support@leavebridgehealth.com.</p></details></div>
     </div>
   </section>
 
   <section class="final" aria-labelledby="final-title">
     <div class="wrap">
-      <h2 id="final-title">Take the next step toward support.</h2>
-      <div class="side"><p>The screening takes about two minutes and asks for no payment.</p><a class="btn" href="#">Begin Your Assessment <svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <h2 id="final-title">Take the next step <em>toward support.</em></h2>
+      <div class="side"><p>The screening takes about two minutes and asks for no payment.</p><div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn" href="#">Begin Your Assessment <svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn-ondark" href="#faq">Contact Us</a></div></div>
     </div>
   </section>
 </main>
@@ -383,6 +399,16 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&btn.getAttribute('aria-expanded')==='true'){set(false);btn.focus();}});
   panel.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
   document.querySelectorAll('a[href="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault()})});
+})();
+</script>
+<script>
+(function(){
+  var tabs=document.querySelectorAll('.tab');var cards=document.querySelectorAll('.svc');
+  tabs.forEach(function(t){t.addEventListener('click',function(){
+    tabs.forEach(function(x){x.setAttribute('aria-pressed',String(x===t))});
+    var f=t.getAttribute('data-filter');
+    cards.forEach(function(c){c.hidden=!(f==='all'||c.getAttribute('data-tag')===f)});
+  })});
 })();
 </script>
 </body></html>
