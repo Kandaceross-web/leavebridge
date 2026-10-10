@@ -1,8 +1,8 @@
 # Luxury homepage design previews
 
 Three standalone homepage concepts for the LeaveBridge Health redesign, built 2026-10-10 for owner review.
-Nothing here is wired into the app, the `public-site/` export or production. The rollback point is the tag
-`pre-luxury-redesign-2026-10-10` (main at `fd69b11`).
+Nothing here is wired into the app, the `public-site/` export or production. The rollback point is the branch
+`rollback/pre-luxury-redesign-2026-10-10` (main at `fd69b11`).
 
 | File | |
 | --- | --- |
