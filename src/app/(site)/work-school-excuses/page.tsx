@@ -8,7 +8,7 @@ import { RECORD_TITLE } from "@/config/same-day";
 
 // Owner spec V1 (2026-10-10), Part 6. The headline, subheadline, steps and price section are the owner's copy.
 // "What you receive" states the real workflow (Part 6, "Required service logic"): the screening is scored by
-// software; a work excuse letter is issued only if a licensed clinician reviews the request and approves it.
+// software; a work or school excuse letter is issued only if a licensed clinician reviews the request and approves it.
 
 const TITLE = "Work & School Excuse Evaluations | LeaveBridge Health";
 const DESCRIPTION =
@@ -22,8 +22,14 @@ export const metadata: Metadata = {
 };
 
 const STEPS = [
-  ["Tell Us About Your Absence", "Complete a confidential intake describing your symptoms, the date of your absence, and the documentation you’re requesting."],
-  ["Complete Your Assessment", "Answer the required mental health screening questions and provide any additional information needed for evaluation."],
+  [
+    "Tell Us About Your Absence",
+    "Complete a confidential intake describing your symptoms, the date of your absence, and the documentation you’re requesting.",
+  ],
+  [
+    "Complete Your Assessment",
+    "Answer the required mental health screening questions and provide any additional information needed for evaluation.",
+  ],
   [
     "Receive Your Outcome",
     "Receive your screening results and information about the documentation decision. When clinically supported and authorized, your documentation will be made available securely.",
@@ -42,8 +48,14 @@ export default async function WorkSchoolExcusesPage() {
           <div className="stack">
             <h1 id="page-title">Missed Work or School? Your Mental Health Matters, Too.</h1>
             <p className="lede">Not every difficult day comes with a fever.</p>
-            <p>Anxiety, stress, depression, and emotional exhaustion can affect your ability to work or attend school.</p>
-            <p>LeaveBridge Health provides a confidential online process for requesting an evaluation for mental health-related absence documentation.</p>
+            <p>
+              Anxiety, stress, depression, and emotional exhaustion can affect your ability to work
+              or attend school.
+            </p>
+            <p>
+              LeaveBridge Health provides a confidential online process for requesting an evaluation
+              for mental health-related absence documentation.
+            </p>
           </div>
           <div className="svc-price-chip">
             <p className="svc-price">{price}</p>
@@ -55,9 +67,13 @@ export default async function WorkSchoolExcusesPage() {
       <section className="section" aria-labelledby="care-title">
         <div className="container-narrow stack">
           <h2 id="care-title">Sometimes, You Need Time to Take Care of Yourself.</h2>
-          <p>Mental health concerns can affect concentration, energy, emotional well-being, and everyday functioning.</p>
           <p>
-            If you’ve missed work or school because of your mental health, an appropriate professional evaluation can help determine whether supporting documentation is
+            Mental health concerns can affect concentration, energy, emotional well-being, and
+            everyday functioning.
+          </p>
+          <p>
+            If you’ve missed work or school because of your mental health, an appropriate
+            professional evaluation can help determine whether supporting documentation is
             clinically warranted.
           </p>
           <p>Our goal is to make the request process clear, confidential, and convenient.</p>
@@ -90,31 +106,39 @@ export default async function WorkSchoolExcusesPage() {
         <div className="container split">
           <div className="stack">
             <h2 id="receive-title">What You Receive</h2>
-            <p className="muted">Each part of the service is different. Here is what each one is.</p>
+            <p className="muted">
+              Each part of the service is different. Here is what each one is.
+            </p>
           </div>
           <ul className="creds">
             <li>
               <span>Questionnaire</span>
-              <span>You complete standard screening questionnaires (PHQ-9, GAD-7 or both) and questions about your symptoms, work and missed time.</span>
+              <span>
+                You complete standard screening questionnaires (PHQ-9, GAD-7 or both) and questions
+                about your symptoms, work and missed time.
+              </span>
             </li>
             <li>
               <span>Screening results</span>
               <span>
-                Your answers are scored by software and you receive a digitally signed {RECORD_TITLE}. It is not a clinician examination, a diagnosis or an excuse.
+                Your answers are scored by software and you receive a digitally signed{" "}
+                {RECORD_TITLE}. It is not a clinician examination, a diagnosis or an excuse.
               </span>
             </li>
             <li>
               <span>Clinician review</span>
               <span>
-                You may then request a work excuse letter. A licensed clinician reviews your screening and your request individually, without a video visit, and may approve,
-                change or decline it.
+                You may then request a work or school excuse letter. A licensed clinician reviews
+                your screening and your request individually, without a video visit, and may
+                approve, change or decline it.
               </span>
             </li>
             <li>
               <span>Documentation</span>
               <span>
-                If the clinician approves, a signed letter with a verifiable document number is made available in your secure portal. Anyone you share it with can check it is
-                genuine and unchanged.
+                If the clinician approves, a signed letter with a verifiable document number is made
+                available in your secure portal. Anyone you share it with can check it is genuine
+                and unchanged.
               </span>
             </li>
           </ul>
@@ -130,7 +154,9 @@ export default async function WorkSchoolExcusesPage() {
             <ul className="svc-list">
               <li>
                 <Icon name="check" />
-                <span>No appointment is needed, and there is no additional charge to request a letter.</span>
+                <span>
+                  No appointment is needed, and there is no additional charge to request a letter.
+                </span>
               </li>
               <li>
                 <Icon name="check" />
@@ -139,7 +165,8 @@ export default async function WorkSchoolExcusesPage() {
             </ul>
             <ButtonLink href={start}>Begin Your Evaluation</ButtonLink>
             <p className="svc-disclosure">
-              Work or school absence documentation is issued only when supported by an appropriate clinical evaluation. Completion of a questionnaire does not guarantee an excuse.{" "}
+              Work or school absence documentation is issued only when supported by an appropriate
+              clinical evaluation. Completion of a questionnaire does not guarantee an excuse.{" "}
               <Link href="/legal/financial-policy">Refund policy</Link>
             </p>
           </div>
@@ -150,11 +177,14 @@ export default async function WorkSchoolExcusesPage() {
         <div className="container-narrow stack">
           <h2 id="crisis-title">If You Are in Crisis</h2>
           <Banner tone="info" icon="info">
-            This service is not for emergencies. If an answer about safety holds your screening, a clinician reviews it on the next business day, not in real time. If you are in
-            danger, call 911 or call or text 988. See <Link href="/crisis">crisis resources</Link>.
+            This service is not for emergencies. If an answer about safety holds your screening, a
+            clinician reviews it on the next business day, not in real time. If you are in danger,
+            call 911 or call or text 988. See <Link href="/crisis">crisis resources</Link>.
           </Banner>
           <p className="small muted">
-            Need FMLA paperwork or a longer absence? The <Link href="/fmla-evaluations">Mental Health Leave &amp; FMLA Evaluation</Link> is the right service.
+            Need FMLA paperwork or a longer absence? The{" "}
+            <Link href="/fmla-evaluations">Mental Health Leave &amp; FMLA Evaluation</Link> is the
+            right service.
           </p>
         </div>
       </section>

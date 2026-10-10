@@ -9,7 +9,10 @@ import type { ReviewTag } from "@/domain/constants";
  * statements are tagged LEGAL_REVIEW_REQUIRED (LEG-30). Nothing here states a diagnosis, eligibility,
  * a need for leave or a work restriction, and no AI model writes any of it.
  */
-export const SAME_DAY_REVIEW: Record<"questions" | "summary" | "holdRules" | "letter" | "legal", ReviewTag> = {
+export const SAME_DAY_REVIEW: Record<
+  "questions" | "summary" | "holdRules" | "letter" | "legal",
+  ReviewTag
+> = {
   questions: "CLINICAL_REVIEW_REQUIRED",
   summary: "CLINICAL_REVIEW_REQUIRED",
   holdRules: "CLINICAL_REVIEW_REQUIRED",
@@ -22,6 +25,21 @@ export const SAME_DAY_SERVICE_NAME = "Same-Day Mental Health Assessment";
 /** What the issued document is, in its own title. */
 export const RECORD_TITLE = "Automated Mental Health Screening Record";
 export const LETTER_TITLE = "Work Excuse Letter";
+
+/** What the excuse letter covers. The patient chooses when requesting; the clinician can change it (owner decision 2026-10-10). */
+export const EXCUSE_SETTINGS = ["work", "school"] as const;
+export type ExcuseSetting = (typeof EXCUSE_SETTINGS)[number];
+export const isExcuseSetting = (v: unknown): v is ExcuseSetting => v === "work" || v === "school";
+export const LETTER_TITLES: Record<ExcuseSetting, string> = {
+  work: "Work Excuse Letter",
+  school: "School Excuse Letter",
+};
+/** Who decides what the letter means for the person, printed on the letter. School wording is CLINICAL_REVIEW_REQUIRED. */
+export const LETTER_DECIDER: Record<ExcuseSetting, string> = {
+  work: "Eligibility for leave and any leave decision belong to the employer, insurer or leave administrator.",
+  school:
+    "Whether and how the absence is excused, and any academic decision, belong to the school.",
+};
 
 /** Only these screening steps are asked before sign-up: where the person is and the immediate-safety question. */
 export const SAME_DAY_SCREENING_STEPS = ["location", "safety"] as const;
@@ -38,7 +56,7 @@ export const RECORD_STATEMENT =
 export const PURCHASE_ACKNOWLEDGEMENT = [
   "This is an automated screening. Software scores my answers and issues an Automated Mental Health Screening Record; no clinician examines me or reviews my answers before it is issued, unless an answer about safety holds it for clinician review.",
   "The record is not a diagnosis, a clinician examination, an FMLA or leave certification, or a work excuse. Payment does not guarantee any letter, certification, diagnosis or leave approval.",
-  "A work excuse letter is a separate request that a licensed clinician reviews and may approve, change or decline.",
+  "A work or school excuse letter is a separate request that a licensed clinician reviews and may approve, change or decline.",
   "This service is not for emergencies. If I am in danger I will call 911 or call or text 988.",
   "If my answers are held for clinician review, a clinician reviews them on the next business day. Nobody monitors answers in real time, at night or on weekends.",
 ];
@@ -60,7 +78,8 @@ export interface ChoiceQuestion {
 export const SAFETY_QUESTION: ChoiceQuestion = {
   key: "safety_now",
   kind: "single",
-  label: "Are you currently thinking about harming yourself or someone else, or are you in immediate danger?",
+  label:
+    "Are you currently thinking about harming yourself or someone else, or are you in immediate danger?",
   options: [
     { value: "no", label: "No" },
     { value: "yes", label: "Yes" },
@@ -99,7 +118,8 @@ export const FUNCTIONING_QUESTIONS: ChoiceQuestion[] = [
   {
     key: "difficulty",
     kind: "single",
-    label: "How difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?",
+    label:
+      "How difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?",
     help: "This is the functioning question that accompanies the PHQ-9 and GAD-7.",
     options: [
       { value: "not", label: "Not difficult at all" },
@@ -123,7 +143,8 @@ export const FUNCTIONING_QUESTIONS: ChoiceQuestion[] = [
   {
     key: "work_effect",
     kind: "single",
-    label: "On days you worked in the past two weeks, how well could you do your job compared with usual?",
+    label:
+      "On days you worked in the past two weeks, how well could you do your job compared with usual?",
     options: [
       { value: "same", label: "About the same as usual" },
       { value: "somewhat_less", label: "Somewhat less well" },
@@ -145,8 +166,24 @@ export const FUNCTIONING_QUESTIONS: ChoiceQuestion[] = [
       { value: "none", label: "None of these" },
     ],
   },
-  { key: "missed_days", kind: "number", label: "In the past 30 days, about how many full workdays did you miss because of how you were feeling?", help: "Enter 0 if none.", min: 0, max: 31 },
-  { key: "partial_days", kind: "number", label: "In the past 30 days, on about how many days did you arrive late, leave early or work fewer hours because of how you were feeling?", help: "Enter 0 if none.", min: 0, max: 31 },
+  {
+    key: "missed_days",
+    kind: "number",
+    label:
+      "In the past 30 days, about how many full workdays did you miss because of how you were feeling?",
+    help: "Enter 0 if none.",
+    min: 0,
+    max: 31,
+  },
+  {
+    key: "partial_days",
+    kind: "number",
+    label:
+      "In the past 30 days, on about how many days did you arrive late, leave early or work fewer hours because of how you were feeling?",
+    help: "Enter 0 if none.",
+    min: 0,
+    max: 31,
+  },
 ];
 
 /** Labels for summary sentences, keyed by question then option value. */
@@ -160,8 +197,18 @@ export const ANSWER_PHRASE: Record<string, Record<string, string>> = {
     panic: "panic or sudden fear",
     irritability: "irritability",
   },
-  symptom_duration: { lt_2w: "less than 2 weeks", "2_4w": "2 to 4 weeks", "1_3m": "1 to 3 months", gt_3m: "more than 3 months" },
-  difficulty: { not: "not difficult at all", somewhat: "somewhat difficult", very: "very difficult", extremely: "extremely difficult" },
+  symptom_duration: {
+    lt_2w: "less than 2 weeks",
+    "2_4w": "2 to 4 weeks",
+    "1_3m": "1 to 3 months",
+    gt_3m: "more than 3 months",
+  },
+  difficulty: {
+    not: "not difficult at all",
+    somewhat: "somewhat difficult",
+    very: "very difficult",
+    extremely: "extremely difficult",
+  },
   work_status: {
     full: "working their usual schedule",
     reduced: "working fewer hours than usual",
@@ -169,7 +216,12 @@ export const ANSWER_PHRASE: Record<string, Record<string, string>> = {
     on_leave: "on leave",
     other: "in another work situation",
   },
-  work_effect: { same: "about the same as usual", somewhat_less: "somewhat less well than usual", much_less: "much less well than usual", unable: "not able to work" },
+  work_effect: {
+    same: "about the same as usual",
+    somewhat_less: "somewhat less well than usual",
+    much_less: "much less well than usual",
+    unable: "not able to work",
+  },
   work_areas: {
     focus: "focusing or remembering",
     deadlines: "finishing tasks on time",
@@ -184,22 +236,36 @@ export const ANSWER_PHRASE: Record<string, Record<string, string>> = {
  * How each instrument's published severity range is described. The ranges themselves come from the
  * instrument definition (src/domain/instruments); these phrases only name what they measure.
  */
-export const INSTRUMENT_MEASURES: Record<SameDayInstrument, { measures: string; max: number; furtherEvaluationAt: number }> = {
-  phq9: { measures: "depressive symptoms over the past two weeks", max: 27, furtherEvaluationAt: 10 },
+export const INSTRUMENT_MEASURES: Record<
+  SameDayInstrument,
+  { measures: string; max: number; furtherEvaluationAt: number }
+> = {
+  phq9: {
+    measures: "depressive symptoms over the past two weeks",
+    max: 27,
+    furtherEvaluationAt: 10,
+  },
   gad7: { measures: "anxiety symptoms over the past two weeks", max: 21, furtherEvaluationAt: 10 },
 };
 
 /** Every sentence of the summary that is not built from the person's own answers or scores (CLN-20). */
 export const SUMMARY_TEXT = {
-  intro: "This summary was generated automatically from the questionnaires completed and the answers given. It reports screening results only.",
-  scoreNotDiagnosis: "A screening score is not a diagnosis. Only an evaluation by a licensed clinician can determine whether a condition is present and what care, if any, is needed.",
-  atOrAboveCutoff: (shortName: string, cutoff: number) => `On the ${shortName}, totals of ${cutoff} or more are the published point at which further evaluation by a clinician is usually recommended.`,
-  belowCutoff: (shortName: string, cutoff: number) => `This total is below ${cutoff}, the published point at which further evaluation by a clinician is usually recommended on the ${shortName}.`,
-  selfReported: "Work and attendance details below are as reported by the person and have not been verified.",
+  intro:
+    "This summary was generated automatically from the questionnaires completed and the answers given. It reports screening results only.",
+  scoreNotDiagnosis:
+    "A screening score is not a diagnosis. Only an evaluation by a licensed clinician can determine whether a condition is present and what care, if any, is needed.",
+  atOrAboveCutoff: (shortName: string, cutoff: number) =>
+    `On the ${shortName}, totals of ${cutoff} or more are the published point at which further evaluation by a clinician is usually recommended.`,
+  belowCutoff: (shortName: string, cutoff: number) =>
+    `This total is below ${cutoff}, the published point at which further evaluation by a clinician is usually recommended on the ${shortName}.`,
+  selfReported:
+    "Work and attendance details below are as reported by the person and have not been verified.",
   nextStepsElevated:
     "These responses suggest it may help to talk with a licensed mental-health professional or a primary care provider soon about the symptoms reported.",
-  nextStepsRoutine: "If these concerns continue or get worse, consider talking with a licensed mental-health professional or a primary care provider.",
-  crisis: "If you are in danger or thinking about harming yourself, call or text 988 (Suicide & Crisis Lifeline) or call 911.",
+  nextStepsRoutine:
+    "If these concerns continue or get worse, consider talking with a licensed mental-health professional or a primary care provider.",
+  crisis:
+    "If you are in danger or thinking about harming yourself, call or text 988 (Suicide & Crisis Lifeline) or call 911.",
 };
 
 /** Rules that hold the record for clinician review instead of issuing it automatically (CLN-20, CLN-01). */
@@ -217,8 +283,17 @@ export const HOLD_REASON_LABEL: Record<string, string> = {
 
 /** The proposed letter the system prepares for the clinician to edit, approve or decline (CLN-21). */
 export const LETTER_TEXT = {
-  draftBody: (p: { name: string; screeningDate: string; start: string; end: string; practice: string }) =>
-    `${p.name} completed a mental health screening with ${p.practice} on ${p.screeningDate}. I have reviewed the information available to me. I recommend that ${p.name} be excused from work from ${p.start} through ${p.end}.`,
-  draftReturn: (p: { name: string; date: string }) => `${p.name} may return to work on ${p.date}.`,
-  privacyLine: "This letter does not include diagnosis or treatment details. Please direct questions about it to the issuing practice.",
+  draftBody: (p: {
+    name: string;
+    screeningDate: string;
+    start: string;
+    end: string;
+    practice: string;
+    setting: ExcuseSetting;
+  }) =>
+    `${p.name} completed a mental health screening with ${p.practice} on ${p.screeningDate}. I have reviewed the information available to me. I recommend that ${p.name} be excused from ${p.setting === "school" ? "school, including classes and required school activities," : "work"} from ${p.start} through ${p.end}.`,
+  draftReturn: (p: { name: string; date: string; setting: ExcuseSetting }) =>
+    `${p.name} may return to ${p.setting} on ${p.date}.`,
+  privacyLine:
+    "This letter does not include diagnosis or treatment details. Please direct questions about it to the issuing practice.",
 };

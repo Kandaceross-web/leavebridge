@@ -81,7 +81,7 @@ export default async function SameDayOpsPage() {
       </section>
 
       <section aria-labelledby="letters-h" className="stack stack-sm">
-        <h2 id="letters-h">Work excuse letter requests</h2>
+        <h2 id="letters-h">Excuse letter requests</h2>
         {q.letters.length ? (
           <ul className="list-rows">
             {q.letters.map((l) => (

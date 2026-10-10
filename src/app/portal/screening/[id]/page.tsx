@@ -235,17 +235,17 @@ export default async function ScreeningHome({
         </section>
       ) : null}
 
-      {/* ---- Work excuse letter ---- */}
+      {/* ---- Work or school excuse letter ---- */}
       {record?.status === "valid" && screening.status === "issued" && extra.letterSetting.enabled ? (
         <section className="card-flat stack stack-sm" aria-labelledby="letter-h">
           <div className="card-head">
-            <h2 id="letter-h">Work excuse letter</h2>
+            <h2 id="letter-h">Excuse letter</h2>
             {letter ? <Badge tone={LETTER_STATUS[letter.status]!.tone}>{LETTER_STATUS[letter.status]!.label}</Badge> : null}
           </div>
           {!letter ? (
             <>
               <p>
-                Your screening record is not a work excuse. You can ask a licensed clinician to review your screening and consider a work excuse letter. The clinician decides whether to
+                Your screening record is not an excuse. You can ask a licensed clinician to review your screening and consider a work or school excuse letter. The clinician decides whether to
                 issue one, and may change or decline it. Each screening can have one letter request.
               </p>
               <div className="btn-row">

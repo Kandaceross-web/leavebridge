@@ -185,6 +185,20 @@ test("same-day screening: sign up, confirm email, pay, answer, get a signed reco
   ).toBeVisible();
   await check(page);
 
+  // A school excuse letter request goes to a clinician; nothing is issued yet.
+  const screeningPath = new URL(page.url()).pathname;
+  await page.getByRole("link", { name: /request a letter/i }).click();
+  await page.waitForURL(/\/letter$/);
+  await check(page);
+  await page.locator('input[name="setting"][value="school"]').check({ force: true });
+  const today = new Date().toISOString().slice(0, 10);
+  await page.locator('input[name="startDate"]').fill(today);
+  await page.locator('input[name="endDate"]').fill(today);
+  await page.getByRole("button", { name: /send request/i }).click();
+  await page.waitForURL(/\?letter=requested/);
+  await expect(page.getByText(/a clinician is reviewing your request/i)).toBeVisible();
+  expect(new URL(page.url()).pathname).toBe(screeningPath);
+
   // Public verification, signed out: status only, no health information or identity.
   await page.context().clearCookies();
   await page.goto("/verify");

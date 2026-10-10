@@ -42,7 +42,7 @@ export const DOCUMENT_KIND_LABEL: Record<DocumentKind, string> = {
   employer_form_completion: "Completed employer or leave-administrator form",
   return_to_work: "Return-to-work note",
   determination_letter: "Assessment summary letter",
-  work_excuse_letter: "Work excuse letter",
+  work_excuse_letter: "Excuse letter",
 };
 
 /**

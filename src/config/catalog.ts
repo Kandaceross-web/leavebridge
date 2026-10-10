@@ -322,8 +322,8 @@ export const CONTENT: ContentSeed[] = [
     2,
     "school",
     "Can mental health concerns support a school absence?",
-    "Mental health concerns can affect school attendance. At present, letters issued through this service cover absence from work only, and the service is for adults 18 and older. If you need documentation for a school absence, please contact us before you pay.",
-    "OWNER_DECISION_REQUIRED",
+    "Yes. When you request a letter after your screening, you can choose school instead of work. School letters are for adult students 18 and older, such as at a college, university or training program. A licensed clinician reviews your request and decides whether to issue a letter. Your school decides whether to accept it.",
+    "CLINICAL_REVIEW_REQUIRED",
   ),
   faq(
     "excuses",
@@ -338,7 +338,7 @@ export const CONTENT: ContentSeed[] = [
     4,
     "guarantee",
     "Does completing the assessment guarantee an excuse?",
-    "No. The screening record is not an excuse. A work excuse letter is issued only if a licensed clinician reviews your request and decides it is clinically supported.",
+    "No. The screening record is not an excuse. A work or school excuse letter is issued only if a licensed clinician reviews your request and decides it is clinically supported.",
     null,
   ),
   faq(
@@ -354,7 +354,7 @@ export const CONTENT: ContentSeed[] = [
     6,
     "clinician-review",
     "Does the $29.99 price include clinician review?",
-    "The screening itself is scored by software, not by a clinician. There is no additional charge to request a work excuse letter, and every letter request is reviewed individually by a licensed clinician. There is no video visit.",
+    "The screening itself is scored by software, not by a clinician. There is no additional charge to request a work or school excuse letter, and every letter request is reviewed individually by a licensed clinician. There is no video visit.",
     "OWNER_DECISION_REQUIRED",
   ),
   faq(
