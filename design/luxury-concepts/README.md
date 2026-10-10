@@ -1,6 +1,6 @@
 # Luxury redesign: three homepage concepts (preview stage)
 
-Status 2026-10-10: previews only. Nothing in `src/` or `public-site/` changed; production (main → Cloudflare Pages) untouched.
+Status 2026-10-10 (revised the same day for the owner's updated brief: less personal focus, no founder section, headshot or identity-based imagery; credentials kept in a discreet Clinical Credentials section; new "The experience" section). Previews only. Nothing in `src/` or `public-site/` changed; production (main → Cloudflare Pages) untouched.
 Rollback point: commit `fd69b11` on main (live site as of 2026-10-10).
 
 Rebuild: `node design/luxury-concepts/build.mjs --shots` (needs `npm ci`; writes concept-*.html and screenshots/).
@@ -28,13 +28,14 @@ No changes to scoring, clinical rules, auth, payments, refunds or document permi
 - **C, Boutique Healthcare**: DM Serif Display + Jost. Wide immersive photo with an ivory panel set into it; each step told as a photo
   "chapter"; one framed price card with gold double rules. Journey: feel reassured, then read the price.
 
-Recommendation: B. Price, clinician and next step are all visible above the fold on desktop, and it carries over most naturally
+Recommendation: B. Service, price and next step are all visible above the fold on desktop, and it carries over most naturally
 to the patient portal (panels, steps, status).
 
 ## Needed from the owner
-- Professional photo (1200 × 1500 px) and biography; license numbers.
+- License numbers for the Clinical Credentials section (a photo is optional and not part of the design).
 - Confirm display name "Kandace S. Ross, LPC, NCC" (records say Kandace Ross, LPC; LPC-MHSP in Tennessee).
-- Editorial photos: licensed stock or commissioned (preview uses labeled placeholders; this environment cannot reach stock sites).
+- Editorial photos: licensed stock or commissioned interiors and architectural details, with no person as the focal point
+  (preview uses labeled placeholders; this environment cannot reach stock sites).
 - Confirm the $9.99 follow-up form meaning (catalog marks it OWNER_DECISION_REQUIRED).
 - An accessibility statement page does not exist yet (footer link is a placeholder).
 - support@leavebridgehealth.com mailbox is not set up yet.

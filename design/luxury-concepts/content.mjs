@@ -14,21 +14,21 @@ export const STATES = ["Mississippi", "Tennessee"];
 export const NAV = [
   ["Services", "#services"],
   ["How It Works", "#how"],
-  ["About", "#clinician"],
+  ["About", "#credentials"],
   ["FAQs", "#faq"],
 ];
 
 export const HERO = {
   eyebrow: "A more personal approach to mental healthcare",
   headline: "Your Wellbeing Deserves Exceptional Care.",
-  sub: "Private, professional mental health assessments and leave documentation support, thoughtfully delivered online.",
+  sub: "Professional mental health assessments and leave documentation support, thoughtfully delivered online.",
   primary: "Begin Your Assessment",
   secondary: "Explore Our Services",
   note: "Start with a brief screening to explore whether our service may be right for you.",
 };
 
 export const TRUST = [
-  ["Licensed mental health professional", "Every assessment is completed by Kandace S. Ross, LPC, NCC."],
+  ["Licensed mental health professional", "Every assessment and decision is made by a licensed professional counselor."],
   ["Convenient online assessments", "A secure portal, with a video visit when your clinician needs one."],
   ["Private patient experience", "You review your documents first and decide who receives them."],
 ];
@@ -130,17 +130,24 @@ export const SERVICES = [
 export const CLINICIAN = {
   name: "Kandace S. Ross",
   post: "LPC, NCC",
-  role: "Founder and clinician",
   credentials: [
     ["Mississippi", "Licensed Professional Counselor (LPC)"],
     ["Tennessee", "Licensed Professional Counselor, Mental Health Service Provider (LPC-MHSP)"],
     ["National", "National Certified Counselor (NCC)"],
   ],
-  availability: "Sees patients located in Mississippi and Tennessee.",
-  bioPlaceholder:
-    "Biography to be supplied: your training, years in practice, the people you work with, and why you started LeaveBridge Health.",
+  availability: "Patients located in Mississippi and Tennessee",
+  intro:
+    "Every assessment is provided by a licensed professional counselor. Your clinician’s name, license and state are also shown inside your assessment, before you share any information.",
   licensePlaceholder: "License numbers to be added",
 };
+
+// Quality and convenience of the experience, stated only as far as the current system supports.
+export const EXPERIENCE = [
+  ["Clinical expertise", "A licensed professional counselor reviews your case and makes every clinical decision. No software decides, and payment never does."],
+  ["Discreet by design", "We do not bill insurance, and nothing reaches your employer unless you choose to share it."],
+  ["Online, at your pace", "Begin whenever suits you. Save your intake and return later; a video visit is arranged only when your clinician needs one."],
+  ["Clear from the start", "Each fee is published in full, and the refund rules are shown before you pay."],
+];
 
 export const FAQ = [
   [
@@ -154,6 +161,10 @@ export const FAQ = [
   [
     "How does the process work?",
     "Start with a two-minute screening. Then create your account, verify your ID and location, pay, and complete your intake. Your clinician reviews your case, meets with you by video if needed, and shares the outcome in your portal.",
+  ],
+  [
+    "Who provides the assessment?",
+    "Kandace S. Ross, LPC, NCC, a licensed professional counselor in Mississippi and Tennessee. Assessments are not provided by a physician.",
   ],
   [
     "Where is the service available?",

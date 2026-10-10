@@ -160,6 +160,20 @@ section.block{padding-block:clamp(64px,8vw,112px)}
 .missing{padding:16px 18px;border:1px dashed var(--gold);border-radius:6px;background:var(--ivory);font-size:.98rem}
 @media (max-width:900px){.clin .ph{grid-column:1 / -1;max-width:420px}.clin .info{grid-column:1 / -1}.clin th{width:110px}}
 
+.exp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:40px}
+.exp > div{border-top:2px solid var(--forest);padding-top:18px}
+.exp h3{font-size:1.2rem;line-height:1.3}
+.exp p{margin-top:8px;font-size:1rem;color:#4f453e}
+@media (max-width:960px){.exp{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.exp{grid-template-columns:1fr}}
+.credbox{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,5vw,72px);padding:clamp(24px,4vw,44px);border:1px solid var(--sand);border-radius:8px;background:var(--porcelain)}
+.credbox h2{font-size:1.6rem;margin-top:12px}
+.credbox p{margin-top:12px;color:var(--taupe);font-size:1rem}
+.credbox table{border-collapse:collapse;width:100%;font-size:1rem}
+.credbox th,.credbox td{text-align:left;padding:11px 0;border-bottom:1px solid var(--sand);vertical-align:top}
+.credbox th{font:600 .78rem/1.8 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--taupe);width:150px;padding-right:16px}
+.tbd{font-style:italic;color:var(--taupe)}
+@media (max-width:860px){.credbox{grid-template-columns:1fr}.credbox th{width:110px}}
 .faq-band{background:var(--sage-2);border-top:1px solid #d3dccf}
 .faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px;margin-top:40px;align-items:start}
 details{background:var(--porcelain);border:1px solid #d3dccf;border-radius:8px}
@@ -202,12 +216,12 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
 </svg>
   <span class="wm-text" aria-hidden="true"><span class="wm-name">LeaveBridge</span><span class="wm-sub">Health</span></span>
 </a>
-    <nav class="nav-links" aria-label="Main"><a href="#services">Services</a><a href="#how">How It Works</a><a href="#clinician">About</a><a href="#faq">FAQs</a></nav>
+    <nav class="nav-links" aria-label="Main"><a href="#services">Services</a><a href="#how">How It Works</a><a href="#credentials">About</a><a href="#faq">FAQs</a></nav>
     <div class="nav-end"><a class="signin" href="#">Patient Sign In</a><a class="btn btn-primary" href="#">Begin Your Assessment</a></div>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn><span class="mb-label">Menu</span></button>
   </div>
   <div id="mobile-menu" class="wrap" hidden>
-    <nav aria-label="Mobile"><a href="#services">Services</a><a href="#how">How It Works</a><a href="#clinician">About</a><a href="#faq">FAQs</a><a href="#">Patient Sign In</a></nav>
+    <nav aria-label="Mobile"><a href="#services">Services</a><a href="#how">How It Works</a><a href="#credentials">About</a><a href="#faq">FAQs</a><a href="#">Patient Sign In</a></nav>
     <a class="btn btn-primary" href="#">Begin Your Assessment</a>
   </div>
 </header>
@@ -217,7 +231,7 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
     <div class="hero-text">
       <p class="eyebrow">A more personal approach to mental healthcare</p>
       <h1>Your Wellbeing Deserves <i>Exceptional</i> Care.</h1>
-      <p class="sub">Private, professional mental health assessments and leave documentation support, thoughtfully delivered online.</p>
+      <p class="sub">Professional mental health assessments and leave documentation support, thoughtfully delivered online.</p>
       <div class="actions">
         <a class="btn btn-primary" href="#">Begin Your Assessment <svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a class="btn btn-line" href="#services">Explore Our Services</a>
@@ -226,18 +240,18 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
     </div>
     <div class="hero-visual">
       
-<figure class="ph " role="img" aria-label="Photo placeholder: A Black woman in a warm, quiet living room on a video call, natural window light, sage and wood tones. Must not appear to be our clinician or a patient.">
+<figure class="ph " role="img" aria-label="Photo placeholder: Warm, uncluttered home study: window light across an oak desk, closed laptop, ceramic cup, linen curtain. Detail-led, no person as the focal point.">
   <span class="ph-window" aria-hidden="true"></span>
   <span class="ph-plant" aria-hidden="true"></span>
   <span class="ph-table" aria-hidden="true"></span>
-  <figcaption class="ph-cap"><b>Photo placeholder · 1500 × 1800 px, 5:6</b><span>A Black woman in a warm, quiet living room on a video call, natural window light, sage and wood tones. Must not appear to be our clinician or a patient.</span></figcaption>
+  <figcaption class="ph-cap"><b>Photo placeholder · 1500 × 1800 px, 5:6</b><span>Warm, uncluttered home study: window light across an oak desk, closed laptop, ceramic cup, linen curtain. Detail-led, no person as the focal point.</span></figcaption>
 </figure>
       <aside class="panel" aria-labelledby="panel-title">
         <span class="ph-tag">Your assessment</span>
         <h2 id="panel-title">Mental Health Leave Assessment</h2>
         <dl>
           <dt>Format</dt><dd>Online clinical assessment</dd>
-          <dt>Clinician</dt><dd>Kandace S. Ross, LPC, NCC</dd>
+          <dt>Provided by</dt><dd>Licensed professional counselor</dd>
           <dt>Fee</dt><dd class="price">$279.99</dd>
         </dl>
         <a class="btn btn-primary" href="#">Start your screening <svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -246,8 +260,15 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
   </div>
 
   <div class="trust-band"><div class="wrap trust">
-    <div><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="9" r="5"/><path d="M8.5 13 7 21l5-2.5L17 21l-1.5-8"/></svg><h2>Licensed mental health professional</h2><p>Every assessment is completed by Kandace S. Ross, LPC, NCC.</p></div><div><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg><h2>Convenient online assessments</h2><p>A secure portal, with a video visit when your clinician needs one.</p></div><div><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><h2>Private patient experience</h2><p>You review your documents first and decide who receives them.</p></div>
+    <div><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="9" r="5"/><path d="M8.5 13 7 21l5-2.5L17 21l-1.5-8"/></svg><h2>Licensed mental health professional</h2><p>Every assessment and decision is made by a licensed professional counselor.</p></div><div><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg><h2>Convenient online assessments</h2><p>A secure portal, with a video visit when your clinician needs one.</p></div><div><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><h2>Private patient experience</h2><p>You review your documents first and decide who receives them.</p></div>
   </div></div>
+
+  <section class="block" aria-labelledby="e-title" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow">The experience</p><h2 id="e-title">Expert care, arranged around your life.</h2></div></div>
+      <div class="exp"><div><h3>Clinical expertise</h3><p>A licensed professional counselor reviews your case and makes every clinical decision. No software decides, and payment never does.</p></div><div><h3>Discreet by design</h3><p>We do not bill insurance, and nothing reaches your employer unless you choose to share it.</p></div><div><h3>Online, at your pace</h3><p>Begin whenever suits you. Save your intake and return later; a video visit is arranged only when your clinician needs one.</p></div><div><h3>Clear from the start</h3><p>Each fee is published in full, and the refund rules are shown before you pay.</p></div></div>
+    </div>
+  </section>
 
   <section class="block" aria-labelledby="u-title">
     <div class="wrap">
@@ -304,26 +325,16 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
     </div>
   </section>
 
-  <section class="block process" id="clinician" aria-labelledby="c-title">
+  <section class="block" id="credentials" aria-labelledby="c-title" style="padding-top:0">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">Clinical leadership</p><h2 id="c-title">Meet the clinician behind your assessment.</h2></div></div>
-      <div class="clin">
-        
-<figure class="ph " role="img" aria-label="Photo placeholder: Your own professional photograph goes here. No stand-in or invented headshot.">
-  <span class="ph-window" aria-hidden="true"></span>
-  <span class="ph-plant" aria-hidden="true"></span>
-  <span class="ph-table" aria-hidden="true"></span>
-  <figcaption class="ph-cap"><b>Photo placeholder · 1200 × 1500 px, 4:5</b><span>Your own professional photograph goes here. No stand-in or invented headshot.</span></figcaption>
-</figure>
-        <div class="info">
-          <h3>Kandace S. Ross</h3>
-          <p class="post">LPC, NCC · Founder and clinician</p>
-          <table><tbody>
-            <tr><th scope="row">Mississippi</th><td>Licensed Professional Counselor (LPC)</td></tr><tr><th scope="row">Tennessee</th><td>Licensed Professional Counselor, Mental Health Service Provider (LPC-MHSP)</td></tr><tr><th scope="row">National</th><td>National Certified Counselor (NCC)</td></tr>
-            <tr><th scope="row">Sees patients in</th><td><div class="chips"><span class="chip">Mississippi</span><span class="chip">Tennessee</span></div></td></tr>
-          </tbody></table>
-          <p class="missing"><b>To be supplied.</b> Biography to be supplied: your training, years in practice, the people you work with, and why you started LeaveBridge Health. License numbers to be added.</p>
-        </div>
+      <div class="credbox">
+        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">Who provides your care</h2><p>Every assessment is provided by a licensed professional counselor. Your clinician’s name, license and state are also shown inside your assessment, before you share any information.</p></div>
+        <table><tbody>
+          <tr><th scope="row">Clinician</th><td>Kandace S. Ross, LPC, NCC</td></tr>
+          <tr><th scope="row">Mississippi</th><td>Licensed Professional Counselor (LPC)</td></tr><tr><th scope="row">Tennessee</th><td>Licensed Professional Counselor, Mental Health Service Provider (LPC-MHSP)</td></tr><tr><th scope="row">National</th><td>National Certified Counselor (NCC)</td></tr>
+          <tr><th scope="row">Serves</th><td><div class="chips"><span class="chip">Mississippi</span><span class="chip">Tennessee</span></div></td></tr>
+          <tr><th scope="row">License numbers</th><td class="tbd">License numbers to be added</td></tr>
+        </tbody></table>
       </div>
     </div>
   </section>
@@ -331,7 +342,7 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
   <section class="block faq-band" id="faq" aria-labelledby="f-title">
     <div class="wrap">
       <div class="head"><div><p class="eyebrow">FAQs</p><h2 id="f-title">Answers before you begin.</h2></div><p>Still have a question? Email support@leavebridgehealth.com.</p></div>
-      <div class="faq"><details><summary>What does the assessment include?</summary><p>A review of your intake, two standard questionnaires and any employer forms, a secure video visit when your clinician needs one, a written outcome, and completed leave forms when they are clinically supported.</p></details><details><summary>Does payment guarantee documentation?</summary><p>No. Payment covers the clinical assessment. Your clinician decides independently whether documentation is clinically appropriate, and your employer or leave administrator decides whether leave is approved.</p></details><details><summary>How does the process work?</summary><p>Start with a two-minute screening. Then create your account, verify your ID and location, pay, and complete your intake. Your clinician reviews your case, meets with you by video if needed, and shares the outcome in your portal.</p></details><details><summary>Where is the service available?</summary><p>Right now, for adults who are physically located in Mississippi or Tennessee during their care. Your clinician can only provide care where they are licensed.</p></details><details><summary>What information or forms should I prepare?</summary><p>A photo ID, any form your employer or leave administrator gave you (such as a WH-380-E), the date it is due, and notes on how your symptoms have affected your work.</p></details><details><summary>How will I receive my outcome?</summary><p>In your private patient portal. Signed documents appear there for you to read first. We do not send anything to your employer unless you ask us to.</p></details><details><summary>What if documentation is not clinically appropriate?</summary><p>Your clinician explains the decision in your portal. The fee covers the assessment whatever the outcome, and you can request a copy of your records to share with another provider.</p></details><details><summary>What are the current refund and cancellation policies?</summary><p>You get a full refund if you cancel before your clinician starts reviewing your case, if your clinician decides the service is not right for you, or if your case is paused for safety reasons. There is no refund once a determination is made, if you miss your video visit, or if you cancel less than 24 hours before it.</p></details><details><summary>Can I request recertification or additional paperwork?</summary><p>Yes. Recertification is $119.99 per visit. Additional or updated forms after your assessment are $9.99 each, and are completed only when they match your clinician’s findings.</p></details><details><summary>How can I contact support?</summary><p>Patients can message us from the portal. Everyone else can email support@leavebridgehealth.com.</p></details></div>
+      <div class="faq"><details><summary>What does the assessment include?</summary><p>A review of your intake, two standard questionnaires and any employer forms, a secure video visit when your clinician needs one, a written outcome, and completed leave forms when they are clinically supported.</p></details><details><summary>Does payment guarantee documentation?</summary><p>No. Payment covers the clinical assessment. Your clinician decides independently whether documentation is clinically appropriate, and your employer or leave administrator decides whether leave is approved.</p></details><details><summary>How does the process work?</summary><p>Start with a two-minute screening. Then create your account, verify your ID and location, pay, and complete your intake. Your clinician reviews your case, meets with you by video if needed, and shares the outcome in your portal.</p></details><details><summary>Who provides the assessment?</summary><p>Kandace S. Ross, LPC, NCC, a licensed professional counselor in Mississippi and Tennessee. Assessments are not provided by a physician.</p></details><details><summary>Where is the service available?</summary><p>Right now, for adults who are physically located in Mississippi or Tennessee during their care. Your clinician can only provide care where they are licensed.</p></details><details><summary>What information or forms should I prepare?</summary><p>A photo ID, any form your employer or leave administrator gave you (such as a WH-380-E), the date it is due, and notes on how your symptoms have affected your work.</p></details><details><summary>How will I receive my outcome?</summary><p>In your private patient portal. Signed documents appear there for you to read first. We do not send anything to your employer unless you ask us to.</p></details><details><summary>What if documentation is not clinically appropriate?</summary><p>Your clinician explains the decision in your portal. The fee covers the assessment whatever the outcome, and you can request a copy of your records to share with another provider.</p></details><details><summary>What are the current refund and cancellation policies?</summary><p>You get a full refund if you cancel before your clinician starts reviewing your case, if your clinician decides the service is not right for you, or if your case is paused for safety reasons. There is no refund once a determination is made, if you miss your video visit, or if you cancel less than 24 hours before it.</p></details><details><summary>Can I request recertification or additional paperwork?</summary><p>Yes. Recertification is $119.99 per visit. Additional or updated forms after your assessment are $9.99 each, and are completed only when they match your clinician’s findings.</p></details><details><summary>How can I contact support?</summary><p>Patients can message us from the portal. Everyone else can email support@leavebridgehealth.com.</p></details></div>
     </div>
   </section>
 
@@ -357,7 +368,7 @@ footer .disc{margin-top:48px;padding:20px 22px;border:1px solid var(--sand);bord
   <span class="wm-text" aria-hidden="true"><span class="wm-name">LeaveBridge</span><span class="wm-sub">Health</span></span>
 </a><p style="margin-top:16px;max-width:34ch;color:var(--taupe)">Mental health leave assessments and documentation support, delivered online.</p><p style="margin-top:12px">support@leavebridgehealth.com</p></div>
       <div><h3>Services</h3><ul><li><a href="#services">Leave Assessment</a></li><li><a href="#services">Recertification</a></li><li><a href="#services">Follow-up Forms</a></li><li><a href="#services">Pricing</a></li></ul></div>
-      <div><h3>Practice</h3><ul><li><a href="#how">How It Works</a></li><li><a href="#clinician">About</a></li><li><a href="#faq">FAQs</a></li><li><a href="#">Patient Sign In</a></li></ul></div>
+      <div><h3>Practice</h3><ul><li><a href="#how">How It Works</a></li><li><a href="#credentials">About</a></li><li><a href="#faq">FAQs</a></li><li><a href="#">Patient Sign In</a></li></ul></div>
       <div><h3>Policies</h3><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Notice of Privacy Practices</a></li><li><a href="#">Terms of Use</a></li><li><a href="#">Refund and Cancellation Policy</a></li><li><a href="#">Accessibility</a></li></ul></div>
     </div>
     <div class="disc"><p><b>In crisis?</b> LeaveBridge Health is not an emergency service. If you are in crisis, call or text 988, the Suicide and Crisis Lifeline, or call 911.</p><p>Assessments are provided by a licensed professional counselor, not a physician. Leave eligibility and approval are decided by your employer or leave administrator.</p><p style="color:var(--taupe)">© 2026 LeaveBridge Health</p></div>

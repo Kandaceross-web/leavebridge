@@ -123,7 +123,13 @@ section.block{padding-block:clamp(64px,9vw,128px)}
 .menu-item .act{grid-column:1;align-self:end}
 @media (max-width:760px){.menu-item{grid-template-columns:1fr}.menu-head{flex-wrap:wrap}.menu-head h3{white-space:normal;flex-basis:100%}.menu-head .dots{display:none}}
 
-/* clinician */
+/* experience + credentials */
+.exp{padding-block:clamp(56px,7vw,104px)}
+.exp-list{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:36px 48px}
+.exp-list dt{font:500 1.45rem/1.2 var(--serif);padding-top:16px;border-top:1px solid var(--gold)}
+.exp-list dd{margin:10px 0 0;color:var(--taupe);font-size:.98rem}
+@media (max-width:620px){.exp-list{grid-template-columns:1fr}}
+.tbd{font-style:italic;color:var(--taupe)}
 .profile{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:start}
 .profile .ph{aspect-ratio:4/5}
 .profile h2{font-size:var(--step-4);font-weight:400;margin-top:14px}
@@ -197,7 +203,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
       </div>
     </div>
     <div class="hero-photo">
-      ${C.photo("", "1600 × 2000 px, 4:5", "A Black woman in her 30s at a wooden desk by a window, laptop open, calm and natural expression. Cream, taupe and sage tones. Must not appear to be our clinician or a patient.")}
+      ${C.photo("", "1600 × 2000 px, 4:5", "Quiet consulting-room interior: tall window with morning light, linen armchair, oak side table, a plant. Architectural, calm, no person as the focal point.")}
     </div>
   </div>
 
@@ -216,6 +222,13 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
         </div>
         <p class="disclose"><b>Before you begin.</b> ${C.UNDERSTAND.qualification}</p>
       </div>
+    </div>
+  </section>
+
+  <section class="block exp" aria-labelledby="e-title">
+    <div class="wrap split">
+      <div><p class="eyebrow">The experience</p><h2 id="e-title" class="big">Expert care, arranged around your life.</h2></div>
+      <dl class="exp-list">${C.EXPERIENCE.map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join("")}</dl>
     </div>
   </section>
 
@@ -249,19 +262,15 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
     </div>
   </section>
 
-  <section class="block process" id="clinician" aria-labelledby="c-title">
-    <div class="wrap profile">
-      ${C.photo("", "1200 × 1500 px, 4:5", "Your own professional photograph goes here. We will not use a stand-in or invented headshot.")}
-      <div>
-        <p class="eyebrow">Clinical leadership</p>
-        <h2 id="c-title">${C.CLINICIAN.name}</h2>
-        <p class="post">${C.CLINICIAN.post} · ${C.CLINICIAN.role}</p>
-        <ul class="creds">
-          ${C.CLINICIAN.credentials.map(([k, v]) => `<li><span>${k}</span><span>${v}</span></li>`).join("")}
-          <li><span>Availability</span><span>${C.CLINICIAN.availability}</span></li>
-        </ul>
-        <p class="missing"><b>To be supplied.</b> ${C.CLINICIAN.bioPlaceholder} ${C.CLINICIAN.licensePlaceholder}.</p>
-      </div>
+  <section class="block" id="credentials" aria-labelledby="c-title">
+    <div class="wrap split">
+      <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title" class="big" style="font-size:var(--step-2)">Who provides your care</h2><p style="margin-top:16px;color:var(--taupe);max-width:40ch">${C.CLINICIAN.intro}</p></div>
+      <ul class="creds">
+        <li><span>Clinician</span><span>${C.CLINICIAN.name}, ${C.CLINICIAN.post}</span></li>
+        ${C.CLINICIAN.credentials.map(([k, v]) => `<li><span>${k}</span><span>${v}</span></li>`).join("")}
+        <li><span>Serves</span><span>${C.CLINICIAN.availability}</span></li>
+        <li><span>License numbers</span><span class="tbd">${C.CLINICIAN.licensePlaceholder}</span></li>
+      </ul>
     </div>
   </section>
 
@@ -287,7 +296,7 @@ ${C.PREVIEW_BAR("Concept A, Editorial Private Care")}
     <div class="fgrid">
       <div>${C.wordmark()}<p style="margin-top:18px;max-width:34ch;color:#d9cdbf">${C.FOOTER.blurb}</p><p style="margin-top:14px">${C.FOOTER.contact}</p></div>
       <div><h3>Services</h3><ul>${C.FOOTER.services.map((x) => `<li><a href="#services">${x}</a></li>`).join("")}</ul></div>
-      <div><h3>Practice</h3><ul><li><a href="#how">How It Works</a></li><li><a href="#clinician">About</a></li><li><a href="#faq">FAQs</a></li><li><a href="#">Patient Sign In</a></li></ul></div>
+      <div><h3>Practice</h3><ul><li><a href="#how">How It Works</a></li><li><a href="#credentials">About</a></li><li><a href="#faq">FAQs</a></li><li><a href="#">Patient Sign In</a></li></ul></div>
       <div><h3>Policies</h3><ul>${C.FOOTER.legal.map((x) => `<li><a href="#">${x}</a></li>`).join("")}</ul></div>
     </div>
     <div class="disc"><p><b>In crisis?</b> ${C.FOOTER.emergency}</p><p>${C.FOOTER.clinical}</p><p>© 2026 LeaveBridge Health</p></div>

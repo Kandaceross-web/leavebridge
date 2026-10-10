@@ -138,6 +138,21 @@ section.block{padding-block:clamp(72px,10vw,136px)}
 .letter b{font:600 .78rem/1.3 var(--sans);letter-spacing:.14em;text-transform:uppercase;font-style:normal;display:block;margin-bottom:6px;color:var(--gold-deep)}
 @media (max-width:860px){.profile{grid-template-columns:1fr}}
 
+.exp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px;margin-top:56px;text-align:center}
+.exp h3{font-size:1.35rem}
+.exp h3::after{content:"";display:block;width:28px;margin:14px auto 0;border-top:1px solid var(--gold)}
+.exp p{margin-top:14px;font-size:1rem;color:#4f453e}
+@media (max-width:960px){.exp{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.exp{grid-template-columns:1fr;text-align:left}.exp h3::after{margin-left:0}}
+.credline{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,6vw,96px)}
+.credline h2{font-size:clamp(1.6rem,2.6vw,2.1rem);margin-top:14px}
+.credline p{margin-top:14px;color:var(--taupe);font-size:1rem}
+.credline dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:20px 32px;border-top:1px solid var(--gold);padding-top:22px;font-size:1rem}
+.credline dt{font:500 .74rem/1.3 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-deep)}
+.credline dd{margin:4px 0 0}
+.tbd{font-style:italic;color:var(--taupe)}
+@media (max-width:860px){.credline{grid-template-columns:1fr}}
+@media (max-width:520px){.credline dl{grid-template-columns:1fr}}
 .faq{max-width:820px;margin:48px auto 0;border-top:1px solid var(--gold)}
 details{border-bottom:1px solid var(--sand)}
 summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;padding:22px 0;font:400 1.3rem/1.35 var(--serif)}
@@ -181,7 +196,7 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
 
 <main id="top">
   <div class="hero">
-    ${C.photo("", "2400 × 1080 px, wide", "A quiet, sunlit room: a Black woman seated in an armchair with a cup of tea and a tablet, linen, wood and a plant. Calm, unposed. Must not appear to be our clinician or a patient.")}
+    ${C.photo("", "2400 × 1080 px, wide", "Wide architectural interior: arched window, plaster walls, soft daylight on linen and wood. Spacious and still, no person as the focal point.")}
     <div class="wrap"><div class="hero-panel">
       <p class="eyebrow">${C.HERO.eyebrow}</p>
       <h1>Your Wellbeing Deserves <em>Exceptional</em> Care.</h1>
@@ -200,7 +215,7 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
     <div class="wrap">
       <div class="center"><p class="eyebrow">Our service</p><h2 id="u-title">${C.UNDERSTAND.heading}</h2></div>
       <div class="story">
-        ${C.photo("", "1500 × 1200 px, 5:4", "Hands holding a mug beside an open notebook on a wooden table, window light. No faces or readable text.")}
+        ${C.photo("", "1500 × 1200 px, 5:4", "A ceramic mug and a closed notebook on an oak table, window light and soft shadow. No people or readable text.")}
         <div class="prose">
           ${C.UNDERSTAND.body.map((p) => `<p>${p}</p>`).join("")}
           <div class="fit">
@@ -213,12 +228,19 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
     </div>
   </section>
 
+  <section class="block" aria-labelledby="e-title" style="padding-top:clamp(48px,6vw,88px)">
+    <div class="wrap">
+      <div class="center"><p class="eyebrow">The experience</p><h2 id="e-title">Expert care, arranged around your life.</h2></div>
+      <div class="exp">${C.EXPERIENCE.map(([t, d]) => `<div><h3>${t}</h3><p>${d}</p></div>`).join("")}</div>
+    </div>
+  </section>
+
   <section class="block chapters" id="how" aria-labelledby="h-title">
     <div class="wrap">
       <div class="center"><p class="eyebrow">How it works</p><h2 id="h-title">Your path, from first question to outcome.</h2></div>
       <ol class="chapter-list">
         ${C.STEPS.map((s, i) => `<li class="chapter">
-          ${C.photo("", "1600 × 1200 px, 4:3", ["A woman answering questions on her phone on a sofa, soft afternoon light, screen not readable.", "A laptop on a kitchen table set up for a video call, warm interior, no visible faces or details on screen.", "A person reading calmly by a window with a cup of coffee, sense of relief, no documents visible."][i])}
+          ${C.photo("", "1600 × 1200 px, 4:3", ["A phone resting on the arm of a linen sofa in soft afternoon light, screen not readable.", "A laptop on an oak desk by a window, ready for a video call, screen not readable.", "A window seat with a cup of coffee and a closed folder, morning light, a sense of calm."][i])}
           <div><span class="label">Step ${["one", "two", "three"][i]}</span><h3>${s.title}</h3><p class="lede">${s.lede}</p><ul>${s.details.map((d) => `<li>${d}</li>`).join("")}</ul></div>
         </li>`).join("")}
       </ol>
@@ -244,18 +266,16 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
     </div>
   </section>
 
-  <section class="block chapters" id="clinician" aria-labelledby="c-title">
-    <div class="wrap profile">
-      <div class="frame">${C.photo("", "1200 × 1500 px, 4:5", "Your own professional photograph goes here. No stand-in or invented headshot.")}</div>
-      <div>
-        <p class="eyebrow">Clinical leadership</p>
-        <h2 id="c-title">${C.CLINICIAN.name}</h2>
-        <p class="post">${C.CLINICIAN.post} · ${C.CLINICIAN.role}</p>
+  <section class="block chapters" id="credentials" aria-labelledby="c-title" style="padding-block:clamp(56px,7vw,96px)">
+    <div class="wrap">
+      <div class="credline">
+        <div><p class="eyebrow">Clinical credentials</p><h2 id="c-title">Who provides your care</h2><p>${C.CLINICIAN.intro}</p></div>
         <dl>
+          <div><dt>Clinician</dt><dd>${C.CLINICIAN.name}, ${C.CLINICIAN.post}</dd></div>
           ${C.CLINICIAN.credentials.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}
-          <div><dt>Availability</dt><dd>${C.CLINICIAN.availability}</dd></div>
+          <div><dt>Serves</dt><dd>${C.CLINICIAN.availability}</dd></div>
+          <div><dt>License numbers</dt><dd class="tbd">${C.CLINICIAN.licensePlaceholder}</dd></div>
         </dl>
-        <p class="letter"><b>To be supplied</b>${C.CLINICIAN.bioPlaceholder} ${C.CLINICIAN.licensePlaceholder}.</p>
       </div>
     </div>
   </section>
@@ -282,7 +302,7 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
     <div class="fgrid">
       <div>${C.wordmark({ accent: "var(--gold)", stroke: "var(--espresso)" })}<p style="margin-top:16px;max-width:34ch;color:var(--taupe)">${C.FOOTER.blurb}</p><p style="margin-top:12px">${C.FOOTER.contact}</p></div>
       <div><h3>Services</h3><ul>${C.FOOTER.services.map((x) => `<li><a href="#services">${x}</a></li>`).join("")}</ul></div>
-      <div><h3>Practice</h3><ul><li><a href="#how">How It Works</a></li><li><a href="#clinician">About</a></li><li><a href="#faq">FAQs</a></li><li><a href="#">Patient Sign In</a></li></ul></div>
+      <div><h3>Practice</h3><ul><li><a href="#how">How It Works</a></li><li><a href="#credentials">About</a></li><li><a href="#faq">FAQs</a></li><li><a href="#">Patient Sign In</a></li></ul></div>
       <div><h3>Policies</h3><ul>${C.FOOTER.legal.map((x) => `<li><a href="#">${x}</a></li>`).join("")}</ul></div>
     </div>
     <div class="disc"><p><b>In crisis?</b> ${C.FOOTER.emergency}</p><p>${C.FOOTER.clinical}</p><p style="color:var(--taupe)">© 2026 LeaveBridge Health</p></div>
