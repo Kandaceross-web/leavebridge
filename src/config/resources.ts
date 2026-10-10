@@ -10,7 +10,13 @@ import type { ContentSeed } from "./catalog";
  * doubles as the page's meta description, so keep it to one or two plain sentences.
  */
 
-const resource = (order: number, slug: string, category: string, title: string, body: string): ContentSeed => ({
+const resource = (
+  order: number,
+  slug: string,
+  category: string,
+  title: string,
+  body: string,
+): ContentSeed => ({
   kind: "resource",
   key: `resource.${slug}`,
   category,
@@ -20,7 +26,8 @@ const resource = (order: number, slug: string, category: string, title: string, 
   order,
 });
 
-const NOT_ADVICE = "> This guide is general information, not legal or medical advice. Your employer, plan, or leave administrator decides leave requests.";
+const NOT_ADVICE =
+  "> This guide is general information, not legal or medical advice. Your employer, plan, or leave administrator decides leave requests.";
 
 export const RESOURCES: ContentSeed[] = [
   resource(
@@ -175,6 +182,28 @@ const state = (order: number, slug: string, title: string, body: string): Conten
 
 /** State pages exist only for states with real state-specific content and a configured jurisdiction. */
 export const STATE_PAGES: ContentSeed[] = [
+  state(
+    0,
+    "georgia",
+    "Mental health leave assessments in Georgia",
+    `LeaveBridge Health clinicians authorized to practice in Georgia can assess adults located in Georgia at the time of their visit. Here is what is specific to Georgia.
+
+${NOT_ADVICE}
+
+## Leave in Georgia
+
+Georgia does not have a state paid family or medical leave program for private-sector workers, so most rely on federal FMLA, if eligible, and their employer's own policies.
+
+## Authorized where you are
+
+Your clinician practices in Georgia under a Counseling Compact privilege to practice, which is based on their home-state license in Tennessee. You must be physically located in Georgia during your visit.
+
+## Crisis support in Georgia
+
+- Call or text **988**, the Suicide and Crisis Lifeline, available 24/7.
+- Georgia Crisis and Access Line: [1-800-715-4225](tel:18007154225).
+- In an emergency, call [911](tel:911).`,
+  ),
   state(
     1,
     "mississippi",

@@ -14,6 +14,7 @@ const PAGES = [
   "/resources/who-can-complete-fmla-forms",
   "/states/mississippi",
   "/states/tennessee",
+  "/states/georgia",
   "/resources/fmla-basics-check",
   "/for-therapists",
   "/contact",

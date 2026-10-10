@@ -3,11 +3,12 @@ import type { Metadata } from "next";
 import { ButtonLink, Icon } from "@/components/ui";
 import { SiteHero } from "@/components/illustration";
 import { siteSettings } from "@/server/web/public";
-import { PUBLIC_PROVIDER } from "@/config/provider";
+import { PUBLIC_PROVIDER, credentialNumber, credentialTitle } from "@/config/provider";
 
 export const metadata: Metadata = {
   title: "About and clinical credentials",
-  description: "About LeaveBridge Health and the licensed professional counselor who provides independent assessments.",
+  description:
+    "About LeaveBridge Health and the licensed professional counselor who provides independent assessments.",
 };
 
 export default async function AboutPage() {
@@ -22,25 +23,30 @@ export default async function AboutPage() {
 
       <section className="grid g3" aria-label="How we work">
         <div className="feature">
-          <span className="bubble bubble-teal"><Icon name="badge" size={24} /></span>
+          <span className="bubble bubble-teal">
+            <Icon name="badge" size={24} />
+          </span>
           <h2 className="h3-size">Independent judgment</h2>
           <p>
-            A licensed clinician makes every determination. No software does, and the fee is the same whatever the outcome.
+            A licensed clinician makes every determination. No software does, and the fee is the
+            same whatever the outcome.
           </p>
         </div>
         <div className="feature">
-          <span className="bubble bubble-sun"><Icon name="shield" size={24} /></span>
+          <span className="bubble bubble-sun">
+            <Icon name="shield" size={24} />
+          </span>
           <h2 className="h3-size">Licensed where you are</h2>
           <p>
             You are matched with a clinician licensed where you are physically located during care.
           </p>
         </div>
         <div className="feature">
-          <span className="bubble"><Icon name="lock" size={24} /></span>
+          <span className="bubble">
+            <Icon name="lock" size={24} />
+          </span>
           <h2 className="h3-size">Your records, your choice</h2>
-          <p>
-            A private portal. Nothing goes to an employer without your written authorization.
-          </p>
+          <p>A private portal. Nothing goes to an employer without your written authorization.</p>
         </div>
       </section>
 
@@ -49,8 +55,8 @@ export default async function AboutPage() {
           <p className="eyebrow">Clinical credentials</p>
           <h2 id="creds-title">Who provides your assessment</h2>
           <p className="muted">
-            Assessments are provided by a licensed professional counselor, not a physician. You can verify a license with
-            the licensing board of the state that issued it.
+            Assessments are provided by a licensed professional counselor, not a physician. You can
+            verify a license with the licensing board of the state that issued it.
           </p>
         </div>
         <ul className="creds">
@@ -68,7 +74,7 @@ export default async function AboutPage() {
             <li key={l.state}>
               <span>{l.state}</span>
               <span>
-                {l.title} ({l.abbreviation}), license no. {l.number}
+                {credentialTitle(l)}, {credentialNumber(l)}
               </span>
             </li>
           ))}
@@ -86,8 +92,10 @@ export default async function AboutPage() {
           What we do, and what we don&rsquo;t
         </h2>
         <p className="muted">
-          We provide assessments and, when clinically supported, leave documentation. We do not provide emergency care, ongoing therapy or medication management,
-          and we do not decide FMLA eligibility or approve leave; those decisions belong to your employer or leave administrator.
+          We provide assessments and, when clinically supported, leave documentation. We do not
+          provide emergency care, ongoing therapy or medication management, and we do not decide
+          FMLA eligibility or approve leave; those decisions belong to your employer or leave
+          administrator.
         </p>
         <div className="btn-row">
           <ButtonLink href="/how-it-works" variant="secondary">

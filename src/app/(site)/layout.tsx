@@ -50,8 +50,20 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             </Link>
             <details className="menu-toggle">
               <summary aria-label="Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M3 7h18M3 12h18M3 17h18"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
                 </svg>
               </summary>
               <nav className="mobile-nav" aria-label="Mobile">
@@ -94,7 +106,8 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             <div className="stack stack-sm">
               <Lockup reverse />
               <p className="blurb">
-                Professional mental health evaluations, with convenience and confidentiality at the center of your experience.
+                Professional mental health evaluations, with convenience and confidentiality at the
+                center of your experience.
               </p>
             </div>
             <div>
@@ -149,7 +162,9 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                 ) : null}
                 {legal.some((l) => l.key === "legal.notice-of-privacy-practices") ? (
                   <li>
-                    <Link href="/legal/notice-of-privacy-practices">Notice of Privacy Practices</Link>
+                    <Link href="/legal/notice-of-privacy-practices">
+                      Notice of Privacy Practices
+                    </Link>
                   </li>
                 ) : null}
                 {legal.some((l) => l.key === "legal.telehealth") ? (
@@ -167,15 +182,27 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
           </div>
           <div className="legal">
             <p>
-              Clinical services are provided by {PUBLIC_PROVIDER.name}, {PUBLIC_PROVIDER.postNominals}:{" "}
-              {PUBLIC_PROVIDER.licenses.map((l) => `${l.state} ${l.abbreviation} no. ${l.number}`).join("; ")}. Services are available only to people
-              located in {states.map((st) => st.state.name).join(" or ") || "the states we serve"} during care.
+              Clinical services are provided by {PUBLIC_PROVIDER.name},{" "}
+              {PUBLIC_PROVIDER.postNominals}:{" "}
+              {PUBLIC_PROVIDER.licenses
+                .map(
+                  (l) =>
+                    `${l.state} ${l.abbreviation}${l.kind === "compact_privilege" ? " Counseling Compact privilege" : ""} no. ${l.number}`,
+                )
+                .join("; ")}
+              . Services are available only to people located in{" "}
+              {new Intl.ListFormat("en-US", { type: "disjunction" }).format(
+                states.map((st) => st.state.name),
+              ) || "the states we serve"}{" "}
+              during care.
             </p>
             <p>
-              Clinicians make their own determinations. We do not decide FMLA eligibility or approve leave; your employer or leave administrator does.
+              Clinicians make their own determinations. We do not decide FMLA eligibility or approve
+              leave; your employer or leave administrator does.
             </p>
             <p>
-              Support: <a href={`mailto:${brand.supportEmail}`}>{brand.supportEmail}</a> · {brand.supportHours}
+              Support: <a href={`mailto:${brand.supportEmail}`}>{brand.supportEmail}</a> ·{" "}
+              {brand.supportHours}
             </p>
             <p>
               © {new Date().getFullYear()} {brand.name}

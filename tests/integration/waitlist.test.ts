@@ -18,10 +18,17 @@ describe("state waitlist", () => {
     expect(outcome).toBe("NOT_AVAILABLE");
     const email = `result-${tag()}@example.test`;
     // Whatever else is posted (here, screening-style fields) is dropped by the schema.
-    const posted = { email: email.toUpperCase(), stateCode: "al", current_state: "AL", reason: "symptoms_affect_work" };
+    const posted = {
+      email: email.toUpperCase(),
+      stateCode: "al",
+      current_state: "AL",
+      reason: "symptoms_affect_work",
+    };
     await as(anonymous, (ctx) => joinWaitlist(ctx, posted));
     await as(anonymous, (ctx) => joinWaitlist(ctx, posted));
-    const rows = await as(system, (ctx) => ctx.tx.select().from(waitlist).where(eq(waitlist.email, email)));
+    const rows = await as(system, (ctx) =>
+      ctx.tx.select().from(waitlist).where(eq(waitlist.email, email)),
+    );
     expect(rows).toHaveLength(1);
     expect(Object.keys(rows[0]!).sort()).toEqual(["createdAt", "email", "id", "stateCode"]);
     expect(rows[0]!.stateCode).toBe("AL");
@@ -31,11 +38,14 @@ describe("state waitlist", () => {
 
   it("counts sign-ups and unserved screenings by state, without addresses", async () => {
     const s = await staff();
-    for (let i = 0; i < 2; i++) await as(anonymous, (ctx) => joinWaitlist(ctx, { email: `count-${tag()}@example.test`, stateCode: "GA" }));
-    await runScreening({ current_state: "GA", appointment_state: "GA" });
+    for (let i = 0; i < 2; i++)
+      await as(anonymous, (ctx) =>
+        joinWaitlist(ctx, { email: `count-${tag()}@example.test`, stateCode: "OH" }),
+      );
+    await runScreening({ current_state: "OH", appointment_state: "OH" });
     for (const role of ["admin", "director"] as const) {
       const rows = await as(staffActor(s, role), (ctx) => waitlistDemand(ctx, 30));
-      const ga = rows.find((r) => r.code === "GA")!;
+      const ga = rows.find((r) => r.code === "OH")!;
       expect(ga.joined).toBeGreaterThanOrEqual(2);
       expect(ga.waiting).toBeGreaterThanOrEqual(2);
       expect(ga.screenings).toBeGreaterThanOrEqual(1);
@@ -52,8 +62,12 @@ describe("state waitlist", () => {
     const emails = [1, 2, 3].map((i) => `open-${i}-${tag()}@example.test`);
     await as(admin, (ctx) => setJurisdictionActive(ctx, "TN", false));
     try {
-      for (const email of emails) await as(anonymous, (ctx) => joinWaitlist(ctx, { email, stateCode: "TN" }));
-      await rejects(as(director, (ctx) => notifyWaitlist(ctx, "TN")), "invalid"); // not served yet
+      for (const email of emails)
+        await as(anonymous, (ctx) => joinWaitlist(ctx, { email, stateCode: "TN" }));
+      await rejects(
+        as(director, (ctx) => notifyWaitlist(ctx, "TN")),
+        "invalid",
+      ); // not served yet
     } finally {
       await as(admin, (ctx) => setJurisdictionActive(ctx, "TN", true));
     }
@@ -68,22 +82,40 @@ describe("state waitlist", () => {
       expect(m.templateKey).toBe(WAITLIST_EMAIL_KEY);
       expect(m.subject).toBe("LeaveBridge Health is now available in Tennessee");
       expect(m.body).toContain("/start?entry=waitlist");
-      expect(m.body).toContain("You asked us to tell you when we opened in Tennessee. This is the only email we'll send about it.");
+      expect(m.body).toContain(
+        "You asked us to tell you when we opened in Tennessee. This is the only email we'll send about it.",
+      );
       expect(lintTemplate(`${m.subject}\n${m.body}`)).toEqual([]);
     }
 
-    const left = await as(system, (ctx) => ctx.tx.select().from(waitlist).where(eq(waitlist.stateCode, "TN")));
+    const left = await as(system, (ctx) =>
+      ctx.tx.select().from(waitlist).where(eq(waitlist.stateCode, "TN")),
+    );
     expect(left).toEqual([]);
-    const [notice] = await as(system, (ctx) => ctx.tx.select().from(waitlistNotices).where(eq(waitlistNotices.stateCode, "TN")));
+    const [notice] = await as(system, (ctx) =>
+      ctx.tx.select().from(waitlistNotices).where(eq(waitlistNotices.stateCode, "TN")),
+    );
     expect(notice?.recipientCount).toBe(3);
-    const [event] = await as(system, (ctx) => ctx.tx.select().from(auditEvents).where(and(eq(auditEvents.action, "waitlist.notified"), eq(auditEvents.subjectId, "TN"))));
+    const [event] = await as(system, (ctx) =>
+      ctx.tx
+        .select()
+        .from(auditEvents)
+        .where(and(eq(auditEvents.action, "waitlist.notified"), eq(auditEvents.subjectId, "TN"))),
+    );
     expect(event?.metadata).toEqual({ state: "TN", count: 3 });
     expect(JSON.stringify(event)).not.toContain("@");
 
     const page = await as(admin, (ctx) => waitlistDemand(ctx, 30));
-    expect(page.find((r) => r.code === "TN")).toMatchObject({ isActive: true, waiting: 0, lastNotice: { count: 3 } });
+    expect(page.find((r) => r.code === "TN")).toMatchObject({
+      isActive: true,
+      waiting: 0,
+      lastNotice: { count: 3 },
+    });
     // Nobody left to email: a second press sends nothing.
-    await rejects(as(director, (ctx) => notifyWaitlist(ctx, "TN")), "invalid");
+    await rejects(
+      as(director, (ctx) => notifyWaitlist(ctx, "TN")),
+      "invalid",
+    );
     expect(outbox.length).toBe(before + 3);
   });
 
@@ -91,10 +123,22 @@ describe("state waitlist", () => {
     const s = await staff();
     for (const role of ["support", "billing", "clinician", "compliance"] as const) {
       const actor = staffActor(s, role);
-      await rejects(as(actor, (ctx) => waitlistDemand(ctx, 30)), "forbidden");
-      await rejects(as(actor, (ctx) => notifyWaitlist(ctx, "MS")), "forbidden");
-      await rejects(as(actor, (ctx) => unservedDemand(ctx, 30)), "forbidden");
+      await rejects(
+        as(actor, (ctx) => waitlistDemand(ctx, 30)),
+        "forbidden",
+      );
+      await rejects(
+        as(actor, (ctx) => notifyWaitlist(ctx, "MS")),
+        "forbidden",
+      );
+      await rejects(
+        as(actor, (ctx) => unservedDemand(ctx, 30)),
+        "forbidden",
+      );
     }
-    await rejects(as(anonymous, (ctx) => notifyWaitlist(ctx, "MS")), "forbidden");
+    await rejects(
+      as(anonymous, (ctx) => notifyWaitlist(ctx, "MS")),
+      "forbidden",
+    );
   });
 });

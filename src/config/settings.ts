@@ -94,7 +94,12 @@ export const SETTING_DEFS = {
        * Service code per service slug, when a service needs a different code from `serviceCode`
        * (for example the automated same-day screening). Empty means `serviceCode` applies.
        */
-      serviceCodes: z.record(z.string(), z.string().regex(/^([0-9A-Z]{5})?$/, "A service (CPT/HCPCS) code is 5 characters.")).default({}),
+      serviceCodes: z
+        .record(
+          z.string(),
+          z.string().regex(/^([0-9A-Z]{5})?$/, "A service (CPT/HCPCS) code is 5 characters."),
+        )
+        .default({}),
     }),
     default: {
       providerName: "Defining You Therapeutic Services",
@@ -320,6 +325,11 @@ export const SETTING_DEFS = {
         },
         { label: "Go to the nearest emergency room", detail: "If you can do so safely.", href: "" },
         {
+          label: "Georgia: 1-800-715-4225",
+          detail: "Georgia Crisis and Access Line, available 24/7.",
+          href: "tel:18007154225",
+        },
+        {
           label: "Mississippi: 1-877-210-8513",
           detail: "Mississippi Department of Mental Health helpline.",
           href: "tel:18772108513",
@@ -380,7 +390,8 @@ export const SETTING_DEFS = {
     default: { abandonedScreeningDays: 30, clinicalRecordYears: 7, auditLogYears: 7 },
     // STR-05 and LEG-10: owner sign-off 2026-10-09 (7 years; 30 days for abandoned screenings).
     reviewTag: null,
-    reviewNote: "STR-05, LEG-10: retention periods per state and license type. No job deletes clinical records yet; one is needed before the first records reach 7 years.",
+    reviewNote:
+      "STR-05, LEG-10: retention periods per state and license type. No job deletes clinical records yet; one is needed before the first records reach 7 years.",
   },
 } as const;
 
