@@ -137,6 +137,9 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                   <Link href="/faq">Frequently Asked Questions</Link>
                 </li>
                 <li>
+                  <Link href="/credentials">Professional Credentials</Link>
+                </li>
+                <li>
                   <Link href="/legal/financial-policy">Refund Policy</Link>
                 </li>
                 <li>

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ButtonLink, Icon, Money } from "@/components/ui";
 import type { ServiceCardCopy } from "@/config/home";
-import { PUBLIC_PROVIDER, credentialNumber, credentialTitle } from "@/config/provider";
+import { PUBLIC_PROVIDER } from "@/config/provider";
 
 /** Abstract bridge line art for the homepage hero (owner spec V1, Part 4). Decorative only. */
 export function BridgeArt() {
@@ -54,31 +54,64 @@ export function ServiceCard({
   );
 }
 
-/** Restrained credentials list (Part 12). */
-export function Credentials() {
+/** Three credential cards: where services are authorized (owner's credentials redesign, 2026-10-10). */
+export function CredentialCards() {
   return (
-    <ul className="creds">
-      <li>
-        <span>Clinician</span>
-        <span>
-          {PUBLIC_PROVIDER.name}, {PUBLIC_PROVIDER.postNominals}
-        </span>
-      </li>
+    <ul className="cred-cards">
       {PUBLIC_PROVIDER.licenses.map((l) => (
-        <li key={l.state}>
-          <span>{l.state}</span>
-          <span>
-            {credentialTitle(l)}, {credentialNumber(l)}
-          </span>
-        </li>
-      ))}
-      {PUBLIC_PROVIDER.certifications.map((c) => (
-        <li key={c}>
-          <span>Certification</span>
-          <span>{c}</span>
+        <li key={l.state} className="cred-card">
+          <h3>{l.state}</h3>
+          <p className="cred-lines">
+            {l.card.lines.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </p>
+          <p className="cred-number">{l.card.number}</p>
         </li>
       ))}
     </ul>
+  );
+}
+
+/** The full credential disclosure, with the Georgia privilege's basis and home state spelled out. */
+export function CredentialDetail({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
+  const H = headingLevel === 2 ? "h2" : "h3";
+  return (
+    <div className="cred-detail">
+      <p className="cred-name">
+        {PUBLIC_PROVIDER.name}, {PUBLIC_PROVIDER.postNominals}
+      </p>
+      <dl>
+        {PUBLIC_PROVIDER.licenses.map((l) => (
+          <div key={l.state}>
+            <dt>
+              <H>{l.state}</H>
+            </dt>
+            <dd>
+              {l.detail.lines.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+              {l.detail.homeState ? <span>Home State: {l.detail.homeState}</span> : null}
+              <span className="cred-number">{l.detail.number}</span>
+            </dd>
+          </div>
+        ))}
+        <div>
+          <dt>
+            <H>National Certification</H>
+          </dt>
+          <dd>
+            {PUBLIC_PROVIDER.certifications.map((c) => (
+              <span key={c}>{c}</span>
+            ))}
+          </dd>
+        </div>
+      </dl>
+      <p className="cred-note">
+        Services are provided by a licensed professional counselor, not a physician. Each license
+        and privilege can be verified with the licensing board of the state that issued it.
+      </p>
+    </div>
   );
 }
 

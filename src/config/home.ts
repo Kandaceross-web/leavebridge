@@ -90,9 +90,18 @@ export const HOME_WHY = {
   ],
 } as const;
 
+/** Owner's credentials redesign (2026-10-10): a compact trust section near the bottom of the homepage. */
 export const HOME_CREDIBILITY = {
-  title: "Built on Professional Clinical Expertise.",
-  body: "LeaveBridge Health is founded on a commitment to accessible mental health evaluations, ethical clinical practice, and professional documentation standards.",
+  title: "Licensed Across Three States",
+  body: "Professional mental health services delivered with clinical expertise, discretion, and convenience.",
+  more: "View Full Professional Credentials",
+};
+
+/** Homepage FAQ preview: questions from the published FAQ, by key, linking to /faq for the rest. */
+export const HOME_FAQ = {
+  title: "Frequently Asked Questions",
+  keys: ["faq.excuses.guarantee", "faq.excuses.online-assessment", "faq.excuses.acceptance", "faq.fmla.continuous"],
+  more: "See all questions",
 };
 
 /** Part 7 and Part 9: the four documentation categories. */

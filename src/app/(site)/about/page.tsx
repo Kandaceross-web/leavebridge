@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ButtonLink, Icon } from "@/components/ui";
 import { SiteHero } from "@/components/illustration";
 import { siteSettings } from "@/server/web/public";
-import { PUBLIC_PROVIDER, credentialNumber, credentialTitle } from "@/config/provider";
+import { CredentialCards } from "@/components/site";
 
 export const metadata: Metadata = {
   title: "About and clinical credentials",
@@ -50,41 +50,18 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="split" aria-labelledby="creds-title">
+      <section className="stack" aria-labelledby="creds-title">
         <div className="stack stack-sm">
-          <p className="eyebrow">Clinical credentials</p>
-          <h2 id="creds-title">Who provides your assessment</h2>
+          <p className="eyebrow">Professional credentials</p>
+          <h2 id="creds-title">Licensed Across Three States</h2>
           <p className="muted">
-            Assessments are provided by a licensed professional counselor, not a physician. You can
-            verify a license with the licensing board of the state that issued it.
+            Assessments are provided by a licensed professional counselor, not a physician.
           </p>
         </div>
-        <ul className="creds">
-          <li>
-            <span>Clinician</span>
-            <span>
-              {PUBLIC_PROVIDER.name}, {PUBLIC_PROVIDER.postNominals}
-            </span>
-          </li>
-          <li>
-            <span>Profession</span>
-            <span>{PUBLIC_PROVIDER.profession}</span>
-          </li>
-          {PUBLIC_PROVIDER.licenses.map((l) => (
-            <li key={l.state}>
-              <span>{l.state}</span>
-              <span>
-                {credentialTitle(l)}, {credentialNumber(l)}
-              </span>
-            </li>
-          ))}
-          {PUBLIC_PROVIDER.certifications.map((c) => (
-            <li key={c}>
-              <span>Certification</span>
-              <span>{c}</span>
-            </li>
-          ))}
-        </ul>
+        <CredentialCards />
+        <p>
+          <Link href="/credentials">View Full Professional Credentials →</Link>
+        </p>
       </section>
 
       <section className="card-quiet stack" aria-labelledby="scope-title">

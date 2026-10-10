@@ -1,6 +1,6 @@
 /**
  * Public provider listing: who provides care, as approved by the owner for publication (2026-10-10; LPC-S and Board Qualified Supervisor added by the owner the same day).
- * Shown discreetly on the homepage ("Clinical credentials") and on /about, and nowhere as branding.
+ * Shown as three cards near the bottom of the homepage, in full on /credentials, and in the footer; never as branding.
  * This is published reference information, not a fixture: the development database holds only fictional
  * clinicians, and the public site must never show them. Keep in step with the verified license records in ops.
  */
@@ -11,15 +11,11 @@ export interface PublicLicense {
   number: string;
   /** A state license, or a Counseling Compact privilege to practice based on the home-state license. */
   kind: "license" | "compact_privilege";
+  /** Homepage card (owner's credentials redesign, 2026-10-10): designation lines and the number line. */
+  card: { lines: string[]; number: string };
+  /** Full credentials panel and /credentials page: the exact designation, home state for a privilege, and number. */
+  detail: { lines: string[]; homeState?: string; number: string };
 }
-
-/** "Licensed Professional Counselor … (LPC-S)" for a license; a privilege's title already names the profession. */
-export const credentialTitle = (l: PublicLicense) =>
-  l.kind === "compact_privilege" ? l.title : `${l.title} (${l.abbreviation})`;
-
-/** "license no. 2581" or "privilege no. LPC-GA-3372". */
-export const credentialNumber = (l: PublicLicense) =>
-  `${l.kind === "compact_privilege" ? "privilege" : "license"} no. ${l.number}`;
 
 export const PUBLIC_PROVIDER = {
   name: "Kandace S. Ross",
@@ -31,6 +27,8 @@ export const PUBLIC_PROVIDER = {
       abbreviation: "LPC-S",
       number: "2581",
       kind: "license",
+      card: { lines: ["Licensed Professional Counselor", "Board Qualified Supervisor"], number: "LPC-S | License #2581" },
+      detail: { lines: ["Licensed Professional Counselor", "Board Qualified Supervisor"], number: "License #2581" },
     },
     {
       state: "Tennessee",
@@ -38,6 +36,14 @@ export const PUBLIC_PROVIDER = {
       abbreviation: "LPC-MHSP (Approved Supervisor)",
       number: "7583",
       kind: "license",
+      card: {
+        lines: ["Licensed Professional Counselor", "Mental Health Service Provider", "Approved Supervisor"],
+        number: "LPC-MHSP | License #7583",
+      },
+      detail: {
+        lines: ["Licensed Professional Counselor — Mental Health Service Provider", "Approved Supervisor"],
+        number: "License #7583",
+      },
     },
     // Added 2026-10-10 from the owner's CompactConnect record: active 10/10/2026, expires 4/30/2027, home state Tennessee.
     {
@@ -47,6 +53,14 @@ export const PUBLIC_PROVIDER = {
       abbreviation: "LPC",
       number: "LPC-GA-3372",
       kind: "compact_privilege",
+      // The owner's spec titled this card "Authorized Professional Counselor", which is not a Georgia title. Until the
+      // owner decides, the card names the profession the privilege authorizes and says it is a privilege.
+      card: { lines: ["Licensed Professional Counselor", "Privilege to Practice"], number: "Privilege #LPC-GA-3372" },
+      detail: {
+        lines: ["Licensed Professional Counselor practicing under a Counseling Compact privilege"],
+        homeState: "Tennessee",
+        number: "Privilege #LPC-GA-3372",
+      },
     },
   ] satisfies PublicLicense[],
   certifications: ["National Certified Counselor (NCC)"],

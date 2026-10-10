@@ -19,6 +19,7 @@ const PAGES = [
   "/for-therapists",
   "/contact",
   "/about",
+  "/credentials",
   "/availability",
   "/crisis",
   "/accessibility",
@@ -54,9 +55,9 @@ test("home answers what, who, how, cost, next steps and what is not guaranteed",
     page.getByText(/employer approval are separate determinations/i).first(),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: /professional clinical expertise/i }),
+    page.getByRole("heading", { name: /licensed across three states/i }),
   ).toBeVisible();
-  await expect(page.getByText(/license no\. 2581/i)).toBeVisible();
+  await expect(page.getByText("LPC-S | License #2581")).toBeVisible();
   const text = (await page.locator("main").innerText()).toLowerCase();
   for (const banned of ["guaranteed approval", "you qualify", "get approved"])
     expect(text).not.toContain(banned);
@@ -144,4 +145,27 @@ test("security headers are present and app paths are not cacheable", async ({ re
 test("unknown pages return 404", async ({ page }) => {
   const res = await page.goto("/definitely-not-a-page");
   expect(res?.status()).toBe(404);
+});
+
+test("credentials: three cards, a keyboard-operable full panel, and the Georgia privilege stated plainly", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const cards = page.locator(".cred-card");
+  await expect(cards).toHaveCount(3);
+  await expect(cards.nth(0)).toContainText("LPC-S | License #2581");
+  await expect(cards.nth(1)).toContainText("LPC-MHSP | License #7583");
+  await expect(cards.nth(2)).toContainText("Privilege #LPC-GA-3372");
+  await expect(page.locator(".cred-cards")).not.toContainText("Counseling Compact");
+  const summary = page.getByText("View Full Professional Credentials");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  const panel = page.locator(".cred-more-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel).toContainText("practicing under a Counseling Compact privilege");
+  await expect(panel).toContainText("Home State: Tennessee");
+  await expect(panel).toContainText("National Certified Counselor (NCC)");
+  await expect(panel).toContainText("not a physician");
+  await page.goto("/credentials");
+  await expect(page.locator(".cred-panel")).toContainText("Privilege #LPC-GA-3372");
 });

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { ButtonLink, Icon } from "@/components/ui";
-import { BridgeArt, Credentials, SectionHead, ServiceCard } from "@/components/site";
+import Link from "next/link";
+import { ButtonLink, Icon, Markdown, ReviewTag } from "@/components/ui";
+import { BridgeArt, CredentialCards, CredentialDetail, SectionHead, ServiceCard } from "@/components/site";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, servicesLd } from "@/server/web/structured-data";
-import { activeStates, enabledServices, sameDayService, siteSettings } from "@/server/web/public";
+import { activeStates, enabledServices, publishedFaq, sameDayService, siteSettings } from "@/server/web/public";
 import {
   HOME_CREDIBILITY,
+  HOME_FAQ,
   HOME_HERO,
   HOME_SERVICES_INTRO,
   HOME_STEPS,
@@ -29,7 +31,14 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [{ brand }, states, services, sameDay] = await Promise.all([siteSettings(), activeStates(), enabledServices(), sameDayService()]);
+  const [{ brand }, states, services, sameDay, faqEntries] = await Promise.all([
+    siteSettings(),
+    activeStates(),
+    enabledServices(),
+    sameDayService(),
+    publishedFaq(),
+  ]);
+  const faq = HOME_FAQ.keys.flatMap((k) => faqEntries.filter((e) => e.key === k));
   const leave = services.find((s) => s.slug === "mental-health-leave-assessment") ?? services[0];
   return (
     <>
@@ -117,15 +126,53 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="creds-title">
-        <div className="container split">
-          <div className="stack">
-            <h2 id="creds-title">{HOME_CREDIBILITY.title}</h2>
+      <section className="section cred-section" aria-labelledby="creds-title">
+        <div className="container">
+          <SectionHead id="creds-title" title={HOME_CREDIBILITY.title}>
             <p className="lede">{HOME_CREDIBILITY.body}</p>
-          </div>
-          <Credentials />
+          </SectionHead>
+          <CredentialCards />
+          <details className="cred-more">
+            <summary>
+              {HOME_CREDIBILITY.more} <span aria-hidden="true">→</span>
+            </summary>
+            <div className="cred-more-panel">
+              <CredentialDetail />
+              <p>
+                <Link href="/credentials">Professional Credentials page</Link>
+              </p>
+            </div>
+          </details>
         </div>
       </section>
+
+      {faq.length ? (
+        <section className="section section-sun" aria-labelledby="home-faq-title">
+          <div className="container faq-grid">
+            <div className="intro">
+              <h2 id="home-faq-title">{HOME_FAQ.title}</h2>
+              <p>
+                <Link href="/faq">{HOME_FAQ.more}</Link>
+              </p>
+            </div>
+            <div className="faq">
+              {faq.map((e) => (
+                <details key={e.id}>
+                  <summary>{e.title}</summary>
+                  <div className="answer">
+                    <Markdown source={e.bodyMd} />
+                    {e.reviewTag ? (
+                      <p>
+                        <ReviewTag tag={e.reviewTag} />
+                      </p>
+                    ) : null}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="final-band" aria-labelledby="next-title">
         <div className="container final-inner">

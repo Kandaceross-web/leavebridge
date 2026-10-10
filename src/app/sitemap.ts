@@ -20,6 +20,7 @@ const PAGES = [
   "/for-therapists",
   "/contact",
   "/about",
+  "/credentials",
   "/availability",
   "/crisis",
   "/accessibility",
