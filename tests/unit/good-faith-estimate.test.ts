@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { npiCheckDigitOk, SETTING_DEFS } from "@/config/settings";
-import { buildEstimate, canonicalEstimate, estimateSections, missingEstimateFields, needsNewEstimate, type EstimateInput } from "@/domain/payments/good-faith-estimate";
+import { buildEstimate, canonicalEstimate, estimateSections, missingEstimateFields, needsNewEstimate, serviceCodeFor, type EstimateInput } from "@/domain/payments/good-faith-estimate";
 
 const setting = SETTING_DEFS.goodFaithEstimate.default;
 
@@ -92,5 +92,12 @@ describe("NPI check digit", () => {
   it("accepts a valid NPI and rejects a one-digit typo", () => {
     expect(npiCheckDigitOk("1234567893")).toBe(true);
     expect(npiCheckDigitOk("1234567894")).toBe(false);
+  });
+});
+
+describe("service codes chosen by the owner", () => {
+  it("uses 90791 for the assessment and 96127 for the automated screening", () => {
+    expect(serviceCodeFor(setting, "mental-health-leave-assessment")).toBe("90791");
+    expect(serviceCodeFor(setting, "same-day-mental-health-assessment")).toBe("96127");
   });
 });

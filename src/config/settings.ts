@@ -110,7 +110,8 @@ export const SETTING_DEFS = {
         "This Good Faith Estimate is not a contract and does not require you to get the items or services from the provider named in it.",
       ],
       disputeUrl: "https://www.cms.gov/nosurprises",
-      serviceCodes: {} as Record<string, string>,
+      // Owner chose 2026-10-10 (LEG-31): the automated screening uses 96127, not the assessment code.
+      serviceCodes: { "same-day-mental-health-assessment": "96127" } as Record<string, string>,
     },
     reviewTag: "OWNER_DECISION_REQUIRED" as ReviewTag,
     reviewNote:
