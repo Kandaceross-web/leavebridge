@@ -131,14 +131,13 @@ export const CLINICIAN = {
   name: "Kandace S. Ross",
   post: "LPC, NCC",
   credentials: [
-    ["Mississippi", "Licensed Professional Counselor (LPC)"],
-    ["Tennessee", "Licensed Professional Counselor, Mental Health Service Provider (LPC-MHSP)"],
+    ["Mississippi", "Licensed Professional Counselor (LPC), license no. 2581"],
+    ["Tennessee", "Licensed Professional Counselor, Mental Health Service Provider (LPC-MHSP), license no. 7581"],
     ["National", "National Certified Counselor (NCC)"],
   ],
   availability: "Patients located in Mississippi and Tennessee",
   intro:
     "Every assessment is provided by a licensed professional counselor. Your clinician’s name, license and state are also shown inside your assessment, before you share any information.",
-  licensePlaceholder: "License numbers to be added",
 };
 
 // Quality and convenience of the experience, stated only as far as the current system supports.

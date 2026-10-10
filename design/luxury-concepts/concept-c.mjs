@@ -274,7 +274,6 @@ ${C.PREVIEW_BAR("Concept C, Boutique Healthcare")}
           <div><dt>Clinician</dt><dd>${C.CLINICIAN.name}, ${C.CLINICIAN.post}</dd></div>
           ${C.CLINICIAN.credentials.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}
           <div><dt>Serves</dt><dd>${C.CLINICIAN.availability}</dd></div>
-          <div><dt>License numbers</dt><dd class="tbd">${C.CLINICIAN.licensePlaceholder}</dd></div>
         </dl>
       </div>
     </div>

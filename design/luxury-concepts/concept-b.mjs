@@ -305,7 +305,6 @@ ${C.PREVIEW_BAR("Concept B, Contemporary Concierge")}
           <tr><th scope="row">Clinician</th><td>${C.CLINICIAN.name}, ${C.CLINICIAN.post}</td></tr>
           ${C.CLINICIAN.credentials.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}
           <tr><th scope="row">Serves</th><td><div class="chips">${C.STATES.map((s) => `<span class="chip">${s}</span>`).join("")}</div></td></tr>
-          <tr><th scope="row">License numbers</th><td class="tbd">${C.CLINICIAN.licensePlaceholder}</td></tr>
         </tbody></table>
       </div>
     </div>

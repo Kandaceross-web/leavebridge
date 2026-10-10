@@ -32,7 +32,7 @@ Recommendation: B. Service, price and next step are all visible above the fold o
 to the patient portal (panels, steps, status).
 
 ## Needed from the owner
-- License numbers for the Clinical Credentials section (a photo is optional and not part of the design).
+- License numbers received 2026-10-10: MS 2581, TN 7581 (a photo is optional and not part of the design).
 - Confirm display name "Kandace S. Ross, LPC, NCC" (records say Kandace Ross, LPC; LPC-MHSP in Tennessee).
 - Editorial photos: licensed stock or commissioned interiors and architectural details, with no person as the focal point
   (preview uses labeled placeholders; this environment cannot reach stock sites).
