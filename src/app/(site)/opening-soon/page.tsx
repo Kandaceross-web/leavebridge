@@ -7,7 +7,7 @@ import { isPublicPreview } from "@/server/env";
 
 export const metadata: Metadata = {
   title: "Opening soon",
-  description: "LeaveBridge Health is preparing to open in Georgia, Mississippi and Tennessee.",
+  description: "LeaveBridge Health is preparing to open in Georgia, Minnesota, Mississippi, Ohio and Tennessee.",
   robots: { index: false, follow: true },
 };
 
@@ -19,7 +19,7 @@ export default function OpeningSoonPage() {
       <SiteHero
         eyebrow="Opening soon"
         title="We’re not booking assessments yet"
-        lede="We’re getting ready to open in Georgia, Mississippi and Tennessee. Screening, accounts and appointments open here at launch."
+        lede="We’re getting ready to open in Georgia, Minnesota, Mississippi, Ohio and Tennessee. Screening, accounts and appointments open here at launch."
       />
       <p>
         While you wait, our guides explain FMLA for mental health and who can complete the forms.

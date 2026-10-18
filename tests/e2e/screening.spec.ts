@@ -99,7 +99,7 @@ test("a person outside served states is told the service is not available", asyn
   await expectAccessible(page);
   await expectNoHorizontalScroll(page);
   await form.getByLabel("Email").fill(`e2e-${Date.now()}@example.test`);
-  await form.getByLabel("State").selectOption("OH");
+  await form.getByLabel("State").selectOption("AZ");
   await form.getByRole("button", { name: "Notify me" }).click();
   await expect(page.getByText(/we will email you if we begin serving that state/i)).toBeVisible();
   expect(page.url()).not.toContain("example.test");

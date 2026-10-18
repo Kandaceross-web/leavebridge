@@ -458,10 +458,12 @@ legend { font-weight: 600; font-size: 15.5px; color: var(--lb-navy); padding: 0;
 .creds li > span:first-child { font: 600 11.5px/2 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lb-ink-2); }
 @media (max-width: 620px) { .creds li { grid-template-columns: 1fr; gap: 2px; } }
 /* Credentials (owner's redesign, 2026-10-10): ivory #F8F6F2, forest #20382F, champagne #B5A078 (decoration only),
-   charcoal #292824. Three equal cards in a row on desktop, stacked compact cards on phones. Full details live on /credentials. */
+   charcoal #292824. Two license cards over three privilege cards on desktop, stacked compact cards on phones. Full details live on /credentials. */
 .cred-section { background: #f8f6f2; }
-.cred-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 28px); }
+.cred-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 28px); }
 .cred-card { position: relative; background: #fff; border: 1px solid #e4ded3; border-radius: var(--r-md); padding: clamp(20px, 2.6vw, 32px); display: grid; grid-template-rows: auto 1fr auto; gap: 12px; color: #292824; transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease; }
+.cred-license { grid-column: span 3; }
+.cred-privilege { grid-column: span 2; }
 .cred-card::before { content: ""; position: absolute; top: -1px; left: clamp(20px, 2.6vw, 32px); width: 36px; height: 2px; background: #b5a078; }
 .cred-card:hover { border-color: #b5a078; box-shadow: 0 14px 30px -22px rgba(32, 56, 47, 0.45); transform: translateY(-2px); }
 .cred-card h3 { margin: 0; font: 600 13px/1.4 var(--body); letter-spacing: 0.18em; text-transform: uppercase; color: #20382f; }
@@ -478,6 +480,7 @@ legend { font-weight: 600; font-size: 15.5px; color: var(--lb-navy); padding: 0;
 .cred-note { margin: 0; font-size: 14px; color: #4e4a43; max-width: 64ch; }
 @media (max-width: 860px) {
   .cred-cards { grid-template-columns: 1fr; gap: 16px; }
+  .cred-license, .cred-privilege { grid-column: auto; }
   .cred-card { padding: 20px 22px; gap: 6px; }
   .cred-card::before { left: 22px; }
   .cred-card h3 { font-size: 12px; }

@@ -330,9 +330,19 @@ export const SETTING_DEFS = {
           href: "tel:18007154225",
         },
         {
+          label: "Minnesota: **CRISIS (**274747)",
+          detail: "Minnesota mobile crisis line, from a cell phone.",
+          href: "tel:**274747",
+        },
+        {
           label: "Mississippi: 1-877-210-8513",
           detail: "Mississippi Department of Mental Health helpline.",
           href: "tel:18772108513",
+        },
+        {
+          label: "Ohio: 1-800-720-9616",
+          detail: "Ohio CareLine, emotional support available 24/7.",
+          href: "tel:18007209616",
         },
         {
           label: "Tennessee: 855-274-7471",

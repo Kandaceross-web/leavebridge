@@ -54,12 +54,12 @@ export function ServiceCard({
   );
 }
 
-/** Three credential cards: where services are authorized (owner's credentials redesign, 2026-10-10). */
+/** Credential cards, licenses first then privileges: where services are authorized (owner's credentials redesign, 2026-10-10). */
 export function CredentialCards() {
   return (
     <ul className="cred-cards">
       {PUBLIC_PROVIDER.licenses.map((l) => (
-        <li key={l.state} className="cred-card">
+        <li key={l.state} className={`cred-card cred-${l.kind === "license" ? "license" : "privilege"}`}>
           <h3>{l.state}</h3>
           <p className="cred-lines">
             {l.card.lines.map((line) => (

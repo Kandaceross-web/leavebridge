@@ -39,8 +39,8 @@ export const FIXTURE_PASSWORD = "Fictional-Dev-Pass-1";
 /** Base32 TOTP secret shared by fixture staff so local sign-in and e2e tests can compute codes. */
 export const FIXTURE_TOTP_SECRET = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP";
 /** Jurisdictions the fixtures activate so the journey can run locally. Not a launch decision (OWN-02). */
-/** Mirrors the owner's launch states (OWN-01/OWN-02, 2026-10-08; Georgia added 2026-10-10 by Counseling Compact privilege). Clinicians are fictional. */
-export const FIXTURE_ACTIVE_STATES = ["GA", "MS", "TN"] as const;
+/** Mirrors the owner's launch states (OWN-01/OWN-02, 2026-10-08; Georgia added 2026-10-10, Minnesota and Ohio 2026-10-18, all by Counseling Compact privilege). Clinicians are fictional. */
+export const FIXTURE_ACTIVE_STATES = ["GA", "MN", "MS", "OH", "TN"] as const;
 
 export const FIXTURE_STAFF = {
   admin: { email: "admin@leavebridge.test", roles: ["admin"] as Role[] },
@@ -378,22 +378,24 @@ export async function seedStaff(ctx: Ctx): Promise<FixtureStaff> {
   await authorize(clinicianIds.clinician, "MS", "license", cMs);
   const cTn = await license(clinicianIds.clinician, "TN", "Licensed Professional Counselor", 500);
   await authorize(clinicianIds.clinician, "TN", "license", cTn);
-  // Georgia by Counseling Compact privilege on the Tennessee home license, like the launch clinician.
-  const [cGa] = await ctx.tx
-    .insert(compactPrivileges)
-    .values({
-      clinicianId: clinicianIds.clinician,
-      compact: "counseling",
-      homeLicenseId: cTn,
-      remoteJurisdictionCode: "GA",
-      privilegeIdentifier: "FIC-COUNSELING-0001",
-      effectiveOn: iso(addDays(-1)),
-      expiresOn: iso(addDays(200)),
-      verifiedBy: userIds.admin,
-      verifiedAt: new Date(),
-    })
-    .returning();
-  await authorize(clinicianIds.clinician, "GA", "compact_privilege", cGa!.id);
+  // Georgia, Minnesota and Ohio by Counseling Compact privilege on the Tennessee home license, like the launch clinician.
+  for (const [code, n] of [["GA", 1], ["MN", 2], ["OH", 3]] as const) {
+    const [p] = await ctx.tx
+      .insert(compactPrivileges)
+      .values({
+        clinicianId: clinicianIds.clinician,
+        compact: "counseling",
+        homeLicenseId: cTn,
+        remoteJurisdictionCode: code,
+        privilegeIdentifier: `FIC-COUNSELING-000${n}`,
+        effectiveOn: iso(addDays(-1)),
+        expiresOn: iso(addDays(200)),
+        verifiedBy: userIds.admin,
+        verifiedAt: new Date(),
+      })
+      .returning();
+    await authorize(clinicianIds.clinician, code, "compact_privilege", p!.id);
+  }
 
   // Clinician 2: MS LCSW expiring soon (shows the expiring-credentials alert).
   const c2Ms = await license(clinicianIds.clinician2, "MS", "Licensed Clinical Social Worker", 20);

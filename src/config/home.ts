@@ -92,7 +92,7 @@ export const HOME_WHY = {
 
 /** Owner's credentials redesign (2026-10-10): a compact trust section near the bottom of the homepage. */
 export const HOME_CREDIBILITY = {
-  title: "Licensed Across Three States",
+  title: "Licensed Across Five States",
   body: "Professional mental health services delivered with clinical expertise, discretion, and convenience.",
 };
 

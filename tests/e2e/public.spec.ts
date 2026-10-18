@@ -15,6 +15,8 @@ const PAGES = [
   "/states/mississippi",
   "/states/tennessee",
   "/states/georgia",
+  "/states/minnesota",
+  "/states/ohio",
   "/resources/fmla-basics-check",
   "/for-therapists",
   "/contact",
@@ -55,7 +57,7 @@ test("home answers what, who, how, cost, next steps and what is not guaranteed",
     page.getByText(/employer approval are separate determinations/i).first(),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: /licensed across three states/i }),
+    page.getByRole("heading", { name: /licensed across five states/i }),
   ).toBeVisible();
   await expect(page.getByText("LPC-S | License #2581")).toBeVisible();
   const text = (await page.locator("main").innerText()).toLowerCase();
@@ -147,20 +149,24 @@ test("unknown pages return 404", async ({ page }) => {
   expect(res?.status()).toBe(404);
 });
 
-test("credentials: three cards on the homepage, full details with the Georgia privilege basis on /credentials", async ({
+test("credentials: five cards on the homepage, full details with the Georgia privilege basis on /credentials", async ({
   page,
 }) => {
   await page.goto("/");
   const cards = page.locator(".cred-card");
-  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveCount(5);
   await expect(cards.nth(0)).toContainText("LPC-S | License #2581");
   await expect(cards.nth(1)).toContainText("LPC-MHSP | License #7583");
   await expect(cards.nth(2)).toHaveText(/^\s*Georgia\s*LPC-GA-3372\s*$/i);
+  await expect(cards.nth(3)).toHaveText(/^\s*Minnesota\s*LPC-MN-3470\s*$/i);
+  await expect(cards.nth(4)).toHaveText(/^\s*Ohio\s*LPC-OH-3471\s*$/i);
   await expect(page.locator(".cred-cards")).not.toContainText("Counseling Compact");
   await expect(page.getByText("View Full Professional Credentials")).toHaveCount(0);
   await page.goto("/credentials");
   const panel = page.locator(".cred-panel");
   await expect(panel).toContainText("Privilege #LPC-GA-3372");
+  await expect(panel).toContainText("Privilege #LPC-MN-3470");
+  await expect(panel).toContainText("Privilege #LPC-OH-3471");
   await expect(panel).toContainText("practicing under a Counseling Compact privilege");
   await expect(panel).toContainText("Home State: Tennessee");
   await expect(panel).toContainText("National Certified Counselor (NCC)");

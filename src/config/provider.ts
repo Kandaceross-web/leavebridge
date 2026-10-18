@@ -53,12 +53,42 @@ export const PUBLIC_PROVIDER = {
       abbreviation: "LPC",
       number: "LPC-GA-3372",
       kind: "compact_privilege",
-      // Owner, 2026-10-10: the Georgia card reads only "LPC-GA" with the privilege number; the full panel gives the basis.
+      // Owner, 2026-10-10: privilege cards read only the privilege number (e.g. "LPC-GA-3372"); the full panel gives the basis.
       card: { lines: ["LPC-GA-3372"], number: null },
       detail: {
         lines: ["Licensed Professional Counselor practicing under a Counseling Compact privilege"],
         homeState: "Tennessee",
         number: "Privilege #LPC-GA-3372",
+      },
+    },
+    // Added 2026-10-18 from the owner's CompactConnect record: active 10/18/2026, expires 4/30/2027, home state Tennessee.
+    {
+      state: "Minnesota",
+      title:
+        "Counseling Compact privilege to practice as a Licensed Professional Counselor, home state Tennessee",
+      abbreviation: "LPC",
+      number: "LPC-MN-3470",
+      kind: "compact_privilege",
+      card: { lines: ["LPC-MN-3470"], number: null },
+      detail: {
+        lines: ["Licensed Professional Counselor practicing under a Counseling Compact privilege"],
+        homeState: "Tennessee",
+        number: "Privilege #LPC-MN-3470",
+      },
+    },
+    // Added 2026-10-18 from the owner's CompactConnect record: active 10/18/2026, expires 4/30/2027, home state Tennessee.
+    {
+      state: "Ohio",
+      title:
+        "Counseling Compact privilege to practice as a Licensed Professional Counselor, home state Tennessee",
+      abbreviation: "LPC",
+      number: "LPC-OH-3471",
+      kind: "compact_privilege",
+      card: { lines: ["LPC-OH-3471"], number: null },
+      detail: {
+        lines: ["Licensed Professional Counselor practicing under a Counseling Compact privilege"],
+        homeState: "Tennessee",
+        number: "Privilege #LPC-OH-3471",
       },
     },
   ] satisfies PublicLicense[],

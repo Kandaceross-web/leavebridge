@@ -53,7 +53,7 @@ export default async function AboutPage() {
       <section className="stack" aria-labelledby="creds-title">
         <div className="stack stack-sm">
           <p className="eyebrow">Professional credentials</p>
-          <h2 id="creds-title">Licensed Across Three States</h2>
+          <h2 id="creds-title">Licensed Across Five States</h2>
           <p className="muted">
             Assessments are provided by a licensed professional counselor, not a physician.
           </p>

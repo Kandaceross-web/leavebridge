@@ -40,12 +40,12 @@ describe("state waitlist", () => {
     const s = await staff();
     for (let i = 0; i < 2; i++)
       await as(anonymous, (ctx) =>
-        joinWaitlist(ctx, { email: `count-${tag()}@example.test`, stateCode: "OH" }),
+        joinWaitlist(ctx, { email: `count-${tag()}@example.test`, stateCode: "AZ" }),
       );
-    await runScreening({ current_state: "OH", appointment_state: "OH" });
+    await runScreening({ current_state: "AZ", appointment_state: "AZ" });
     for (const role of ["admin", "director"] as const) {
       const rows = await as(staffActor(s, role), (ctx) => waitlistDemand(ctx, 30));
-      const ga = rows.find((r) => r.code === "OH")!;
+      const ga = rows.find((r) => r.code === "AZ")!;
       expect(ga.joined).toBeGreaterThanOrEqual(2);
       expect(ga.waiting).toBeGreaterThanOrEqual(2);
       expect(ga.screenings).toBeGreaterThanOrEqual(1);

@@ -206,6 +206,28 @@ Your clinician practices in Georgia under a Counseling Compact privilege to prac
   ),
   state(
     1,
+    "minnesota",
+    "Mental health leave assessments in Minnesota",
+    `LeaveBridge Health clinicians authorized to practice in Minnesota can assess adults located in Minnesota at the time of their visit. Here is what is specific to Minnesota.
+
+${NOT_ADVICE}
+
+## Leave in Minnesota
+
+Minnesota Paid Leave, a state program that began on January 1, 2026, can provide partial pay while you take time off for your own serious health condition. The state decides eligibility and benefits. Federal FMLA, if you are eligible, and your employer's own policies may also apply.
+
+## Authorized where you are
+
+Your clinician practices in Minnesota under a Counseling Compact privilege to practice, which is based on their home-state license in Tennessee. You must be physically located in Minnesota during your visit.
+
+## Crisis support in Minnesota
+
+- Call or text **988**, the Suicide and Crisis Lifeline, available 24/7.
+- Minnesota mobile crisis: call **CRISIS ([**274747](tel:**274747)) from a cell phone.
+- In an emergency, call [911](tel:911).`,
+  ),
+  state(
+    2,
     "mississippi",
     "Mental health leave assessments in Mississippi",
     `LeaveBridge Health clinicians licensed in Mississippi can assess adults located in Mississippi at the time of their visit. Here is what is specific to Mississippi.
@@ -231,7 +253,29 @@ Your clinician must be licensed in Mississippi, and you must be physically locat
 - In an emergency, call [911](tel:911).`,
   ),
   state(
-    2,
+    3,
+    "ohio",
+    "Mental health leave assessments in Ohio",
+    `LeaveBridge Health clinicians authorized to practice in Ohio can assess adults located in Ohio at the time of their visit. Here is what is specific to Ohio.
+
+${NOT_ADVICE}
+
+## Leave in Ohio
+
+Ohio does not have a state paid family or medical leave program for private-sector workers, so most rely on federal FMLA, if eligible, and their employer's own policies.
+
+## Authorized where you are
+
+Your clinician practices in Ohio under a Counseling Compact privilege to practice, which is based on their home-state license in Tennessee. You must be physically located in Ohio during your visit.
+
+## Crisis support in Ohio
+
+- Call or text **988**, the Suicide and Crisis Lifeline, available 24/7.
+- Ohio CareLine, emotional support available 24/7: [1-800-720-9616](tel:18007209616).
+- In an emergency, call [911](tel:911).`,
+  ),
+  state(
+    4,
     "tennessee",
     "Mental health leave assessments in Tennessee",
     `LeaveBridge Health clinicians licensed in Tennessee can assess adults located in Tennessee at the time of their visit. Here is what is specific to Tennessee.
