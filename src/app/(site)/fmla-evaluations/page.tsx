@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Photo } from "@/components/site";
 import { ButtonLink, Icon, Money } from "@/components/ui";
 import { enabledServices, siteSettings } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
@@ -38,6 +39,7 @@ export default async function FmlaEvaluationsPage() {
             </p>
           </div>
           <div className="svc-price-chip">
+            <Photo name="page-leave" className="chip-photo" eager sizes="(max-width: 860px) 100vw, 420px" />
             <p className="svc-price">{price}</p>
             <ButtonLink href={start}>Begin Your Confidential Evaluation</ButtonLink>
           </div>

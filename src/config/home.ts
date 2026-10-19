@@ -12,22 +12,15 @@ export const HOME_HERO = {
   ],
   primary: "Explore Our Services",
   secondary: "How It Works",
-  trust: [
-    { icon: "lock", label: "Confidential Online Intake" },
-    { icon: "badge", label: "Professional Clinical Standards" },
-    { icon: "file", label: "Transparent Pricing" },
-  ],
 } as const;
 
 export const HOME_SERVICES_INTRO = {
   title: "How Can We Help?",
-  body: "Choose the service that fits your needs. Clear pricing, confidential intake, and a straightforward process from the beginning.",
 };
 
 export interface ServiceCardCopy {
   title: string;
   benefit: string;
-  summary: string;
   includes: string[];
   cta: string;
   href: string;
@@ -38,13 +31,10 @@ export interface ServiceCardCopy {
 export const SERVICE_CARD_EXCUSE: ServiceCardCopy = {
   title: "Work & School Excuse Evaluations",
   benefit: "For the days when mental health affects your ability to show up.",
-  summary: "Request an evaluation for a mental health-related absence from work or school through our convenient online process.",
   includes: [
-    "Confidential online intake",
-    "Standardized mental health screening",
-    "Assessment results",
-    "Review of your documentation request, where included in the service",
-    "Secure access to available documentation",
+    "Standardized PHQ-9 and GAD-7 mental health screening",
+    "Licensed clinician review of your letter request",
+    "Digitally signed letter with a verification code, when approved",
   ],
   cta: "Request an Evaluation",
   href: "/work-school-excuses",
@@ -55,13 +45,10 @@ export const SERVICE_CARD_EXCUSE: ServiceCardCopy = {
 export const SERVICE_CARD_FMLA: ServiceCardCopy = {
   title: "Mental Health Leave & FMLA Evaluations",
   benefit: "When your mental health affects your ability to work, we’re here to help you navigate the next step.",
-  summary: "Receive an individualized mental health evaluation to determine whether leave-related clinical documentation is appropriate.",
   includes: [
-    "Confidential clinical intake",
-    "Comprehensive mental health evaluation",
-    "Review of relevant symptoms and functional concerns",
-    "Assessment of requested leave-related documentation",
-    "Clinical recommendations and documentation when appropriate",
+    "Comprehensive mental health evaluation by a licensed clinician",
+    "Review of your symptoms and how they affect your work",
+    "Completed leave paperwork when clinically appropriate",
   ],
   cta: "Begin Your Evaluation",
   href: "/fmla-evaluations",
@@ -76,19 +63,22 @@ export const HOME_STEPS = {
     ["Complete Your Intake", "Provide your information and complete the required assessment steps through our secure online platform."],
     ["Receive Your Evaluation Outcome", "Review your results, any required clinical next steps, and the status of your documentation request."],
   ],
-  cta: "Explore Our Services",
 } as const;
 
 export const HOME_WHY = {
   title: "Care That Respects Your Time.",
   body: "Seeking mental health support and documentation shouldn’t feel unnecessarily complicated. We combine convenient technology with professional clinical standards to make the evaluation process easier to navigate.",
-  blocks: [
-    ["Convenient Access", "Begin your request online, on your schedule."],
-    ["Confidential Experience", "Share sensitive information through our protected intake process."],
-    ["Professional Evaluation", "Clinical decisions are guided by professional judgment and appropriate assessment standards."],
-    ["Clear Pricing", "Know the price of your selected evaluation before you begin."],
+  points: [
+    "Your records stay in a private portal that only you control.",
+    "Nothing is shared with an employer or school without your written authorization.",
+    "Every document we issue carries a code anyone can use to confirm it is genuine.",
   ],
 } as const;
+
+export const HOME_FINAL = {
+  title: "Take the Next Step With Confidence.",
+  cta: "Get Started",
+};
 
 /** Owner's credentials redesign (2026-10-10): a compact trust section near the bottom of the homepage. */
 export const HOME_CREDIBILITY = {

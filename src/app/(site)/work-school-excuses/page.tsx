@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Photo } from "@/components/site";
 import { notFound } from "next/navigation";
 import { Banner, ButtonLink, Icon, Money } from "@/components/ui";
 import { sameDayService } from "@/server/web/public";
@@ -58,6 +59,7 @@ export default async function WorkSchoolExcusesPage() {
             </p>
           </div>
           <div className="svc-price-chip">
+            <Photo name="service-excuse" className="chip-photo" eager sizes="(max-width: 860px) 100vw, 420px" />
             <p className="svc-price">{price}</p>
             <ButtonLink href={start}>Request an Excuse Evaluation</ButtonLink>
           </div>

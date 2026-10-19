@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ButtonLink, Icon, Markdown, ReviewTag } from "@/components/ui";
-import { BridgeArt, CredentialCards, SectionHead, ServiceCard } from "@/components/site";
+import { ButtonLink, Markdown, ReviewTag } from "@/components/ui";
+import { CredentialCards, Photo, SectionHead, ServiceCard } from "@/components/site";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, servicesLd } from "@/server/web/structured-data";
 import { activeStates, enabledServices, publishedFaq, sameDayService, siteSettings } from "@/server/web/public";
 import {
   HOME_CREDIBILITY,
   HOME_FAQ,
+  HOME_FINAL,
   HOME_HERO,
   HOME_SERVICES_INTRO,
   HOME_STEPS,
@@ -54,74 +55,80 @@ export default async function HomePage() {
             ))}
             <div className="btn-row">
               <ButtonLink href="#services">{HOME_HERO.primary}</ButtonLink>
-              <ButtonLink href="#how-it-works" variant="secondary">
-                {HOME_HERO.secondary}
-              </ButtonLink>
+              <Link href="#how-it-works" className="text-link">
+                {HOME_HERO.secondary} <span aria-hidden="true">→</span>
+              </Link>
             </div>
-            <ul className="trust-inline" aria-label="Why people choose us">
-              {HOME_HERO.trust.map((t) => (
-                <li key={t.label}>
-                  <Icon name={t.icon} size={18} />
-                  <span>{t.label}</span>
+          </div>
+          <div className="hero2-photo">
+            <Photo name="hero-tea" eager sizes="(max-width: 860px) 100vw, 520px" />
+          </div>
+        </div>
+      </section>
+
+      <section id="services" className="section" aria-labelledby="services-title">
+        <div className="container">
+          <SectionHead id="services-title" title={HOME_SERVICES_INTRO.title} />
+          <div className="svc-grid">
+            <ServiceCard
+              id="card-excuse"
+              copy={SERVICE_CARD_EXCUSE}
+              photo="page-excuse"
+              priceCents={sameDay?.priceCents ?? null}
+            />
+            <ServiceCard
+              id="card-fmla"
+              copy={SERVICE_CARD_FMLA}
+              photo="service-leave"
+              priceCents={leave?.priceCents ?? null}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" className="section section-sun" aria-labelledby="how-title">
+        <div className="container editorial">
+          <div className="editorial-photo">
+            <Photo name="steps-phone" sizes="(max-width: 860px) 100vw, 480px" />
+          </div>
+          <div className="editorial-text">
+            <SectionHead id="how-title" title={HOME_STEPS.title}>
+              <p className="lede">{HOME_STEPS.body}</p>
+            </SectionHead>
+            <ol className="steps-list">
+              {HOME_STEPS.steps.map(([title, body], i) => (
+                <li key={title}>
+                  <span className="num" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <h3>
+                      <span className="visually-hidden">Step {i + 1}: </span>
+                      {title}
+                    </h3>
+                    <p>{body}</p>
+                  </div>
                 </li>
               ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="why-title">
+        <div className="container editorial editorial-reverse">
+          <div className="editorial-photo">
+            <Photo name="private-linen" sizes="(max-width: 860px) 100vw, 480px" />
+          </div>
+          <div className="editorial-text">
+            <SectionHead id="why-title" title={HOME_WHY.title}>
+              <p className="lede">{HOME_WHY.body}</p>
+            </SectionHead>
+            <ul className="quiet-list">
+              {HOME_WHY.points.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
             </ul>
-          </div>
-          <div className="hero2-art">
-            <BridgeArt />
-          </div>
-        </div>
-      </section>
-
-      <section id="services" className="section section-sun" aria-labelledby="services-title">
-        <div className="container">
-          <SectionHead id="services-title" title={HOME_SERVICES_INTRO.title}>
-            <p className="lede">{HOME_SERVICES_INTRO.body}</p>
-          </SectionHead>
-          <div className="svc-grid">
-            <ServiceCard id="card-excuse" copy={SERVICE_CARD_EXCUSE} priceCents={sameDay?.priceCents ?? null} />
-            <ServiceCard id="card-fmla" copy={SERVICE_CARD_FMLA} priceCents={leave?.priceCents ?? null} />
-          </div>
-        </div>
-      </section>
-
-      <section id="how-it-works" className="section" aria-labelledby="how-title">
-        <div className="container">
-          <SectionHead id="how-title" title={HOME_STEPS.title}>
-            <p className="lede">{HOME_STEPS.body}</p>
-          </SectionHead>
-          <ol className="steps2">
-            {HOME_STEPS.steps.map(([title, body], i) => (
-              <li key={title}>
-                <span className="num" aria-hidden="true">
-                  {i + 1}
-                </span>
-                <h3>
-                  <span className="visually-hidden">Step {i + 1}: </span>
-                  {title}
-                </h3>
-                <p>{body}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="mt-4">
-            <ButtonLink href="#services">{HOME_STEPS.cta}</ButtonLink>
-          </div>
-        </div>
-      </section>
-
-      <section className="section section-sun" aria-labelledby="why-title">
-        <div className="container">
-          <SectionHead id="why-title" title={HOME_WHY.title}>
-            <p className="lede">{HOME_WHY.body}</p>
-          </SectionHead>
-          <div className="why-grid">
-            {HOME_WHY.blocks.map(([title, body]) => (
-              <div key={title} className="why-block">
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -163,10 +170,11 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      <section className="final-band" aria-labelledby="next-title">
+      <section className="final-band final-photo" aria-labelledby="next-title">
+        <Photo name="band-bridge" className="final-bg" sizes="100vw" />
         <div className="container final-inner">
-          <h2 id="next-title">Take the Next Step With Confidence.</h2>
-          <ButtonLink href="#services">Get Started</ButtonLink>
+          <h2 id="next-title">{HOME_FINAL.title}</h2>
+          <ButtonLink href="#services">{HOME_FINAL.cta}</ButtonLink>
         </div>
       </section>
     </>

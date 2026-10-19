@@ -4,7 +4,6 @@ import { Badge, ButtonLink, Icon, Money } from "@/components/ui";
 import { SiteHero } from "@/components/illustration";
 import { allServices, enabledServices, sameDayService } from "@/server/web/public";
 import { appHref } from "@/server/web/app-link";
-import { LEAVE_CATEGORIES } from "@/config/home";
 
 export const metadata: Metadata = {
   title: "Services and pricing",
@@ -63,7 +62,7 @@ export default async function ServicesPage() {
 
       {sameDay ? (
         <section className="stack" aria-labelledby="includes-title">
-          <h2 id="includes-title">What Your Evaluation Includes</h2>
+          <h2 id="includes-title">Also Offered</h2>
           <article className="svc-card svc-card-compact" aria-labelledby="same-day-title">
             <h3 id="same-day-title">Work &amp; School Excuse Evaluation</h3>
             <p className="svc-price">{sameDay.priceCents !== null ? <Money cents={sameDay.priceCents} /> : "—"}</p>
@@ -78,26 +77,6 @@ export default async function ServicesPage() {
           </p>
         </section>
       ) : null}
-
-      <section className="stack" aria-labelledby="types-title">
-        <div className="section-head">
-          <h2 id="types-title">Explore Your Leave Options</h2>
-          <p className="lede">
-            Mental health concerns affect everyone differently. Your evaluation helps determine what type of documentation, if any, may be clinically appropriate.
-          </p>
-        </div>
-        <div className="cat-grid">
-          {LEAVE_CATEGORIES.map(([title, body]) => (
-            <div key={title} className="cat-card">
-              <h3>{title}</h3>
-              <p>{body}</p>
-            </div>
-          ))}
-        </div>
-        <p>
-          <Link href="/faq#evaluation-requirements">Learn About Evaluation Requirements</Link>
-        </p>
-      </section>
 
       <section className="grid g2" aria-label="Documentation and employer requirements">
         <div className="feature">

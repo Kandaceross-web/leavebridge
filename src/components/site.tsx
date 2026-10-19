@@ -3,43 +3,72 @@ import { ButtonLink, Icon, Money } from "@/components/ui";
 import type { ServiceCardCopy } from "@/config/home";
 import { PUBLIC_PROVIDER } from "@/config/provider";
 
-/** Abstract bridge line art for the homepage hero (owner spec V1, Part 4). Decorative only. */
-export function BridgeArt() {
+/**
+ * Photographs in public/images/: stills from the Pexels footage licensed for the ad campaign (commercial use, no
+ * attribution required; credits in docs/IMAGE-CREDITS.md). Each has a 640px "-sm" and a full-size "-lg" WebP.
+ * Decorative by default (empty alt): they set the mood and carry no information the text does not.
+ */
+const PHOTOS = {
+  "hero-tea": [864, 1080],
+  "service-excuse": [1440, 1080],
+  "service-leave": [1440, 1080],
+  "private-linen": [864, 1080],
+  "steps-phone": [864, 1080],
+  "band-bridge": [1920, 840],
+  "page-excuse": [1440, 1080],
+  "page-leave": [1440, 1080],
+} as const;
+export type PhotoName = keyof typeof PHOTOS;
+
+export function Photo({
+  name,
+  sizes,
+  className,
+  eager = false,
+}: {
+  name: PhotoName;
+  sizes: string;
+  className?: string;
+  eager?: boolean;
+}) {
+  const [w, h] = PHOTOS[name];
   return (
-    <svg className="bridge-art" viewBox="0 0 520 380" aria-hidden="true" focusable="false">
-      <circle cx="380" cy="104" r="46" className="sun" />
-      <path d="M20 250 C 140 92, 380 92, 500 250" className="arch" />
-      <path d="M70 250 C 170 140, 350 140, 450 250" className="arch-2" />
-      <path d="M8 250 H512" className="deck" />
-      <path
-        d="M130 172 V250 M190 140 V250 M260 128 V250 M330 140 V250 M390 172 V250"
-        className="piers"
-      />
-      <path d="M30 292 C 120 282, 200 300, 280 290 S 440 282, 500 292" className="water" />
-      <path d="M80 322 C 160 314, 240 330, 320 320 S 430 314, 470 322" className="water water-2" />
-    </svg>
+    // Plain <img>: the public site is a static export with no image optimizer behind it.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      className={className}
+      src={`/images/${name}-lg.webp`}
+      srcSet={`/images/${name}-sm.webp 640w, /images/${name}-lg.webp ${w}w`}
+      sizes={sizes}
+      width={w}
+      height={h}
+      alt=""
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+    />
   );
 }
 
-/** One of the two homepage service cards (Part 5): equal weight, price, five details, full-width action. */
+/** One of the two homepage service cards: photograph, title, price, benefit, three inclusions, action, disclosure. */
 export function ServiceCard({
   copy,
   priceCents,
   id,
+  photo,
 }: {
   copy: ServiceCardCopy;
   priceCents: number | null;
   id: string;
+  photo: PhotoName;
 }) {
   return (
     <article className="svc-card" aria-labelledby={id}>
-      <h3 id={id}>{copy.title}</h3>
-      <p className="svc-price">{priceCents !== null ? <Money cents={priceCents} /> : "—"}</p>
-      <p className="svc-benefit">{copy.benefit}</p>
-      <p className="svc-summary">{copy.summary}</p>
-      <div>
-        <p className="svc-label">What’s Included</p>
-        <ul className="svc-list">
+      <Photo name={photo} className="svc-photo" sizes="(max-width: 860px) 100vw, 600px" />
+      <div className="svc-body">
+        <h3 id={id}>{copy.title}</h3>
+        <p className="svc-price">{priceCents !== null ? <Money cents={priceCents} /> : "—"}</p>
+        <p className="svc-benefit">{copy.benefit}</p>
+        <ul className="svc-list" aria-label="What’s included">
           {copy.includes.map((x) => (
             <li key={x}>
               <Icon name="check" />
@@ -47,9 +76,9 @@ export function ServiceCard({
             </li>
           ))}
         </ul>
+        <ButtonLink href={copy.href}>{copy.cta}</ButtonLink>
+        <p className="svc-disclosure">{copy.disclosure}</p>
       </div>
-      <ButtonLink href={copy.href}>{copy.cta}</ButtonLink>
-      <p className="svc-disclosure">{copy.disclosure}</p>
     </article>
   );
 }

@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { ButtonLink, Icon, Money } from "@/components/ui";
 import { SiteHero } from "@/components/illustration";
 import { launchPriceCents, siteSettings } from "@/server/web/public";
-import { HOME_STEPS } from "@/config/home";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -62,49 +61,31 @@ export default async function HowItWorksPage() {
   ];
   return (
     <div className="container page stack stack-xl">
-      <SiteHero eyebrow="How it works" title={HOME_STEPS.title} lede={HOME_STEPS.body} />
-
-      <section aria-label="The three steps">
-        <ol className="steps2">
-          {HOME_STEPS.steps.map(([title, body], i) => (
-            <li key={title}>
-              <span className="num" aria-hidden="true">
-                {i + 1}
-              </span>
-              <h2 className="h3-size">
-                <span className="visually-hidden">Step {i + 1}: </span>
-                {title}
-              </h2>
-              <p>{body}</p>
-            </li>
-          ))}
-        </ol>
-        <div className="mt-4">
-          <ButtonLink href="/#services">{HOME_STEPS.cta}</ButtonLink>
-        </div>
-      </section>
-
-      <section className="stack" aria-labelledby="detail-title">
-        <div className="section-head">
-          <h2 id="detail-title">The Mental Health Leave &amp; FMLA Evaluation, Step by Step</h2>
-          <p className="lede">
+      <SiteHero
+        eyebrow="How it works"
+        title="The Mental Health Leave & FMLA Evaluation, Step by Step"
+        lede={
+          <>
             This evaluation includes clinician review and, when your clinician needs one, a video
             visit. The Work &amp; School Excuse Evaluation steps are on{" "}
             <Link href="/work-school-excuses">its own page</Link>.
-          </p>
-        </div>
+          </>
+        }
+      />
+
+      <section className="stack" aria-label="Steps in the leave evaluation">
         <ol className="flow flow-cols-4" aria-label="Steps in the leave evaluation">
           {steps.map((s, i) => (
             <li key={i} className={s.clinical ? "clin" : undefined}>
               <span className="num" aria-hidden="true">
                 {i + 1}
               </span>
-              <h3 className="h3-size">
+              <h2 className="h3-size">
                 {s.title}
                 {s.clinical ? (
                   <span className="visually-hidden"> (clinician-only step)</span>
                 ) : null}
-              </h3>
+              </h2>
               <p>{s.body}</p>
               {s.clinical ? (
                 <span className="clin-tag">
