@@ -61,35 +61,37 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hero2-photo">
-            <Photo name="hero-tea" eager sizes="(max-width: 860px) 100vw, 520px" />
+            <Photo name="hero-smile" eager sizes="(max-width: 860px) 100vw, 520px" />
           </div>
         </div>
       </section>
 
-      <section id="services" className="section" aria-labelledby="services-title">
+      <section id="services" className="section tone-sage" aria-labelledby="services-title">
         <div className="container">
           <SectionHead id="services-title" title={HOME_SERVICES_INTRO.title} />
           <div className="svc-grid">
             <ServiceCard
               id="card-excuse"
+              accent="warm"
               copy={SERVICE_CARD_EXCUSE}
-              photo="page-excuse"
+              photo="card-stretch"
               priceCents={sameDay?.priceCents ?? null}
             />
             <ServiceCard
               id="card-fmla"
+              accent="green"
               copy={SERVICE_CARD_FMLA}
-              photo="service-leave"
+              photo="card-breathe"
               priceCents={leave?.priceCents ?? null}
             />
           </div>
         </div>
       </section>
 
-      <section id="how-it-works" className="section section-sun" aria-labelledby="how-title">
+      <section id="how-it-works" className="section tone-sun" aria-labelledby="how-title">
         <div className="container editorial">
           <div className="editorial-photo">
-            <Photo name="steps-phone" sizes="(max-width: 860px) 100vw, 480px" />
+            <Photo name="split-smile-man" sizes="(max-width: 860px) 100vw, 480px" />
           </div>
           <div className="editorial-text">
             <SectionHead id="how-title" title={HOME_STEPS.title}>
@@ -115,10 +117,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="why-title">
+      <section className="section tone-blush" aria-labelledby="why-title">
         <div className="container editorial editorial-reverse">
           <div className="editorial-photo">
-            <Photo name="private-linen" sizes="(max-width: 860px) 100vw, 480px" />
+            <Photo name="split-smile-window" sizes="(max-width: 860px) 100vw, 480px" />
           </div>
           <div className="editorial-text">
             <SectionHead id="why-title" title={HOME_WHY.title}>
@@ -143,7 +145,7 @@ export default async function HomePage() {
       </section>
 
       {faq.length ? (
-        <section className="section section-sun" aria-labelledby="home-faq-title">
+        <section className="section tone-sage" aria-labelledby="home-faq-title">
           <div className="container faq-grid">
             <div className="intro">
               <h2 id="home-faq-title">{HOME_FAQ.title}</h2>

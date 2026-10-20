@@ -45,6 +45,14 @@
   --lb-focus: #263d34;
   --lb-gold: #b49a68;
   --lb-forest-dark: #1b3028;
+  /* Warm color washes (owner, 2026-10-20: "where is the color and the happiness"). Backgrounds and decoration only;
+     text on them stays espresso or forest, and terracotta text uses the darker --lb-terracotta-text. */
+  --lb-blush: #f8e7dd;
+  --lb-sunwash: #faefd9;
+  --lb-sagewash: #e7f0e3;
+  --lb-terracotta: #c9734f;
+  --lb-terracotta-text: #9a4527;
+  --lb-sage-mid: #6f9a7c;
 
   --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
   --body: "Inter Variable", "Inter", "Helvetica Neue", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -645,3 +653,28 @@ section:has(> .svc-card-compact) { --gap: 24px; }
 .svc-card-compact p { font-size: 16px; line-height: 1.6; }
 .svc-card-compact .btn { min-height: 50px; justify-self: start; }
 @media (max-width: 640px) { .svc-card-compact .btn { justify-self: stretch; } }
+
+/* Color pass (2026-10-20) --------------------------------------------------------------- */
+.tone-sage { background: var(--lb-sagewash); }
+.tone-sun { background: var(--lb-sunwash); }
+.tone-blush { background: var(--lb-blush); }
+.tone-sage, .tone-sun, .tone-blush { border-block: 0; }
+.hero2 { background: linear-gradient(120deg, #fbe9de 0%, #f9f1e6 46%, #e6efe1 100%); border-bottom: 0; position: relative; }
+.hero2::before { content: ""; position: absolute; width: 520px; height: 520px; right: -120px; top: -160px; border-radius: 50%; background: radial-gradient(circle, rgba(245, 196, 120, 0.45), rgba(245, 196, 120, 0) 70%); pointer-events: none; }
+.hero2::after { content: ""; position: absolute; width: 420px; height: 420px; left: -160px; bottom: -200px; border-radius: 50%; background: radial-gradient(circle, rgba(201, 115, 79, 0.18), rgba(201, 115, 79, 0) 70%); pointer-events: none; }
+.hero2-grid { position: relative; z-index: 1; }
+.hero2-photo::before { border-color: var(--lb-terracotta); }
+.hero2-tagline { color: var(--lb-terracotta-text); }
+.svc-card { border-top: 5px solid transparent; }
+.svc-warm { border-top-color: var(--lb-terracotta); }
+.svc-green { border-top-color: var(--lb-sage-mid); }
+.svc-warm .svc-list svg { color: var(--lb-terracotta-text); }
+.steps-list .num { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; padding: 0; background: #b05a37; color: #fff; font: 600 18px/1 var(--body); }
+.steps-list li { border-top-color: rgba(48, 43, 39, 0.12); }
+.quiet-list li { border-top-color: rgba(48, 43, 39, 0.12); }
+.quiet-list li:last-child { border-bottom-color: rgba(48, 43, 39, 0.12); }
+.quiet-list li::before { background: var(--lb-terracotta); height: 2px; }
+.tone-sage .faq details, .tone-sage .faq details:last-child { border-color: rgba(48, 43, 39, 0.14); }
+.cred-card::before { background: var(--lb-terracotta); }
+.cred-privilege::before { background: var(--lb-sage-mid); }
+.final-photo::after { background: linear-gradient(180deg, rgba(27, 48, 40, 0.35), rgba(120, 52, 26, 0.55)); }

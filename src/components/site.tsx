@@ -6,16 +6,17 @@ import { PUBLIC_PROVIDER } from "@/config/provider";
 /**
  * Photographs in public/images/: stills from the Pexels footage licensed for the ad campaign (commercial use, no
  * attribution required; credits in docs/IMAGE-CREDITS.md). Each has a 640px "-sm" and a full-size "-lg" WebP.
- * Decorative by default (empty alt): they set the mood and carry no information the text does not.
+ * Decorative by default (empty alt): they set the mood and carry no information the text does not. People shown are
+ * models from stock footage, not clients or staff.
  */
 const PHOTOS = {
-  "hero-tea": [864, 1080],
-  "service-excuse": [1440, 1080],
-  "service-leave": [1440, 1080],
-  "private-linen": [864, 1080],
-  "steps-phone": [864, 1080],
+  "hero-smile": [864, 1080],
+  "card-stretch": [1920, 1080],
+  "card-breathe": [1920, 1080],
+  "split-smile-man": [864, 1080],
+  "split-smile-window": [864, 1080],
   "band-bridge": [1920, 840],
-  "page-excuse": [1440, 1080],
+  "service-excuse": [1440, 1080],
   "page-leave": [1440, 1080],
 } as const;
 export type PhotoName = keyof typeof PHOTOS;
@@ -55,14 +56,16 @@ export function ServiceCard({
   priceCents,
   id,
   photo,
+  accent,
 }: {
   copy: ServiceCardCopy;
   priceCents: number | null;
   id: string;
   photo: PhotoName;
+  accent: "warm" | "green";
 }) {
   return (
-    <article className="svc-card" aria-labelledby={id}>
+    <article className={`svc-card svc-${accent}`} aria-labelledby={id}>
       <Photo name={photo} className="svc-photo" sizes="(max-width: 860px) 100vw, 600px" />
       <div className="svc-body">
         <h3 id={id}>{copy.title}</h3>
