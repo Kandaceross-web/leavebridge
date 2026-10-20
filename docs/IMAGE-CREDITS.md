@@ -6,7 +6,7 @@ Each still was cropped, its colour was slightly softened, and it was saved as We
 
 | File | Used on | Clip | Photographer |
 | --- | --- | --- | --- |
-| videos/hero-smile (6 s loop) | Homepage hero | [A pregnant woman drinking coffee and looking outside](https://www.pexels.com/video/a-pregnant-woman-drinking-coffee-and-looking-outside-8023795/) | Ivan S |
+| videos/online-visit (7 s loop) | Homepage hero | [Woman talking in a call](https://www.pexels.com/video/woman-talking-in-a-call-7661517/) | Jep Gambardella |
 | card-stretch | Homepage, Work & School card | [Woman doing yoga in bedroom](https://www.pexels.com/video/woman-doing-yoga-in-bedroom-6639948/) | Kaboompics (Karolina) |
 | card-breathe | Homepage, FMLA card | [Man taking a deep breath](https://www.pexels.com/video/man-taking-a-deep-breath-8795165/) | Anastasia Shuraeva |
 | split-smile-man | Homepage, How it works | [A smiling man looking out the window](https://www.pexels.com/video/a-smiling-man-looking-out-the-window-9902445/) | Ron Lach |

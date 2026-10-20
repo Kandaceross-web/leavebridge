@@ -61,7 +61,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hero2-photo">
-            <LoopVideo name="hero-smile" />
+            <LoopVideo name="online-visit" />
           </div>
         </div>
       </section>

@@ -54,7 +54,7 @@ export function Photo({
  * browsers only autoplay muted video; the public site ships no JavaScript to fix it up afterwards. Under
  * prefers-reduced-motion the CSS hides the video and shows its poster still instead.
  */
-export function LoopVideo({ name, className }: { name: "hero-smile" | "band-bridge"; className?: string }) {
+export function LoopVideo({ name, className }: { name: "online-visit" | "band-bridge"; className?: string }) {
   const cls = className ? ` ${className}` : "";
   return (
     <span
