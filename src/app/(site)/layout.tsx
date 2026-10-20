@@ -4,10 +4,9 @@ import { headers } from "next/headers";
 import { Lockup } from "@/components/ui";
 import { NavLink } from "@/components/nav";
 import { DevBanner } from "@/components/dev-banner";
-import { legalPages, siteSettings, statePages } from "@/server/web/public";
+import { legalPages, siteSettings } from "@/server/web/public";
 import { env } from "@/server/env";
 import { appHref } from "@/server/web/app-link";
-import { PUBLIC_PROVIDER } from "@/config/provider";
 
 // Owner spec V1 (2026-10-10), Part 3: menu items in this exact order; "Get Started" goes to the service cards.
 const NAV = [
@@ -19,11 +18,7 @@ const NAV = [
 ];
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
-  const [{ brand, crisis }, legal, states] = await Promise.all([
-    siteSettings(),
-    legalPages(),
-    statePages(),
-  ]);
+  const [{ crisis }, legal] = await Promise.all([siteSettings(), legalPages()]);
   // Optional privacy-preserving analytics, marketing pages only (LEG-14). Never rendered in the portal, ops or screening.
   const analyticsSrc = env.SITE_ANALYTICS_SRC;
   const nonce = analyticsSrc ? ((await headers()).get("x-nonce") ?? undefined) : undefined;
@@ -182,34 +177,6 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                 ) : null}
               </ul>
             </div>
-          </div>
-          <div className="legal">
-            <p>
-              Clinical services are provided by {PUBLIC_PROVIDER.name},{" "}
-              {PUBLIC_PROVIDER.postNominals}:{" "}
-              {PUBLIC_PROVIDER.licenses
-                .map(
-                  (l) =>
-                    `${l.state} ${l.abbreviation}${l.kind === "compact_privilege" ? " Counseling Compact privilege" : ""} no. ${l.number}`,
-                )
-                .join("; ")}
-              . Services are available only to people located in{" "}
-              {new Intl.ListFormat("en-US", { type: "disjunction" }).format(
-                states.map((st) => st.state.name),
-              ) || "the states we serve"}{" "}
-              during care.
-            </p>
-            <p>
-              Clinicians make their own determinations. We do not decide FMLA eligibility or approve
-              leave; your employer or leave administrator does.
-            </p>
-            <p>
-              Support: <a href={`mailto:${brand.supportEmail}`}>{brand.supportEmail}</a> ·{" "}
-              {brand.supportHours}
-            </p>
-            <p>
-              © {new Date().getFullYear()} {brand.name}
-            </p>
           </div>
         </div>
       </footer>
