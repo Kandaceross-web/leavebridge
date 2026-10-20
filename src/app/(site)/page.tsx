@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink, Markdown, ReviewTag } from "@/components/ui";
-import { CredentialCards, Photo, SectionHead, ServiceCard } from "@/components/site";
+import { CredentialCards, LoopVideo, Photo, SectionHead, ServiceCard } from "@/components/site";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, servicesLd } from "@/server/web/structured-data";
 import { activeStates, enabledServices, publishedFaq, sameDayService, siteSettings } from "@/server/web/public";
@@ -61,7 +61,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hero2-photo">
-            <Photo name="hero-smile" eager sizes="(max-width: 860px) 100vw, 520px" />
+            <LoopVideo name="hero-smile" />
           </div>
         </div>
       </section>
@@ -173,7 +173,7 @@ export default async function HomePage() {
       ) : null}
 
       <section className="final-band final-photo" aria-labelledby="next-title">
-        <Photo name="band-bridge" className="final-bg" sizes="100vw" />
+        <LoopVideo name="band-bridge" className="final-bg" />
         <div className="container final-inner">
           <h2 id="next-title">{HOME_FINAL.title}</h2>
           <ButtonLink href="#services">{HOME_FINAL.cta}</ButtonLink>

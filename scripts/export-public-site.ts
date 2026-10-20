@@ -166,8 +166,8 @@ async function main() {
     const styleHashes = new Set<string>();
     for (const page of pages) {
       let html = staticHtml(await (await get(page)).text());
-      // Framework assets, the self-hosted illustrations in public/illustrations/ and photographs in public/images/.
-      for (const m of html.matchAll(/(?:href|src)="(\/(?:_next\/static|illustrations|images)\/[^"]+)"/g))
+      // Framework assets, the self-hosted illustrations in public/illustrations/ and photographs in public/images/ and clips in public/videos/.
+      for (const m of html.matchAll(/(?:href|src|poster)="(\/(?:_next\/static|illustrations|images|videos)\/[^"]+)"/g))
         assets.add(m[1]!);
       for (const m of html.matchAll(/srcSet="([^"]+)"|srcset="([^"]+)"/g))
         for (const part of (m[1] ?? m[2])!.split(","))

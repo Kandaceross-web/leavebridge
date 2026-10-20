@@ -10,12 +10,10 @@ import { PUBLIC_PROVIDER } from "@/config/provider";
  * models from stock footage, not clients or staff.
  */
 const PHOTOS = {
-  "hero-smile": [864, 1080],
   "card-stretch": [1920, 1080],
   "card-breathe": [1920, 1080],
   "split-smile-man": [864, 1080],
   "split-smile-window": [864, 1080],
-  "band-bridge": [1920, 840],
   "service-excuse": [1440, 1080],
   "page-leave": [1440, 1080],
 } as const;
@@ -46,6 +44,29 @@ export function Photo({
       alt=""
       loading={eager ? "eager" : "lazy"}
       decoding="async"
+    />
+  );
+}
+
+/**
+ * Silent looping clips in public/videos/ (cut from the same Pexels footage as the photographs; owner asked for video
+ * 2026-10-20). Written as raw HTML because React leaves the `muted` attribute out of server-rendered markup, and
+ * browsers only autoplay muted video; the public site ships no JavaScript to fix it up afterwards. Under
+ * prefers-reduced-motion the CSS hides the video and shows its poster still instead.
+ */
+export function LoopVideo({ name, className }: { name: "hero-smile" | "band-bridge"; className?: string }) {
+  const cls = className ? ` ${className}` : "";
+  return (
+    <span
+      className={`loop-video${cls}`}
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{
+        __html:
+          `<video autoplay muted loop playsinline preload="metadata" poster="/videos/${name}-poster.webp" tabindex="-1">` +
+          `<source src="/videos/${name}.mp4" type="video/mp4">` +
+          `<source src="/videos/${name}.webm" type="video/webm"></video>` +
+          `<img src="/videos/${name}-poster.webp" alt="" loading="lazy" decoding="async">`,
+      }}
     />
   );
 }
